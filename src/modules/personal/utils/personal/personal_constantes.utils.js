@@ -1,0 +1,37 @@
+const TIPOS_CONTRATO = [
+  'NOMBRADO',
+  'CONTRATADO',
+  'CAS',
+  'LOCADOR',
+  'TERCERO',
+  'OTRO',
+];
+
+const TURNOS = [
+  'MANANA',
+  'TARDE',
+  'NOCHE',
+  'ROTATIVO',
+];
+
+const ESTADOS_LABORALES = [
+  'ACTIVO',
+  'VACACIONES',
+  'DESCANSO_MEDICO',
+  'SUSPENDIDO',
+  'CESADO',
+];
+
+const ROLES_PERSONAL = [
+  'CONDUCTOR',
+  'RECOLECTOR',
+  'SUPERVISOR',
+  'OPERADOR',
+];
+
+module.exports = {
+  TIPOS_CONTRATO,
+  TURNOS,
+  ESTADOS_LABORALES,
+  ROLES_PERSONAL
+}
