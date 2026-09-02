@@ -16,7 +16,7 @@ const {
     getConductorByIdController,
     updateConductorController,
     changeConductorEstadoController,
-} = require(    '../controllers/conductor.controller');
+} = require('../controllers/conductor.controller');
 
 
 // ROUTES

@@ -2,6 +2,9 @@ const { Op } = require('sequelize');
 const db = require('../../../../database/models',);
 const AppError = require('../../../../utils/app-error');
 
+// Services
+const getConductorByIdService = require('./get-conductor-by-id.service');
+
 // Modelos
 const { ConductorPerfil } = db;
 
@@ -196,7 +199,7 @@ const updateConductorService = async (
 
   await conductor.update(data);
 
-  return getConductorService(id);
+  return getConductorByIdService(id);
 };
 
 

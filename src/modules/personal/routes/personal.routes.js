@@ -5,9 +5,7 @@ const router = express.Router();
 const {
     verificarToken,
     autorizarRoles,
-} = require(
-    '../../../middlewares/auth.middleware',
-);
+} = require('../../../middlewares/auth.middleware');
 
 router.use(verificarToken);
 

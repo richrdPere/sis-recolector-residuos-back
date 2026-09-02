@@ -1,4 +1,3 @@
-
 const db = require('../../../../database/models',);
 const AppError = require('../../../../utils/app-error');
 

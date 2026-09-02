@@ -15,9 +15,7 @@ const {
     getConductoresDisponiblesController,
     getRecolectoresDisponiblesController,
     getPersonalByRolController,
-} = require(
-    '../controllers/disponibilidad.controller',
-);
+} = require('../controllers/disponibilidad.controller');
 
 // ROUTES
 router.get('/conductores/disponibles',

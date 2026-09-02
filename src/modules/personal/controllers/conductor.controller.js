@@ -58,16 +58,14 @@ const getConductorByIdController = async (req, res, next) => {
 */
 const updateConductorController = async (req, res, next) => {
   try {
-    const data =
-      await updateConductorService(
-        req.params.idPersonal,
-        req.body,
-      );
+    const data = await updateConductorService(
+      req.params.idPersonal,
+      req.body,
+    );
 
     return res.status(200).json({
       success: true,
-      message:
-        'Perfil de conductor actualizado correctamente.',
+      message: 'Perfil de conductor actualizado correctamente.',
       data,
     });
   } catch (error) {

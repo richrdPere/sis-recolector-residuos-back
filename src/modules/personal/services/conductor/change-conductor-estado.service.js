@@ -1,6 +1,9 @@
 const db = require('../../../../database/models',);
 const AppError = require('../../../../utils/app-error');
 
+// Services
+const getConductorByIdService = require('./get-conductor-by-id.service');
+
 // Modelos
 const { ConductorPerfil } = db;
 
@@ -61,7 +64,7 @@ const changeConductorEstadoService = async ({
         estado,
     });
 
-    return getConductorService(id);
+    return getConductorByIdService(id);
 };
 
 module.exports = changeConductorEstadoService;
