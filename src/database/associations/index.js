@@ -9,8 +9,8 @@ module.exports = (db) => {
     // - Personal operativo
     require("./personal.associations")(db);
 
-    // // - Movimientos    
-    // require("./movimientos.associations")(db);
+    // - Rutas y zonas
+    require("./rutas.associations")(db);
 
     // // - Plan mensual
     // require("./plan-mensual.associations")(db);
