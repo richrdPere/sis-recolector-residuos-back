@@ -15,5 +15,8 @@ module.exports = (db) => {
     // - Programaciones
     require("./programaciones.associations")(db);
 
+    // Recorridos
+    require('./recorridos.associations')(db);
+
 
 }

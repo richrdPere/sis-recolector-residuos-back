@@ -33,6 +33,10 @@ db.ProgramacionRuta = require('./programaciones/programacion_ruta.model');
 db.ProgramacionPersonal = require('./programaciones/programacion_personal.model');
 db.ProgramacionHistorial = require('./programaciones/programacion_historial.model');
 
+// - Recorridos
+db.Recorrido = require('./recorridos/recorrido.model');
+db.RecorridoEvento = require('./recorridos/recorrido-evento.model');
+
 
 // CARGAR ASOCIACIONES
 require("../associations")(db);
