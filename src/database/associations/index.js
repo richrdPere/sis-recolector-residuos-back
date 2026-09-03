@@ -12,8 +12,8 @@ module.exports = (db) => {
     // - Rutas y zonas
     require("./rutas.associations")(db);
 
-    // // - Plan mensual
-    // require("./plan-mensual.associations")(db);
+    // - Programaciones
+    require("./programaciones.associations")(db);
 
 
 }

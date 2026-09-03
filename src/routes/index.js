@@ -5,12 +5,13 @@ const authRoutes = require("../modules/auth/routes/auth.routes");
 const vehiculoRoutes = require("../modules/vehiculos/routes/vehiculo.routes");
 const personalRoutes = require('../modules/personal/routes');
 const rutasRoutes = require("../modules/rutas/routes");
+const programacionRoutes = require('../modules/programaciones/routes');
 
 // Rutas
 router.use("/auth", authRoutes);
 router.use("/vehiculos", vehiculoRoutes);
 router.use('/personal', personalRoutes);
 router.use('/rutas', rutasRoutes);
-
+router.use('/programaciones', programacionRoutes);
 
 module.exports = router;

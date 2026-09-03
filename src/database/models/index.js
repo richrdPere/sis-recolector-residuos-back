@@ -28,6 +28,12 @@ db.RutaVersion = require('./rutas/ruta_version.model');
 db.RutaPunto = require('./rutas/ruta_punto.model');
 db.RutaHorario = require('./rutas/ruta_horario.model');
 
+// - Programaciones y asignaciones
+db.ProgramacionRuta = require('./programaciones/programacion_ruta.model');
+db.ProgramacionPersonal = require('./programaciones/programacion_personal.model');
+db.ProgramacionHistorial = require('./programaciones/programacion_historial.model');
+
+
 // CARGAR ASOCIACIONES
 require("../associations")(db);
 
