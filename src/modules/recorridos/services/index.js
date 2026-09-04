@@ -6,6 +6,7 @@ const reanudarRecorridoService = require('./reanudar-recorrido.service');
 const finalizarRecorridoService = require('./finalizar-recorrido.service');
 const cancelarRecorridoService = require('./cancelar-recorrido.service');
 const getRecorridoEventosService = require('./get-recorrido-eventos.service');
+const getMisRecorridosService = require("./get-mis-recorridos.service");
 
 module.exports = {
     iniciarRecorridoService,
@@ -16,4 +17,5 @@ module.exports = {
     finalizarRecorridoService,
     cancelarRecorridoService,
     getRecorridoEventosService,
+    getMisRecorridosService,
 };

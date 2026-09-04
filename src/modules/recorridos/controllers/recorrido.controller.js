@@ -7,6 +7,7 @@ const {
   reanudarRecorridoService,
   finalizarRecorridoService,
   cancelarRecorridoService,
+  getMisRecorridosService,
 } = require(
   '../services',
 );
@@ -51,52 +52,25 @@ const iniciarRecorridoController = async (req, res, next) => {
     const metadata = getRequestMetadata(req);
 
     const data = await iniciarRecorridoService({
-      id_programacion:
-        req.params
-          .idProgramacion,
-
-      id_usuario:
-        getAuthenticatedUserId(
-          req,
-        ),
-
-      fecha_evento:
-        req.body.fecha_evento,
-
-      latitud:
-        req.body.latitud,
-
-      longitud:
-        req.body.longitud,
-
-      precision_gps:
-        req.body.precision_gps,
-
-      kilometraje:
-        req.body.kilometraje,
-
-      observacion:
-        req.body.observacion,
-
-      clave_idempotencia:
-        getIdempotencyKey(req),
-
-      origen:
-        metadata.origen,
-
-      ip:
-        metadata.ip,
-
-      user_agent:
-        metadata.user_agent,
+      id_programacion: req.params.idProgramacion,
+      id_usuario: getAuthenticatedUserId(req),
+      fecha_evento: req.body.fecha_evento,
+      latitud: req.body.latitud,
+      longitud: req.body.longitud,
+      precision_gps: req.body.precision_gps,
+      kilometraje: req.body.kilometraje,
+      observacion: req.body.observacion,
+      clave_idempotencia: getIdempotencyKey(req),
+      origen: metadata.origen,
+      ip: metadata.ip,
+      user_agent: metadata.user_agent,
     });
 
     return res
       .status(201)
       .json({
         success: true,
-        message:
-          'Recorrido iniciado correctamente.',
+        message: 'Recorrido iniciado correctamente.',
         data,
       });
   } catch (error) {
@@ -377,6 +351,48 @@ const cancelarRecorridoController = async (req, res, next) => {
     next(error);
   }
 };
+/*
+|--------------------------------------------------------------------------
+| 8. Obtener mis recorridos
+|--------------------------------------------------------------------------
+*/
+const getMisRecorridosController = async (req, res, next) => {
+  try {
+    const {
+      page = 1,
+      limit = 10,
+      estado = null,
+      fecha_desde = null,
+      fecha_hasta = null,
+    } = req.query;
+
+    const idUsuario =
+      req.usuario
+        .id_usuario ??
+      req.usuario.id;
+
+    const result = await getMisRecorridosService({
+      id_usuario: idUsuario,
+      page,
+      limit,
+      estado,
+      fecha_desde,
+      fecha_hasta,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message:
+        result.items.length
+          ? 'Recorridos obtenidos correctamente.'
+          : 'No se encontraron recorridos para el usuario.',
+      data: result,
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
 
 module.exports = {
   iniciarRecorridoController,
@@ -386,4 +402,5 @@ module.exports = {
   reanudarRecorridoController,
   finalizarRecorridoController,
   cancelarRecorridoController,
+  getMisRecorridosController,
 };

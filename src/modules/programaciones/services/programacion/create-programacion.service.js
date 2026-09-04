@@ -1,4 +1,3 @@
-const { Op } = require('sequelize');
 const db = require('../../../../database/models');
 const AppError = require('../../../../utils/app-error');
 
@@ -190,19 +189,13 @@ const createProgramacionService = async ({
       const member of team
     ) {
       await getPersonalForFunction({
-        id_personal:
-          member.id_personal,
-
-        funcion:
-          member.funcion,
-
+        id_personal: member.id_personal,
+        funcion: member.funcion,
         transaction,
       });
 
       await assertPersonalAvailable({
-        id_personal:
-          member.id_personal,
-
+        id_personal: member.id_personal,
         fecha_programada,
         hora_inicio_programada,
         hora_fin_programada,
@@ -314,10 +307,16 @@ const createProgramacionService = async ({
 
     await transaction.commit();
 
-    return getProgramacionByIdService(
-      programacion
-        .id_programacion,
-    );
+    try {
+      return await getProgramacionByIdService(
+        programacion.id_programacion,
+      );
+    } catch (error) {
+      return {
+        id_programacion: programacion.id_programacion,
+        mensaje: 'La programación fue creada, pero no se pudo recuperar su detalle.',
+      };
+    }
   } catch (error) {
     if (!transaction.finished) {
       await transaction.rollback();

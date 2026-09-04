@@ -21,9 +21,7 @@ const ROLES_CONSULTA = [
 ];
 
 // Authentication
-router.use(
-    verificarToken,
-);
+router.use(verificarToken);
 
 // Routes
 router.get('/:idRecorrido/eventos',

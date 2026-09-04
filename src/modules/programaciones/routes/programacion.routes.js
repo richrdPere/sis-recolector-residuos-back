@@ -4,7 +4,7 @@ const router = express.Router();
 // Controllers
 const {
     createProgramacionController,
-    getProgramacionesController,
+    getProgramacionesPaginatedController,
     getProgramacionByIdController,
     updateProgramacionController,
     cancelProgramacionController,
@@ -33,16 +33,16 @@ const ROLES_GESTION = [
 ];
 
 // ROUTES
-router.post('/',
+router.post('/create',
     autorizarRoles(...ROLES_GESTION),
     createProgramacionController
 );
 
-router.get('/',
+router.get('/paginado',
     autorizarRoles(
         ...ROLES_CONSULTA,
     ),
-    getProgramacionesController,
+    getProgramacionesPaginatedController,
 );
 
 router.patch('/:idProgramacion/cancelar',
@@ -52,14 +52,14 @@ router.patch('/:idProgramacion/cancelar',
     cancelProgramacionController,
 );
 
-router.put('/:idProgramacion',
+router.put('/editar/:idProgramacion',
     autorizarRoles(
         ...ROLES_GESTION,
     ),
     updateProgramacionController,
 );
 
-router.get('/:idProgramacion',
+router.get('/view/:idProgramacion',
     autorizarRoles(
         ...ROLES_CONSULTA,
         'CONDUCTOR',

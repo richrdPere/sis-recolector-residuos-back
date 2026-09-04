@@ -1,4 +1,5 @@
 const db = require('../../../database/models');
+const AppError = require('../../../utils/app-error');
 
 // Validations
 const { validateId } = require('../validations/recorrido.validation');
@@ -9,8 +10,16 @@ const { getRecorridoOrFail } = require('../utils/recorrido-service.utils');
 // Modelos
 const { RecorridoEvento } = db;
 
+const EVENT_TYPES = [
+  'INICIO',
+  'PAUSA',
+  'REANUDACION',
+  'FINALIZACION',
+  'CANCELACION',
+];
+
 // =======================================================
-// Service: Obtener recorrido eventos
+// Service: Obtener eventos de un recorrido
 // =======================================================
 const getRecorridoEventosService = async ({
   id_recorrido,
@@ -24,24 +33,45 @@ const getRecorridoEventosService = async ({
       'identificador del recorrido',
     );
 
+  // Confirmar que el recorrido existe.
   await getRecorridoOrFail(
     recorridoId,
   );
 
-  const normalizedPage =
-    Math.max(
-      Number(page) || 1,
-      1,
-    );
+  // -------------------------------------------
+  // Paginación
+  // -------------------------------------------
 
-  const normalizedLimit =
-    Math.min(
-      Math.max(
-        Number(limit) || 20,
-        1,
-      ),
+  const parsedPage = Number.parseInt(
+    page,
+    10,
+  );
+
+  const parsedLimit = Number.parseInt(
+    limit,
+    10,
+  );
+
+  const normalizedPage = Number.isInteger(
+    parsedPage,
+  ) &&
+    parsedPage > 0
+    ? parsedPage
+    : 1;
+
+  const normalizedLimit = Number.isInteger(
+    parsedLimit,
+  ) &&
+    parsedLimit > 0
+    ? Math.min(
+      parsedLimit,
       100,
-    );
+    )
+    : 20;
+
+  // -------------------------------------------
+  // Filtros
+  // -------------------------------------------
 
   const where = {
     id_recorrido:
@@ -49,69 +79,89 @@ const getRecorridoEventosService = async ({
   };
 
   if (tipo_evento) {
-    where.tipo_evento =
-      String(tipo_evento)
+    const normalizedEventType =
+      String(
+        tipo_evento,
+      )
         .trim()
         .toUpperCase();
+
+    if (
+      !EVENT_TYPES.includes(
+        normalizedEventType,
+      )
+    ) {
+      throw new AppError(
+        'El tipo de evento no es válido.',
+        400,
+        'INVALID_ROUTE_EVENT_TYPE',
+      );
+    }
+
+    where.tipo_evento = normalizedEventType;
   }
 
-  const {
-    rows,
-    count,
-  } =
-    await RecorridoEvento
-      .findAndCountAll({
-        where,
+  // -------------------------------------------
+  // Consulta
+  // -------------------------------------------
+  const { rows, count } = await RecorridoEvento
+    .findAndCountAll({
+      where,
 
-        include: [
-          {
-            association:
-              'usuario',
+      include: [
+        {
+          association:
+            'usuario',
 
-            attributes: [
-              'id_usuario',
-              'username',
-            ],
-
-            required: false,
-          },
-        ],
-
-        order: [
-          [
-            'fecha_evento',
-            'DESC',
+          attributes: [
+            'id_usuario',
+            'username',
           ],
+
+          required: false,
+        },
+      ],
+
+      order: [
+        [
+          'fecha_evento',
+          'DESC',
         ],
+        [
+          'id_recorrido_evento',
+          'DESC',
+        ],
+      ],
 
-        limit:
-          normalizedLimit,
+      limit:
+        normalizedLimit,
 
-        offset:
-          (
-            normalizedPage - 1
-          ) *
-          normalizedLimit,
-      });
+      offset:
+        (
+          normalizedPage -
+          1
+        ) *
+        normalizedLimit,
+    });
+
+  const totalPages =
+    count > 0
+      ? Math.ceil(
+        count /
+        normalizedLimit,
+      )
+      : 0;
 
   return {
     items: rows,
 
     pagination: {
-      page:
-        normalizedPage,
-
-      limit:
-        normalizedLimit,
-
-      total:
-        count,
-
-      total_pages:
-        Math.ceil(
-          count /
-          normalizedLimit,
-        ),
+      page: normalizedPage,
+      limit: normalizedLimit,
+      total: count,
+      total_pages: totalPages,
+      has_next_page: normalizedPage < totalPages,
+      has_previous_page: normalizedPage > 1,
     },
   };
 };

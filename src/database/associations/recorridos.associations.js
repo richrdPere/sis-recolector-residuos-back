@@ -6,6 +6,8 @@ module.exports = (db) => {
     Recorrido,
     RecorridoEvento,
     Usuario,
+    RecorridoPosicion,
+    RecorridoUltimaUbicacion,
   } = db;
 
   // ==========================================================
@@ -101,5 +103,70 @@ module.exports = (db) => {
     as: 'usuario',
     onUpdate: 'CASCADE',
     onDelete: 'SET NULL',
+  });
+
+  // ==========================================================
+  // Recorrido - recorrido posicion
+  // ==========================================================
+  Recorrido.hasMany(RecorridoPosicion, {
+    foreignKey: 'id_recorrido',
+    as: 'posiciones',
+  });
+
+  RecorridoPosicion.belongsTo(Recorrido, {
+    foreignKey: 'id_recorrido',
+    as: 'recorrido',
+  });
+
+  // ==========================================================
+  // Recorrido - recorrido ultima ubicacion
+  // ==========================================================
+  Recorrido.hasOne(RecorridoUltimaUbicacion, {
+    foreignKey: 'id_recorrido',
+    as: 'ultima_ubicacion',
+  });
+
+  RecorridoUltimaUbicacion.belongsTo(Recorrido, {
+    foreignKey: 'id_recorrido',
+    as: 'recorrido',
+  });
+
+  // ==========================================================
+  // Recorrido posicion - recorrido ultima ubicacion
+  // ==========================================================
+  RecorridoPosicion.hasOne(RecorridoUltimaUbicacion, {
+    foreignKey: 'id_posicion',
+    as: 'referencia_ultima_ubicacion',
+  });
+
+  RecorridoUltimaUbicacion.belongsTo(RecorridoPosicion, {
+    foreignKey: 'id_posicion',
+    as: 'posicion',
+  });
+
+  // ==========================================================
+  // Usuario - recorrido posicion
+  // ==========================================================
+  Usuario.hasMany(RecorridoPosicion, {
+    foreignKey: 'id_usuario',
+    as: 'posiciones_transmitidas',
+  });
+
+  RecorridoPosicion.belongsTo(Usuario, {
+    foreignKey: 'id_usuario',
+    as: 'usuario',
+  });
+
+  // ==========================================================
+  // Usuario - recorrido ultima ubicacion
+  // ==========================================================
+  Usuario.hasMany(RecorridoUltimaUbicacion, {
+    foreignKey: 'id_usuario',
+    as: 'ultimas_ubicaciones_transmitidas',
+  });
+
+  RecorridoUltimaUbicacion.belongsTo(Usuario, {
+    foreignKey: 'id_usuario',
+    as: 'usuario',
   });
 };

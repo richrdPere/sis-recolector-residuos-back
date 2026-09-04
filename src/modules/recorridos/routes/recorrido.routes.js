@@ -3,12 +3,14 @@ const router = express.Router();
 
 // Controllers
 const {
+    iniciarRecorridoController,
     getRecorridoActivoController,
     getRecorridoByIdController,
     pausarRecorridoController,
     reanudarRecorridoController,
     finalizarRecorridoController,
     cancelarRecorridoController,
+    getMisRecorridosController,
 } = require(
     '../controllers',
 );
@@ -43,10 +45,23 @@ const ROLES_GESTION = [
     'SUPERVISOR',
 ];
 
+const ROLES_DETALLE = [
+    ...new Set([
+        ...ROLES_CONSULTA,
+        ...ROLES_EQUIPO,
+    ]),
+];
+
 // Autenticación
 router.use(verificarToken);
 
 // ROUTES
+router.post('/:idProgramacion/iniciar',
+    autorizarRoles(
+        ...ROLES_OPERACION,
+    ),
+    iniciarRecorridoController,
+);
 
 router.get('/activo',
     autorizarRoles(
@@ -83,11 +98,21 @@ router.patch('/:idRecorrido/cancelar',
     cancelarRecorridoController,
 );
 
+router.get('/mis-recorridos',
+    autorizarRoles(
+        ...ROLES_EQUIPO,
+    ),
+    getMisRecorridosController,
+);
+
 router.get('/:idRecorrido',
     autorizarRoles(
-        ...ROLES_CONSULTA,
+        ...ROLES_DETALLE,
     ),
     getRecorridoByIdController,
 );
+
+
+
 
 module.exports = router;

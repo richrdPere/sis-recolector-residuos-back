@@ -7,6 +7,7 @@ const personalRoutes = require('../modules/personal/routes');
 const rutasRoutes = require("../modules/rutas/routes");
 const programacionRoutes = require('../modules/programaciones/routes');
 const recorridoRoutes = require('../modules/recorridos/routes');
+const trackingRoutes = require("../modules/tracking/routes/tracking.routes");
 
 // Rutas
 router.use("/auth", authRoutes);
@@ -15,5 +16,6 @@ router.use('/personal', personalRoutes);
 router.use('/rutas', rutasRoutes);
 router.use('/programaciones', programacionRoutes);
 router.use('/recorridos', recorridoRoutes);
+router.use('/tracking', trackingRoutes);
 
 module.exports = router;

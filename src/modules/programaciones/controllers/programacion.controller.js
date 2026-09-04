@@ -26,7 +26,10 @@ const createProgramacionController = async (req, res, next) => {
     const data =
       await createProgramacionService({
         ...req.body,
-        ...metadata,
+        id_usuario_creacion: metadata.id_usuario,
+        ip: metadata.ip,
+        user_agent: metadata.user_agent,
+        origen: metadata.origen,
       });
 
     return res
@@ -45,7 +48,7 @@ const createProgramacionController = async (req, res, next) => {
 | 2. Obtener programaciones
 |--------------------------------------------------------------------------
 */
-const getProgramacionesController = async (req, res, next) => {
+const getProgramacionesPaginatedController = async (req, res, next) => {
   try {
     const data =
       await getProgramacionesPaginatedService({
@@ -78,11 +81,7 @@ const getProgramacionesController = async (req, res, next) => {
 */
 const getProgramacionByIdController = async (req, res, next) => {
   try {
-    const data = await getProgramacionByIdService({
-      id_programacion:
-        req.params
-          .idProgramacion,
-    });
+    const data = await getProgramacionByIdService(req.params.idProgramacion);
 
     return res
       .status(200)
@@ -102,31 +101,23 @@ const getProgramacionByIdController = async (req, res, next) => {
 */
 const updateProgramacionController = async (req, res, next) => {
   try {
-    const metadata =
-      getRequestMetadata(
-        req,
-      );
+    const metadata = getRequestMetadata(req);
 
-    const data =
-      await updateProgramacionService({
-        id_programacion:
-          req.params
-            .idProgramacion,
-
-        ...req.body,
-        ...metadata,
-      });
+    const data = await updateProgramacionService(
+      req.params.idProgramacion,
+      req.body,
+      metadata,
+    );
 
     return res
       .status(200)
       .json({
         success: true,
-        message:
-          'Programación actualizada correctamente.',
+        message: 'Programación actualizada correctamente.',
         data,
       });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 /*
@@ -172,7 +163,7 @@ const cancelProgramacionController = async (req, res, next) => {
 
 module.exports = {
   createProgramacionController,
-  getProgramacionesController,
+  getProgramacionesPaginatedController,
   getProgramacionByIdController,
   updateProgramacionController,
   cancelProgramacionController,

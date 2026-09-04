@@ -46,11 +46,13 @@ const addProgramacionPersonalController = async (req, res, next) => {
 */
 const getProgramacionPersonalController = async (req, res, next) => {
   try {
-    const data = await getProgramacionPersonalService({
-      id_programacion: req.params.idProgramacion,
-      funcion: req.query.funcion,
-      estado_asignacion: req.query.estado_asignacion,
-    });
+    // const data = await getProgramacionPersonalService({
+    //   id_programacion: req.params.idProgramacion,
+    //   funcion: req.query.funcion,
+    //   estado_asignacion: req.query.estado_asignacion,
+    // });
+
+    const data = await getProgramacionPersonalService(req.params.idProgramacion);
 
     return res
       .status(200)

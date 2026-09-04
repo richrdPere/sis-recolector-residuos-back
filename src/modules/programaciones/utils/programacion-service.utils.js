@@ -75,34 +75,33 @@ const validateRouteSchedule = async ({
             hora_fin_programada,
         );
 
-    const validSchedule =
-        schedules.some(
-            (schedule) => {
-                const applies =
-                    scheduleAppliesToDate(
-                        schedule,
-                        fecha_programada,
-                    );
-
-                const scheduleStart =
-                    timeToSeconds(
-                        schedule.hora_inicio,
-                    );
-
-                const scheduleEnd =
-                    timeToSeconds(
-                        schedule.hora_fin,
-                    );
-
-                return (
-                    applies &&
-                    requestedStart >=
-                    scheduleStart &&
-                    requestedEnd <=
-                    scheduleEnd
+    const validSchedule = schedules.some(
+        (schedule) => {
+            const applies =
+                scheduleAppliesToDate(
+                    schedule,
+                    fecha_programada,
                 );
-            },
-        );
+
+            const scheduleStart =
+                timeToSeconds(
+                    schedule.hora_inicio,
+                );
+
+            const scheduleEnd =
+                timeToSeconds(
+                    schedule.hora_fin,
+                );
+
+            return (
+                applies &&
+                requestedStart >=
+                scheduleStart &&
+                requestedEnd <=
+                scheduleEnd
+            );
+        },
+    );
 
     if (!validSchedule) {
         throw new AppError(
@@ -423,7 +422,7 @@ const getPersonalForFunction = async ({
                         ],
                     },
                     {
-                        model:
+                        model: 
                             ConductorPerfil,
 
                         as: 'conductor',
