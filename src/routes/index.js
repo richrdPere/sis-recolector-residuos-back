@@ -8,6 +8,7 @@ const rutasRoutes = require("../modules/rutas/routes");
 const programacionRoutes = require('../modules/programaciones/routes');
 const recorridoRoutes = require('../modules/recorridos/routes');
 const trackingRoutes = require("../modules/tracking/routes/tracking.routes");
+const recoleccionRoutes = require('../modules/recolecciones/routes/recoleccion.routes');
 
 // Rutas
 router.use("/auth", authRoutes);
@@ -17,5 +18,6 @@ router.use('/rutas', rutasRoutes);
 router.use('/programaciones', programacionRoutes);
 router.use('/recorridos', recorridoRoutes);
 router.use('/tracking', trackingRoutes);
+router.use('/recolecciones', recoleccionRoutes);
 
 module.exports = router;

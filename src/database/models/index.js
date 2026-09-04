@@ -39,6 +39,10 @@ db.RecorridoEvento = require('./recorridos/recorrido-evento.model');
 db.RecorridoPosicion = require("./recorridos/recorrido-posicion.model");
 db.RecorridoUltimaUbicacion = require("./recorridos/recorrido-ultima-ubicacion.model");
 
+// - Recoleccion
+db.RecoleccionEvidencia = require("./recoleccion/recoleccion-evidencia.model");
+db.RecoleccionPunto = require("./recoleccion/recoleccion-punto.model");
+
 
 // CARGAR ASOCIACIONES
 require("../associations")(db);
