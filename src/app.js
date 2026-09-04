@@ -5,6 +5,9 @@ require("dotenv").config();
 const path = require("path");
 const fs = require("fs");
 
+// Firebase
+const { initializeFirebaseAdmin } = require('./config/firebase-admin');
+
 // Utils
 const crearAdminPorDefecto = require("./utils/initAdmin");
 const crearRolesPorDefecto = require("./utils/initRoles");
@@ -98,6 +101,9 @@ const startServer = async () => {
     await db.sequelize.sync({ alter: false });
 
     console.log("📦 Modelos sincronizados");
+
+    // FIREBASE
+    initializeFirebaseAdmin();
 
     // ROLES
     await crearRolesPorDefecto();

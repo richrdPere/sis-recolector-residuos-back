@@ -12,6 +12,7 @@ const {
   registerEvidenceController,
   getCollectionEvidencesController,
   annulEvidenceController,
+  getRecorridoCapacidadController,
 } = require('../controllers/recoleccion.controller');
 
 // Middlewares
@@ -137,6 +138,13 @@ router.get('/:idRecoleccion',
     ...ROLES_DETALLE,
   ),
   getCollectionByIdController,
+);
+
+router.get('/:idRecorrido/capacidad',
+  autorizarRoles(
+    ...ROLES_DETALLE,
+  ),
+  getRecorridoCapacidadController,
 );
 
 module.exports = router;

@@ -38,3 +38,10 @@ Thumbs.db
 .vscode/
 .idea/
 *.swp
+
+# =========================
+# FIREBASE
+# =========================
+cert/
+*-firebase-adminsdk-*.json
+firebase-service-account.json

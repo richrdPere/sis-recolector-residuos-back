@@ -8,6 +8,7 @@ const {
   registerEvidenceService,
   getCollectionEvidencesService,
   annulEvidenceService,
+  getRecorridoCapacidadService,
 } = require('../services');
 
 const { getRequestMetadata } = require('../utils/recoleccion-controller.utils');
@@ -277,6 +278,30 @@ const annulEvidenceController = async (req, res, next) => {
     return next(error);
   }
 };
+/*
+|--------------------------------------------------------------------------
+| 10. Anular evidencia
+|--------------------------------------------------------------------------
+*/
+const getRecorridoCapacidadController = async (req, res, next) => {
+  try {
+    const data =
+      await getRecorridoCapacidadService(
+        req.params
+          .idRecorrido,
+      );
+
+    return res.status(200)
+      .json({
+        success: true,
+        message: 'Capacidad del vehículo obtenida correctamente.',
+        data,
+      });
+  } catch (error) {
+    return next(error);
+  }
+};
+
 
 module.exports = {
   registerCollectionController,
@@ -288,4 +313,5 @@ module.exports = {
   registerEvidenceController,
   getCollectionEvidencesController,
   annulEvidenceController,
+  getRecorridoCapacidadController,
 };

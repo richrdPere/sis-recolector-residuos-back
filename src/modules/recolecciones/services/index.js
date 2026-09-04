@@ -9,6 +9,7 @@ const annulCollectionService = require('./annul-collection.service');
 const registerEvidenceService = require('./register-evidence.service');
 const getCollectionEvidencesService = require('./get-collection-evidences.service');
 const annulEvidenceService = require('./annul-evidence.service');
+const getRecorridoCapacidadService = require("./get-collection-capacidad.service");
 
 module.exports = {
     registerCollectionService,
@@ -20,4 +21,5 @@ module.exports = {
     registerEvidenceService,
     getCollectionEvidencesService,
     annulEvidenceService,
+    getRecorridoCapacidadService,
 };

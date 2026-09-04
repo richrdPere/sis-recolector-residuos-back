@@ -43,6 +43,13 @@ db.RecorridoUltimaUbicacion = require("./recorridos/recorrido-ultima-ubicacion.m
 db.RecoleccionEvidencia = require("./recoleccion/recoleccion-evidencia.model");
 db.RecoleccionPunto = require("./recoleccion/recoleccion-punto.model");
 
+// - Incidentes
+
+// - Notificaciones
+db.NotificacionEnvio = require("./notificaciones/notificacion_envio.model");
+db.NotificacionUsuario = require("./notificaciones/notificacion_usuario.model");
+db.Notificacion = require("./notificaciones/notificacion.model");
+db.UsuarioDispositivo = require("./notificaciones/usuario_dispositivo.model");
 
 // CARGAR ASOCIACIONES
 require("../associations")(db);
