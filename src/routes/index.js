@@ -10,6 +10,7 @@ const recorridoRoutes = require('../modules/recorridos/routes');
 const trackingRoutes = require("../modules/tracking/routes/tracking.routes");
 const recoleccionRoutes = require('../modules/recolecciones/routes/recoleccion.routes');
 const notificationRoutes = require('../modules/notificaciones/routes');
+const ciudadanoRoutes = require('../modules/ciudadanos/routes/ciudadanos.routes');
 
 // Rutas
 router.use("/auth", authRoutes);
@@ -21,5 +22,6 @@ router.use('/recorridos', recorridoRoutes);
 router.use('/tracking', trackingRoutes);
 router.use('/recolecciones', recoleccionRoutes);
 router.use('/notificaciones', notificationRoutes);
+router.use('/ciudadanos', ciudadanoRoutes);
 
 module.exports = router;

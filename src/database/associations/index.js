@@ -21,4 +21,13 @@ module.exports = (db) => {
     // - Recoleccion
     require("./recoleccion.associations")(db);
 
+    // - Incidentes
+
+
+    // - Notificaciones
+    require("./notificaciones.associations")(db);
+
+    // - Ciudadanos
+    require("./ciudadanos.associations")(db);
+
 }
