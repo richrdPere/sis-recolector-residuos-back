@@ -11,6 +11,8 @@ const trackingRoutes = require("../modules/tracking/routes/tracking.routes");
 const recoleccionRoutes = require('../modules/recolecciones/routes/recoleccion.routes');
 const notificationRoutes = require('../modules/notificaciones/routes');
 const ciudadanoRoutes = require('../modules/ciudadanos/routes/ciudadanos.routes');
+const codigoQrRoutes = require('../modules/codigos-qr/routes/codigo-qr.routes');
+const codigoQrPublicRoutes = require('../modules/codigos-qr/routes/codigo-qr-public.routes');
 
 // Rutas
 router.use("/auth", authRoutes);
@@ -23,5 +25,7 @@ router.use('/tracking', trackingRoutes);
 router.use('/recolecciones', recoleccionRoutes);
 router.use('/notificaciones', notificationRoutes);
 router.use('/ciudadanos', ciudadanoRoutes);
+router.use('/codigos-qr', codigoQrRoutes);
+router.use('/publico/qr', codigoQrPublicRoutes);
 
 module.exports = router;

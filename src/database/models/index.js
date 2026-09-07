@@ -56,6 +56,10 @@ db.CiudadanoDomicilio = require("./ciudadanos/ciudadano_domicilio.model");
 db.CiudadanoPreferenciaNotificacion = require("./ciudadanos/ciudadano_preferencia_notificacion.model");
 db.Ciudadano = require("./ciudadanos/ciudadano.model");
 
+// - Codigo QR
+db.CodigoQr = require('./codigo-qr/codigo_qr.model');
+db.CodigoQrAcceso = require('./codigo-qr/codigo_qr_acceso.model');
+
 // CARGAR ASOCIACIONES
 require("../associations")(db);
 

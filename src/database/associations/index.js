@@ -30,4 +30,7 @@ module.exports = (db) => {
     // - Ciudadanos
     require("./ciudadanos.associations")(db);
 
+    // - Codigos QR 
+    require("./codigos_qr.associations")(db);
+
 }
