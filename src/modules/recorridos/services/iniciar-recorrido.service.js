@@ -7,9 +7,7 @@ const {
   ESTADOS_PROGRAMACION,
   ESTADOS_VEHICULO,
   TIPOS_EVENTO_RECORRIDO,
-} = require(
-  '../utils/recorrido.constants',
-);
+} = require('../utils/recorrido.constants');
 
 // Validations
 const {
@@ -21,9 +19,7 @@ const {
   validateIdempotencyKey,
   normalizeOrigin,
   validateObservation,
-} = require(
-  '../validations/recorrido.validation',
-);
+} = require('../validations/recorrido.validation');
 
 // Uitls
 const {
@@ -34,9 +30,7 @@ const {
   findIdempotentEvent,
   getRecorridoDetail,
   getActiveRecorridoForUser,
-} = require(
-  '../utils/recorrido-service.utils',
-);
+} = require('../utils/recorrido-service.utils');
 
 // Modelos
 const {

@@ -23,8 +23,7 @@ const createPersonalController = async (req, res, next) => {
 
     return res.status(201).json({
       success: true,
-      message:
-        'Personal operativo registrado correctamente.',
+      message: 'Personal operativo registrado correctamente.',
       data,
     });
   } catch (error) {

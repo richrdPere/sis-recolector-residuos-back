@@ -1,0 +1,32 @@
+const ROLES_CONSULTA_ADMIN = [
+    'SUPER_ADMIN',
+    'ADMIN',
+    'SUPERVISOR',
+    'OPERADOR',
+];
+
+const ROLES_GESTION = [
+    'SUPER_ADMIN',
+    'ADMIN',
+    'SUPERVISOR',
+];
+
+const ROLES_PERSONAL_OPERATIVO = [
+    'CONDUCTOR',
+    'RECOLECTOR',
+    'SUPERVISOR',
+];
+
+const ROLES_CONSULTA_DETALLE = [
+    ...new Set([
+        ...ROLES_CONSULTA_ADMIN,
+        ...ROLES_PERSONAL_OPERATIVO,
+    ]),
+];
+
+module.exports = {
+    ROLES_CONSULTA_ADMIN,
+    ROLES_GESTION,
+    ROLES_PERSONAL_OPERATIVO,
+    ROLES_CONSULTA_DETALLE,
+};

@@ -105,18 +105,18 @@ const createUsuarioController = async (req, res, next) => {
 */
 const loginController = async (req, res, next) => {
   try {
-    // const {
-    //   ip,
-    //   user_agent,
-    //   dispositivo,
-    // } = getRequestMetadata(req);
+    const {
+      ip,
+      user_agent,
+      dispositivo,
+    } = getRequestMetadata(req);
 
     const data = await loginService({
       username: req.body.username,
       password: req.body.password,
-      // ip,
-      // user_agent,
-      // dispositivo,
+      ip,
+      user_agent,
+      dispositivo,
     });
 
     return res.status(200).json({
@@ -138,20 +138,20 @@ const loginController = async (req, res, next) => {
 */
 const refreshSessionController = async (req, res, next) => {
   try {
-    // const {
-    //   ip,
-    //   user_agent,
-    //   dispositivo,
-    // } = getRequestMetadata(req);
+    const {
+      ip,
+      user_agent,
+      dispositivo,
+    } = getRequestMetadata(req);
 
     const data =
       await refreshSessionService({
         refresh_token:
           req.body.refresh_token,
 
-        // ip,
-        // user_agent,
-        // dispositivo,
+        ip,
+        user_agent,
+        dispositivo,
       });
 
     return res.status(200).json({

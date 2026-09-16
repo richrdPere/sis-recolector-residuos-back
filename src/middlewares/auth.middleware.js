@@ -232,15 +232,14 @@ const verificarToken = (
 const autorizarRoles = (
   ...rolesPermitidos
 ) => {
-  const rolesNormalizados =
-    rolesPermitidos
-      .flat()
-      .filter(Boolean)
-      .map((rol) =>
-        String(rol)
-          .trim()
-          .toUpperCase(),
-      );
+  const rolesNormalizados = rolesPermitidos
+    .flat()
+    .filter(Boolean)
+    .map((rol) =>
+      String(rol)
+        .trim()
+        .toUpperCase(),
+    );
 
   if (!rolesNormalizados.length) {
     throw new Error(
@@ -258,10 +257,9 @@ const autorizarRoles = (
         );
       }
 
-      const rolesUsuario =
-        normalizeRoles(
-          req.usuario.roles,
-        );
+      const rolesUsuario = normalizeRoles(req.usuario.roles);
+
+      console.log("ROLES DEL USER: ", rolesUsuario);
 
       if (!rolesUsuario.length) {
         throw new AppError(

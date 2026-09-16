@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-// Middlewares
+// Middleware
 const {
     verificarToken,
     autorizarRoles,
@@ -14,66 +14,56 @@ const {
     getMisAsignacionesController,
     removeProgramacionPersonalController,
     respondAssignmentController,
-} = require(
-    '../controllers/programacion-personal.controller',
-);
+} = require('../controllers/programacion-personal.controller');
 
 // Roles
-const ROLES_CONSULTA = [
-    'SUPER_ADMIN',
-    'ADMIN',
-    'SUPERVISOR',
-    'OPERADOR',
-];
+const {
+    ROLES_CONSULTA_ADMIN,
+    ROLES_GESTION,
+    ROLES_PERSONAL_OPERATIVO,
+} = require('../validations/programacion.roles');
 
-const ROLES_GESTION = [
-    'SUPER_ADMIN',
-    'ADMIN',
-    'SUPERVISOR',
-];
-
-const ROLES_PERSONAL = [
-    'CONDUCTOR',
-    'RECOLECTOR',
-    'SUPERVISOR',
-];
-
-// Todas las rutas requieren autenticación
+// Autenticación
 router.use(verificarToken);
 
-// RUTAS
-router.get('/mis-asignaciones',
-    autorizarRoles(
-        ...ROLES_PERSONAL,
-    ),
+// *********************************************************
+// MÓVIL - ASIGNACIONES PROPIAS
+// *********************************************************
+router.get(
+    '/mis-asignaciones',
+    autorizarRoles(...ROLES_PERSONAL_OPERATIVO),
     getMisAsignacionesController,
 );
 
-router.patch('/asignaciones/:idProgramacionPersonal/respuesta',
-    autorizarRoles(
-        ...ROLES_PERSONAL,
-    ),
+// El service debe verificar que la asignación pertenezca
+// al usuario autenticado y permita responder en su estado actual.
+router.patch(
+    '/asignaciones/:idProgramacionPersonal/respuesta',
+    autorizarRoles(...ROLES_PERSONAL_OPERATIVO),
     respondAssignmentController,
 );
 
-router.get('/:idProgramacion/personal',
-    autorizarRoles(
-        ...ROLES_CONSULTA,
-    ),
+// *********************************************************
+// WEB - CONSULTA DEL EQUIPO
+// *********************************************************
+router.get(
+    '/:idProgramacion/personal',
+    autorizarRoles(...ROLES_CONSULTA_ADMIN),
     getProgramacionPersonalController,
 );
 
-router.post('/:idProgramacion/personal',
-    autorizarRoles(
-        ...ROLES_GESTION,
-    ),
+// *********************************************************
+// WEB - GESTIÓN DEL EQUIPO
+// *********************************************************
+router.post(
+    '/:idProgramacion/personal',
+    autorizarRoles(...ROLES_GESTION),
     addProgramacionPersonalController,
 );
 
-router.patch('/:idProgramacion/personal/:idProgramacionPersonal/retirar',
-    autorizarRoles(
-        ...ROLES_GESTION,
-    ),
+router.patch(
+    '/:idProgramacion/personal/:idProgramacionPersonal/retirar',
+    autorizarRoles(...ROLES_GESTION),
     removeProgramacionPersonalController,
 );
 

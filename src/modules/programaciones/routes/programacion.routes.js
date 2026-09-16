@@ -1,4 +1,5 @@
 const express = require('express');
+
 const router = express.Router();
 
 // Controllers
@@ -16,55 +17,49 @@ const {
     autorizarRoles,
 } = require('../../../middlewares/auth.middleware');
 
+// Roles
+const {
+    ROLES_CONSULTA_ADMIN,
+    ROLES_GESTION,
+    ROLES_CONSULTA_DETALLE,
+} = require('../validations/programacion.roles');
+
+// Autenticación
 router.use(verificarToken);
 
-// Roles
-const ROLES_CONSULTA = [
-    'SUPER_ADMIN',
-    'ADMIN',
-    'SUPERVISOR',
-    'OPERADOR',
-];
-
-const ROLES_GESTION = [
-    'SUPER_ADMIN',
-    'ADMIN',
-    'SUPERVISOR',
-];
-
-// ROUTES
-router.post('/create',
-    autorizarRoles(...ROLES_GESTION),
-    createProgramacionController
-);
-
+// *********************************************************
+// WEB - CONSULTA GENERAL
+// *********************************************************
 router.get('/paginado',
-    autorizarRoles(
-        ...ROLES_CONSULTA,
-    ),
+    autorizarRoles(...ROLES_CONSULTA_ADMIN),
     getProgramacionesPaginatedController,
 );
 
-router.patch('/:idProgramacion/cancelar',
-    autorizarRoles(
-        ...ROLES_GESTION,
-    ),
-    cancelProgramacionController,
+// *********************************************************
+// WEB - GESTIÓN
+// *********************************************************
+router.post('/create',
+    autorizarRoles(...ROLES_GESTION),
+    createProgramacionController,
 );
 
 router.put('/editar/:idProgramacion',
-    autorizarRoles(
-        ...ROLES_GESTION,
-    ),
+    autorizarRoles(...ROLES_GESTION),
     updateProgramacionController,
 );
 
+router.patch('/:idProgramacion/cancelar',
+    autorizarRoles(...ROLES_GESTION),
+    cancelProgramacionController,
+);
+
+// *********************************************************
+// WEB Y MÓVIL - DETALLE
+// *********************************************************
+// El service debe verificar la asignación cuando el usuario
+// no tenga un rol de consulta administrativa.
 router.get('/view/:idProgramacion',
-    autorizarRoles(
-        ...ROLES_CONSULTA,
-        'CONDUCTOR',
-        'RECOLECTOR',
-    ),
+    autorizarRoles(...ROLES_CONSULTA_DETALLE),
     getProgramacionByIdController,
 );
 

@@ -88,17 +88,13 @@ const getVehiculosServicePaginado = async ({
         });
 
     return {
-        vehiculos: rows,
-        pagination: {
-            total: count,
-            page: pagina,
-            limit: limite,
-            total_pages: Math.ceil(count / limite),
-            has_next_page:
-                pagina < Math.ceil(count / limite),
-            has_previous_page:
-                pagina > 1,
-        },
+        items: rows,
+        total: count,
+        page: pagina,
+        limit: limite,
+        totalPages: Math.ceil(count / limite),
+        // has_next_page: pagina < Math.ceil(count / limite),
+        // has_previous_page: pagina > 1,
     };
 };
 

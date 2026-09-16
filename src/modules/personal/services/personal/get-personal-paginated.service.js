@@ -137,18 +137,13 @@ const getPersonalPaginatedService = async ({
       );
     }
 
-    where.tipo_contrato =
-      tipo_contrato;
+    where.tipo_contrato = tipo_contrato;
   }
 
-  const include =
-    getPersonalIncludes();
+  const include = getPersonalIncludes();
 
   if (rol) {
-    const roleName =
-      String(rol)
-        .trim()
-        .toUpperCase();
+    const roleName = String(rol).trim().toUpperCase();
 
     include[0].include[1].where = {
       estado: true,
@@ -162,43 +157,40 @@ const getPersonalPaginatedService = async ({
   const offset =
     (pagina - 1) * limite;
 
-  const { count, rows } =
-    await PersonalOperativo
-      .findAndCountAll({
-        where,
-        include,
-        distinct: true,
-        col: 'id_personal',
-        subQuery: false,
-        limit: limite,
-        offset,
-        order: [
-          [
-            'created_at',
-            'DESC',
-          ],
-        ],
-      });
+  const { count, rows } = await PersonalOperativo.findAndCountAll({
+    where,
+    include,
+    distinct: true,
+    col: 'id_personal',
+    // subQuery: false,
+    limit: limite,
+    offset,
+    order: [
+      [
+        'created_at',
+        'DESC',
+      ],
+    ],
+  });
 
   const totalPages =
     Math.ceil(count / limite);
 
   return {
     items: rows,
+    total: count,
+    page: pagina,
+    limit: limite,
+    total_pages: totalPages,
+    // pagination: {
 
-    pagination: {
-      total: count,
-      page: pagina,
-      limit: limite,
-      total_pages:
-        totalPages,
 
-      has_next_page:
-        pagina < totalPages,
+    //   has_next_page:
+    //     pagina < totalPages,
 
-      has_previous_page:
-        pagina > 1,
-    },
+    //   has_previous_page:
+    //     pagina > 1,
+    // },
   };
 };
 

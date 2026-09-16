@@ -1,4 +1,5 @@
 const express = require('express');
+
 const router = express.Router();
 
 // Controllers
@@ -6,37 +7,41 @@ const {
     getConductoresDisponiblesController,
     getRecolectoresDisponiblesController,
     getVehiculosDisponiblesController,
-} = require(
-    '../controllers/disponibilidad.controller',
-);
+} = require('../controllers/disponibilidad.controller');
 
-// Middlewares
+// Middleware
 const {
     verificarToken,
     autorizarRoles,
-} = require(
-    '../../../middlewares/auth.middleware',
-);
+} = require('../../../middlewares/auth.middleware');
 
-// Roles autorizados
-const ROLES_DISPONIBILIDAD = [
-    'SUPER_ADMIN',
-    'ADMIN',
-    'SUPERVISOR',
-    'OPERADOR',
-];
+// Roles
+const {
+    ROLES_CONSULTA_ADMIN,
+} = require('../validations/programacion.roles');
 
-// Autenticación y autorización general
+// *********************************************************
+// WEB - AUTENTICACIÓN Y AUTORIZACIÓN
+// *********************************************************
 router.use(verificarToken);
-router.use(
-    autorizarRoles(
-        ...ROLES_DISPONIBILIDAD,
-    ),
+router.use(autorizarRoles(...ROLES_CONSULTA_ADMIN));
+
+// *********************************************************
+// DISPONIBILIDAD PARA PLANIFICACIÓN
+// *********************************************************
+router.get(
+    '/vehiculos',
+    getVehiculosDisponiblesController,
 );
 
-// ROUTES
-router.get('/vehiculos', getVehiculosDisponiblesController);
-router.get('/conductores', getConductoresDisponiblesController);
-router.get('/recolectores', getRecolectoresDisponiblesController);
+router.get(
+    '/conductores',
+    getConductoresDisponiblesController,
+);
+
+router.get(
+    '/recolectores',
+    getRecolectoresDisponiblesController,
+);
 
 module.exports = router;

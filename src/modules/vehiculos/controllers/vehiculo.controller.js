@@ -51,18 +51,15 @@ const getVehiculosPaginadoController = async (
                 limit: req.query.limit,
                 search: req.query.search,
                 estado: req.query.estado,
-                estado_operativo:
-                    req.query.estado_operativo,
-                tipo_vehiculo:
-                    req.query.tipo_vehiculo,
+                estado_operativo: req.query.estado_operativo,
+                tipo_vehiculo: req.query.tipo_vehiculo,
             });
 
         return res.status(200).json({
             success: true,
-            message:
-                'Vehículos obtenidos correctamente.',
-            data: result.vehiculos,
-            pagination: result.pagination,
+            message: 'Vehículos obtenidos correctamente.',
+            data: result,
+            // pagination: result.pagination,
         });
     } catch (error) {
         next(error);
@@ -171,8 +168,7 @@ const deleteVehiculoController = async (
 
         return res.status(200).json({
             success: true,
-            message:
-                'Vehículo eliminado correctamente.',
+            message: 'Vehículo eliminado correctamente.',
             data: result,
         });
     } catch (error) {
