@@ -93,19 +93,13 @@ const getRecolectoresDisponiblesController = async (req, res, next) => {
 */
 const getVehiculosDisponiblesController = async (req, res, next) => {
   try {
-    const data =
-      await getVehiculosDisponiblesService(
-        getAvailabilityParams(
-          req,
-        ),
-      );
+    const data = await getVehiculosDisponiblesService(getAvailabilityParams(req));
 
     return res
       .status(200)
       .json({
         success: true,
-        message:
-          'Vehículos disponibles obtenidos correctamente.',
+        message: 'Vehículos disponibles obtenidos correctamente.',
         data,
       });
   } catch (error) {

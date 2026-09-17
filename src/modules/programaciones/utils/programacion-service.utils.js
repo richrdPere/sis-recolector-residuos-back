@@ -422,7 +422,7 @@ const getPersonalForFunction = async ({
                         ],
                     },
                     {
-                        model: 
+                        model:
                             ConductorPerfil,
 
                         as: 'conductor',
@@ -530,33 +530,32 @@ const assertPersonalAvailable = async ({
         };
     }
 
-    const conflict =
-        await ProgramacionPersonal.findOne({
-            where: {
-                id_personal,
+    const conflict = await ProgramacionPersonal.findOne({
+        where: {
+            id_personal,
 
-                estado_asignacion: {
-                    [Op.notIn]:
-                        ESTADOS_ASIGNACION_SIN_CONFLICTO,
-                },
+            estado_asignacion: {
+                [Op.notIn]:
+                    ESTADOS_ASIGNACION_SIN_CONFLICTO,
             },
+        },
 
-            include: [
-                {
-                    model:
-                        ProgramacionRuta,
+        include: [
+            {
+                model:
+                    ProgramacionRuta,
 
-                    as: 'programacion',
+                as: 'programacion',
 
-                    where:
-                        programmingWhere,
+                where:
+                    programmingWhere,
 
-                    required: true,
-                },
-            ],
+                required: true,
+            },
+        ],
 
-            transaction,
-        });
+        transaction,
+    });
 
     if (conflict) {
         throw new AppError(

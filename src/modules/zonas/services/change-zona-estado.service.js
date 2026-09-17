@@ -1,8 +1,8 @@
-const db = require('../../../../database/models');
-const AppError = require('../../../../utils/app-error');
+const db = require('../../../database/models');
+const AppError = require('../../../utils/app-error');
 
 // Utils
-const { validateId } = require('../../utils/rutas-service.utils');
+const { validateId } = require('../../rutas/utils/rutas-service.utils');
 
 // Modelos
 const {
@@ -44,9 +44,7 @@ const changeZonaEstadoService = async ({
         );
     }
 
-    if (
-        zona.estado === estado
-    ) {
+    if (zona.estado === estado) {
         throw new AppError(
             'La zona ya tiene el estado solicitado.',
             409,

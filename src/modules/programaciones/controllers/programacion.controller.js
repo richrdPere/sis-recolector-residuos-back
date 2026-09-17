@@ -127,24 +127,12 @@ const updateProgramacionController = async (req, res, next) => {
 */
 const cancelProgramacionController = async (req, res, next) => {
   try {
-    const metadata =
-      getRequestMetadata(
-        req,
-      );
+    const metadata = getRequestMetadata(req);
 
-    const data =
-      await cancelProgramacionService({
-        id_programacion:
-          req.params
-            .idProgramacion,
-
-        motivo:
-          req.body.motivo,
-
-        observacion:
-          req.body
-            .observacion,
-
+    const data = await cancelProgramacionService(
+      req.params.idProgramacion,
+      {
+        motivo_cancelacion: req.body.motivo_cancelacion,
         ...metadata,
       });
 

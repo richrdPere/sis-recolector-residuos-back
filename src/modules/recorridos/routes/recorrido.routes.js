@@ -57,58 +57,42 @@ router.use(verificarToken);
 
 // ROUTES
 router.post('/:idProgramacion/iniciar',
-    autorizarRoles(
-        ...ROLES_OPERACION,
-    ),
+    autorizarRoles(...ROLES_OPERACION),
     iniciarRecorridoController,
 );
 
 router.get('/activo',
-    autorizarRoles(
-        ...ROLES_EQUIPO,
-    ),
+    autorizarRoles(...ROLES_EQUIPO),
     getRecorridoActivoController,
 );
 
 router.patch('/:idRecorrido/pausar',
-    autorizarRoles(
-        ...ROLES_OPERACION,
-    ),
+    autorizarRoles(...ROLES_OPERACION),
     pausarRecorridoController,
 );
 
 router.patch('/:idRecorrido/reanudar',
-    autorizarRoles(
-        ...ROLES_OPERACION,
-    ),
+    autorizarRoles(...ROLES_OPERACION),
     reanudarRecorridoController,
 );
 
 router.patch('/:idRecorrido/finalizar',
-    autorizarRoles(
-        ...ROLES_OPERACION,
-    ),
+    autorizarRoles(...ROLES_OPERACION),
     finalizarRecorridoController,
 );
 
 router.patch('/:idRecorrido/cancelar',
-    autorizarRoles(
-        ...ROLES_GESTION,
-    ),
+    autorizarRoles(...ROLES_GESTION),
     cancelarRecorridoController,
 );
 
 router.get('/mis-recorridos',
-    autorizarRoles(
-        ...ROLES_EQUIPO,
-    ),
+    autorizarRoles(...ROLES_EQUIPO),
     getMisRecorridosController,
 );
 
 router.get('/:idRecorrido',
-    autorizarRoles(
-        ...ROLES_DETALLE,
-    ),
+    autorizarRoles(...ROLES_DETALLE),
     getRecorridoByIdController,
 );
 

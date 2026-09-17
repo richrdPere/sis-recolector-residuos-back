@@ -138,8 +138,7 @@ const createProgramacionService = async ({
     );
 
     await assertVehicleAvailable({
-      id_vehiculo:
-        vehicleId,
+      id_vehiculo: vehicleId,
       fecha_programada,
       hora_inicio_programada,
       hora_fin_programada,
@@ -148,46 +147,29 @@ const createProgramacionService = async ({
 
     const team = [
       {
-        id_personal:
-          conductorId,
-
-        funcion:
-          'CONDUCTOR',
-
-        es_principal:
-          true,
+        id_personal: conductorId,
+        funcion: 'CONDUCTOR',
+        es_principal: true,
       },
 
       ...collectorIds.map(
         (id) => ({
           id_personal: id,
-          funcion:
-            'RECOLECTOR',
-
-          es_principal:
-            false,
+          funcion: 'RECOLECTOR',
+          es_principal: false,
         }),
       ),
     ];
 
     if (id_supervisor) {
       team.push({
-        id_personal:
-          Number(
-            id_supervisor,
-          ),
-
-        funcion:
-          'SUPERVISOR',
-
-        es_principal:
-          false,
+        id_personal: Number(id_supervisor),
+        funcion: 'SUPERVISOR',
+        es_principal: false,
       });
     }
 
-    for (
-      const member of team
-    ) {
+    for (const member of team) {
       await getPersonalForFunction({
         id_personal: member.id_personal,
         funcion: member.funcion,
@@ -237,27 +219,15 @@ const createProgramacionService = async ({
           },
         );
 
-    for (
-      const member of team
-    ) {
+    for (const member of team) {
       await ProgramacionPersonal
         .create(
           {
-            id_programacion:
-              programacion
-                .id_programacion,
-
-            id_personal:
-              member.id_personal,
-
-            funcion:
-              member.funcion,
-
-            es_principal:
-              member.es_principal,
-
-            estado_asignacion:
-              'ASIGNADO',
+            id_programacion: programacion.id_programacion,
+            id_personal: member.id_personal,
+            funcion: member.funcion,
+            es_principal: member.es_principal,
+            estado_asignacion: 'ASIGNADO',
           },
           {
             transaction,

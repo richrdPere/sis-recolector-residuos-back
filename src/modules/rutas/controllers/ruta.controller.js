@@ -45,23 +45,16 @@ const getRutasPaginatedController = async (req, res, next) => {
         limit: req.query.limit,
         search: req.query.search,
 
-        id_zona:
-          req.query.id_zona,
-
-        estado:
-          req.query.estado,
-
-        estado_ruta:
-          req.query.estado_ruta,
+        id_zona: req.query.id_zona,
+        estado: req.query.estado,
+        estado_ruta: req.query.estado_ruta,
       });
 
     return res.status(200).json({
       success: true,
-      message:
-        'Rutas obtenidas correctamente.',
-      data: result.items,
-      pagination:
-        result.pagination,
+      message: 'Rutas obtenidas correctamente.',
+      data: result,
+
     });
   } catch (error) {
     next(error);
@@ -163,11 +156,8 @@ const changeRutaEstadoRutaController = async (req, res, next) => {
   try {
     const data =
       await changeRutaEstadoRutaService({
-        id_ruta:
-          req.params.id,
-
-        estado_ruta:
-          req.body.estado_ruta,
+        id_ruta: req.params.id,
+        estado_ruta: req.body.estado_ruta,
       });
 
     return res.status(200).json({
@@ -189,11 +179,8 @@ const changeRutaEstadoController = async (req, res, next) => {
   try {
     const data =
       await changeRutaEstadoService({
-        id_ruta:
-          req.params.id,
-
-        estado:
-          req.body.estado,
+        id_ruta: req.params.id,
+        estado: req.body.estado,
       });
 
     return res.status(200).json({

@@ -29,33 +29,20 @@ const removeProgramacionPersonalService = async (
         user_agent = null,
     },
 ) => {
-    const programmingId =
-        validateId(
-            idProgramacion,
-            'identificador de la programación',
-        );
+    const programmingId = validateId(idProgramacion, 'identificador de la programación');
+    const assignmentId = validateId(idAsignacion, 'identificador de la asignación');
 
-    const assignmentId =
-        validateId(
-            idAsignacion,
-            'identificador de la asignación',
-        );
-
-    const transaction =
-        await sequelize.transaction();
+    const transaction = await sequelize.transaction();
 
     try {
-        const programacion =
-            await ProgramacionRuta
-                .findByPk(
-                    programmingId,
-                    {
-                        transaction,
-                        lock:
-                            transaction.LOCK
-                                .UPDATE,
-                    },
-                );
+        const programacion = await ProgramacionRuta
+            .findByPk(
+                programmingId,
+                {
+                    transaction,
+                    lock: transaction.LOCK.UPDATE,
+                },
+            );
 
         if (!programacion) {
             throw new AppError(
@@ -70,8 +57,7 @@ const removeProgramacionPersonalService = async (
                 'PROGRAMADA',
                 'ASIGNADA',
             ].includes(
-                programacion
-                    .estado_programacion,
+                programacion.estado_programacion,
             )
         ) {
             throw new AppError(
@@ -85,11 +71,8 @@ const removeProgramacionPersonalService = async (
             await ProgramacionPersonal
                 .findOne({
                     where: {
-                        id_programacion:
-                            programmingId,
-
-                        id_programacion_personal:
-                            assignmentId,
+                        id_programacion: programmingId,
+                        id_programacion_personal: assignmentId,
                     },
 
                     transaction,
@@ -103,11 +86,7 @@ const removeProgramacionPersonalService = async (
             );
         }
 
-        if (
-            assignment
-                .estado_asignacion ===
-            'RETIRADO'
-        ) {
+        if (assignment.estado_asignacion === 'RETIRADO') {
             throw new AppError(
                 'El personal ya fue retirado.',
                 409,
@@ -115,17 +94,12 @@ const removeProgramacionPersonalService = async (
             );
         }
 
-        const previousState =
-            programacion
-                .estado_programacion;
+        const previousState = programacion.estado_programacion;
 
         await assignment.update(
             {
-                estado_asignacion:
-                    'RETIRADO',
-
-                observacion:
-                    observacion?.trim() ||
+                estado_asignacion: 'RETIRADO',
+                observacion: observacion?.trim() ||
                     'Personal retirado de la programación.',
             },
             {
@@ -140,32 +114,16 @@ const removeProgramacionPersonalService = async (
             );
 
         await registerHistory({
-            id_programacion:
-                programmingId,
-
+            id_programacion: programmingId,
             id_usuario,
-
-            tipo_evento:
-                'RETIRO_PERSONAL',
-
-            estado_anterior:
-                previousState,
-
-            estado_nuevo:
-                newState,
-
+            tipo_evento: 'RETIRO_PERSONAL',
+            estado_anterior: previousState,
+            estado_nuevo: newState,
             datos_anteriores: {
-                id_personal:
-                    assignment
-                        .id_personal,
-
-                funcion:
-                    assignment.funcion,
+                id_personal: assignment.id_personal,
+                funcion: assignment.funcion,
             },
-
-            observacion:
-                assignment.observacion,
-
+            observacion: assignment.observacion,
             ip,
             user_agent,
             transaction,

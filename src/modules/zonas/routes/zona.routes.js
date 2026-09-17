@@ -54,8 +54,7 @@ router.get('/view/:id',
 );
 
 // - Administración
-router.post(
-    '/create',
+router.post('/create',
     autorizarRoles(
         'SUPER_ADMIN',
         'ADMIN',
@@ -63,8 +62,7 @@ router.post(
     createZonaController,
 );
 
-router.put(
-    '/update/:id',
+router.put('/update/:id',
     autorizarRoles(
         'SUPER_ADMIN',
         'ADMIN',
@@ -72,8 +70,7 @@ router.put(
     updateZonaController,
 );
 
-router.patch(
-    '/estado/:id',
+router.patch('/estado/:id',
     autorizarRoles(
         'SUPER_ADMIN',
         'ADMIN',
@@ -81,8 +78,7 @@ router.patch(
     changeZonaEstadoController,
 );
 
-router.delete(
-    '/delete/:id',
+router.delete('/delete/:id',
     autorizarRoles(
         'SUPER_ADMIN',
         'ADMIN',

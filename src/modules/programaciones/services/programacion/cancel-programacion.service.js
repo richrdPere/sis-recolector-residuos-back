@@ -109,17 +109,12 @@ const cancelProgramacionService = async (
     await ProgramacionPersonal
       .update(
         {
-          estado_asignacion:
-            'RETIRADO',
-
-          observacion:
-            'Asignación retirada por cancelación de la programación.',
+          estado_asignacion: 'RETIRADO',
+          observacion: 'Asignación retirada por cancelación de la programación.',
         },
         {
           where: {
-            id_programacion:
-              id,
-
+            id_programacion:              id,
             estado_asignacion: {
               [Op.notIn]: [
                 'FINALIZADO',
@@ -135,18 +130,10 @@ const cancelProgramacionService = async (
     await registerHistory({
       id_programacion: id,
       id_usuario,
-      tipo_evento:
-        'CANCELACION',
-
-      estado_anterior:
-        previousState,
-
-      estado_nuevo:
-        'CANCELADA',
-
-      observacion:
-        reason,
-
+      tipo_evento: 'CANCELACION',
+      estado_anterior: previousState,
+      estado_nuevo: 'CANCELADA',
+      observacion: reason,
       ip,
       user_agent,
       transaction,

@@ -207,52 +207,21 @@ const updateProgramacionService = async (
         );
 
         await assertVehicleAvailable({
-            id_vehiculo:
-                vehicleId,
-
-            fecha_programada:
-                finalData
-                    .fecha_programada,
-
-            hora_inicio_programada:
-                finalData
-                    .hora_inicio_programada,
-
-            hora_fin_programada:
-                finalData
-                    .hora_fin_programada,
-
-            excludeProgramacionId:
-                id,
-
+            id_vehiculo: vehicleId,
+            fecha_programada: finalData.fecha_programada,
+            hora_inicio_programada: finalData.hora_inicio_programada,
+            hora_fin_programada: finalData.hora_fin_programada,
+            excludeProgramacionId: id,
             transaction,
         });
 
-        for (
-            const assignment of
-            programacion
-                .personal_asignado ||
-            []
-        ) {
+        for (const assignment of programacion.personal_asignado || []) {
             await assertPersonalAvailable({
-                id_personal:
-                    assignment
-                        .id_personal,
-
-                fecha_programada:
-                    finalData
-                        .fecha_programada,
-
-                hora_inicio_programada:
-                    finalData
-                        .hora_inicio_programada,
-
-                hora_fin_programada:
-                    finalData
-                        .hora_fin_programada,
-
-                excludeProgramacionId:
-                    id,
+                id_personal: assignment.id_personal,
+                fecha_programada: finalData.fecha_programada,
+                hora_inicio_programada: finalData.hora_inicio_programada,
+                hora_fin_programada: finalData.hora_fin_programada,
+                excludeProgramacionId: id,
 
                 transaction,
             });
@@ -261,13 +230,8 @@ const updateProgramacionService = async (
         await programacion.update(
             {
                 ...finalData,
-
-                id_ruta_version:
-                    version
-                        .id_ruta_version,
-
-                id_vehiculo:
-                    vehicleId,
+                id_ruta_version: version.id_ruta_version,
+                id_vehiculo: vehicleId,
             },
             {
                 transaction,
@@ -277,23 +241,11 @@ const updateProgramacionService = async (
         await registerHistory({
             id_programacion: id,
             id_usuario,
-            tipo_evento:
-                'ACTUALIZACION',
-
-            estado_anterior:
-                programacion
-                    .estado_programacion,
-
-            estado_nuevo:
-                programacion
-                    .estado_programacion,
-
-            datos_anteriores:
-                previousData,
-
-            datos_nuevos:
-                finalData,
-
+            tipo_evento: 'ACTUALIZACION',
+            estado_anterior: programacion.estado_programacion,
+            estado_nuevo: programacion.estado_programacion,
+            datos_anteriores: previousData,
+            datos_nuevos: finalData,
             ip,
             user_agent,
             transaction,

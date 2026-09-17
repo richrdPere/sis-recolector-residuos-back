@@ -20,13 +20,14 @@ const addProgramacionPersonalController = async (req, res, next) => {
   try {
     const metadata = getRequestMetadata(req);
 
-    const data = await addProgramacionPersonalService({
-      id_programacion: req.params.idProgramacion,
-      id_personal: req.body.id_personal,
-      funcion: req.body.funcion,
-      observacion: req.body.observacion,
-      ...metadata,
-    });
+    const data = await addProgramacionPersonalService(
+      req.params.idProgramacion,
+      {
+        id_personal: req.body.id_personal,
+        funcion: req.body.funcion,
+        observacion: req.body.observacion,
+        ...metadata,
+      });
 
     return res
       .status(201)
@@ -104,13 +105,13 @@ const removeProgramacionPersonalController = async (req, res, next) => {
   try {
     const metadata = getRequestMetadata(req);
 
-    const data = await removeProgramacionPersonalService({
-      id_programacion: req.params.idProgramacion,
-      id_programacion_personal: req.params.idProgramacionPersonal,
-      motivo: req.body.motivo,
-      observacion: req.body.observacion,
-      ...metadata,
-    });
+    const data = await removeProgramacionPersonalService(
+      req.params.idProgramacion,
+      req.params.idProgramacionPersonal,
+      {
+        observacion: req.body.observacion,
+        ...metadata,
+      });
 
     return res
       .status(200)

@@ -239,21 +239,26 @@ const getProgramacionesPaginatedService = async ({
 
   return {
     items: rows,
+    total: count,
+    page: currentPage,
+    limit: currentLimit,
+    total_pages: totalPages,
+    has_next_page: currentPage < totalPages,
+    has_previous_page: currentPage > 1,
+    // pagination: {
+    //   total: count,
+    //   page: currentPage,
+    //   limit: currentLimit,
+    //   total_pages:
+    //     totalPages,
 
-    pagination: {
-      total: count,
-      page: currentPage,
-      limit: currentLimit,
-      total_pages:
-        totalPages,
+    //   has_next_page:
+    //     currentPage <
+    //     totalPages,
 
-      has_next_page:
-        currentPage <
-        totalPages,
-
-      has_previous_page:
-        currentPage > 1,
-    },
+    //   has_previous_page:
+    //     currentPage > 1,
+    // },
   };
 };
 

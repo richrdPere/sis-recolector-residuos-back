@@ -29,16 +29,14 @@ router.use(verificarToken);
 // *********************************************************
 // MÓVIL - ASIGNACIONES PROPIAS
 // *********************************************************
-router.get(
-    '/mis-asignaciones',
+router.get('/mis-asignaciones',
     autorizarRoles(...ROLES_PERSONAL_OPERATIVO),
     getMisAsignacionesController,
 );
 
 // El service debe verificar que la asignación pertenezca
 // al usuario autenticado y permita responder en su estado actual.
-router.patch(
-    '/asignaciones/:idProgramacionPersonal/respuesta',
+router.patch('/asignaciones/:idProgramacionPersonal/respuesta',
     autorizarRoles(...ROLES_PERSONAL_OPERATIVO),
     respondAssignmentController,
 );
@@ -46,8 +44,7 @@ router.patch(
 // *********************************************************
 // WEB - CONSULTA DEL EQUIPO
 // *********************************************************
-router.get(
-    '/:idProgramacion/personal',
+router.get('/:idProgramacion/personal',
     autorizarRoles(...ROLES_CONSULTA_ADMIN),
     getProgramacionPersonalController,
 );
@@ -55,14 +52,12 @@ router.get(
 // *********************************************************
 // WEB - GESTIÓN DEL EQUIPO
 // *********************************************************
-router.post(
-    '/:idProgramacion/personal',
+router.post('/:idProgramacion/personal',
     autorizarRoles(...ROLES_GESTION),
     addProgramacionPersonalController,
 );
 
-router.patch(
-    '/:idProgramacion/personal/:idProgramacionPersonal/retirar',
+router.patch('/:idProgramacion/personal/:idProgramacionPersonal/retirar',
     autorizarRoles(...ROLES_GESTION),
     removeProgramacionPersonalController,
 );

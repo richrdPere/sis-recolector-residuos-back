@@ -1,9 +1,9 @@
 const { Op } = require('sequelize');
-const db = require('../../../../database/models');
-const AppError = require('../../../../utils/app-error');
+const db = require('../../../database/models');
+const AppError = require('../../../utils/app-error');
 
 // Utils
-const { validateId } = require('../../utils/rutas-service.utils');
+const { validateId } = require('../../rutas/utils/rutas-service.utils');
 
 // Modelos
 const {

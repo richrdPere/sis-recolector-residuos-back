@@ -170,41 +170,35 @@ const ProgramacionRuta = sequelize.define('ProgramacionRuta', {
         fields: [
           'id_ruta',
         ],
-
-        name:
-          'idx_programacion_ruta',
+        name: 'idx_programacion_ruta',
       },
       {
         fields: [
           'id_ruta_version',
         ],
 
-        name:
-          'idx_programacion_version',
+        name: 'idx_programacion_version',
       },
       {
         fields: [
           'id_vehiculo',
         ],
 
-        name:
-          'idx_programacion_vehiculo',
+        name: 'idx_programacion_vehiculo',
       },
       {
         fields: [
           'fecha_programada',
         ],
 
-        name:
-          'idx_programacion_fecha',
+        name: 'idx_programacion_fecha',
       },
       {
         fields: [
           'estado_programacion',
         ],
 
-        name:
-          'idx_programacion_estado',
+        name: 'idx_programacion_estado',
       },
       {
         fields: [
@@ -214,8 +208,7 @@ const ProgramacionRuta = sequelize.define('ProgramacionRuta', {
           'hora_fin_programada',
         ],
 
-        name:
-          'idx_programacion_conflicto_vehiculo',
+        name: 'idx_programacion_conflicto_vehiculo',
       },
       {
         fields: [
@@ -223,16 +216,14 @@ const ProgramacionRuta = sequelize.define('ProgramacionRuta', {
           'fecha_programada',
         ],
 
-        name:
-          'idx_programacion_ruta_fecha',
+        name: 'idx_programacion_ruta_fecha',
       },
       {
         fields: [
           'id_usuario_creacion',
         ],
 
-        name:
-          'idx_programacion_usuario',
+        name: 'idx_programacion_usuario',
       },
     ],
 

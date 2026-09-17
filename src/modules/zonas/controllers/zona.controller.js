@@ -6,7 +6,7 @@ const {
   updateZonaService,
   changeZonaEstadoService,
   deleteZonaService,
-} = require('../services/zona');
+} = require('../services');
 
 /*
 |--------------------------------------------------------------------------
@@ -47,11 +47,9 @@ const getZonasPaginatedController = async (req, res, next) => {
 
     return res.status(200).json({
       success: true,
-      message:
-        'Zonas obtenidas correctamente.',
-      data: result.items,
-      pagination:
-        result.pagination,
+      message: 'Zonas obtenidas correctamente.',
+      data: result,
+
     });
   } catch (error) {
     next(error);
@@ -130,11 +128,8 @@ const changeZonaEstadoController = async (req, res, next) => {
   try {
     const data =
       await changeZonaEstadoService({
-        id_zona:
-          req.params.id,
-
-        estado:
-          req.body.estado,
+        id_zona: req.params.id,
+        estado: req.body.estado,
       });
 
     return res.status(200).json({

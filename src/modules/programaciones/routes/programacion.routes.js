@@ -48,7 +48,7 @@ router.put('/editar/:idProgramacion',
     updateProgramacionController,
 );
 
-router.patch('/:idProgramacion/cancelar',
+router.patch('/cancelar/:idProgramacion',
     autorizarRoles(...ROLES_GESTION),
     cancelProgramacionController,
 );

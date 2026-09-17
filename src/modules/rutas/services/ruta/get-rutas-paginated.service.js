@@ -178,21 +178,13 @@ const getRutasPaginatedService = async ({
   return {
     items: rows,
 
-    pagination: {
-      total: count,
-      page: currentPage,
-      limit: currentLimit,
+    total: count,
+    page: currentPage,
+    limit: currentLimit,
 
-      total_pages:
-        totalPages,
-
-      has_next_page:
-        currentPage <
-        totalPages,
-
-      has_previous_page:
-        currentPage > 1,
-    },
+    total_pages: totalPages,
+    has_next_page: currentPage < totalPages,
+    has_previous_page: currentPage > 1,
   };
 };
 

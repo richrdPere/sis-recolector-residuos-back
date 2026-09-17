@@ -29,19 +29,8 @@ router.use(autorizarRoles(...ROLES_CONSULTA_ADMIN));
 // *********************************************************
 // DISPONIBILIDAD PARA PLANIFICACIÓN
 // *********************************************************
-router.get(
-    '/vehiculos',
-    getVehiculosDisponiblesController,
-);
-
-router.get(
-    '/conductores',
-    getConductoresDisponiblesController,
-);
-
-router.get(
-    '/recolectores',
-    getRecolectoresDisponiblesController,
-);
+router.get('/vehiculos', getVehiculosDisponiblesController);
+router.get('/conductores', getConductoresDisponiblesController);
+router.get('/recolectores', getRecolectoresDisponiblesController);
 
 module.exports = router;

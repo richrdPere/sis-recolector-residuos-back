@@ -1,6 +1,6 @@
 const { Op } = require('sequelize');
-const db = require('../../../../database/models');
-const AppError = require('../../../../utils/app-error');
+const db = require('../../../database/models');
+const AppError = require('../../../utils/app-error');
 
 // Service
 const getZonaByIdService = require("./get-zona-by-id.service");
@@ -10,7 +10,7 @@ const {
     validateId,
     normalizeCode,
     normalizeText,
-} = require('../../utils/rutas-service.utils');
+} = require('../../rutas/utils/rutas-service.utils');
 
 // Modelos
 const { Zona } = db;
