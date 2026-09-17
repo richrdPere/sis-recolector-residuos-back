@@ -51,6 +51,8 @@ const iniciarRecorridoController = async (req, res, next) => {
   try {
     const metadata = getRequestMetadata(req);
 
+    console.log("req conductor: ", getAuthenticatedUserId(req));
+
     const data = await iniciarRecorridoService({
       id_programacion: req.params.idProgramacion,
       id_usuario: getAuthenticatedUserId(req),
@@ -111,12 +113,11 @@ const getRecorridoActivoController = async (req, res, next) => {
 */
 const getRecorridoByIdController = async (req, res, next) => {
   try {
-    const data =
-      await getRecorridoByIdService({
-        id_recorrido:
-          req.params
-            .idRecorrido,
-      });
+    const data = await getRecorridoByIdService({
+      id_recorrido:
+        req.params
+          .idRecorrido,
+    });
 
     return res
       .status(200)
@@ -140,49 +141,24 @@ const pausarRecorridoController = async (req, res, next) => {
     const metadata = getRequestMetadata(req);
 
     const data = await pausarRecorridoService({
-      id_recorrido:
-        req.params
-          .idRecorrido,
-
-      id_usuario:
-        getAuthenticatedUserId(
-          req,
-        ),
-
-      fecha_evento:
-        req.body.fecha_evento,
-
-      latitud:
-        req.body.latitud,
-
-      longitud:
-        req.body.longitud,
-
-      precision_gps:
-        req.body.precision_gps,
-
-      observacion:
-        req.body.observacion,
-
-      clave_idempotencia:
-        getIdempotencyKey(req),
-
-      origen:
-        metadata.origen,
-
-      ip:
-        metadata.ip,
-
-      user_agent:
-        metadata.user_agent,
+      id_recorrido: req.params.idRecorrido,
+      id_usuario: getAuthenticatedUserId(req),
+      fecha_evento: req.body.fecha_evento,
+      latitud: req.body.latitud,
+      longitud: req.body.longitud,
+      precision_gps: req.body.precision_gps,
+      observacion: req.body.observacion,
+      clave_idempotencia: getIdempotencyKey(req),
+      origen: metadata.origen,
+      ip: metadata.ip,
+      user_agent: metadata.user_agent,
     });
 
     return res
       .status(200)
       .json({
         success: true,
-        message:
-          'Recorrido pausado correctamente.',
+        message: 'Recorrido pausado correctamente.',
         data,
       });
   } catch (error) {
@@ -196,23 +172,21 @@ const pausarRecorridoController = async (req, res, next) => {
 */
 const reanudarRecorridoController = async (req, res, next) => {
   try {
-    const metadata =
-      getRequestMetadata(req);
+    const metadata = getRequestMetadata(req);
 
-    const data =
-      await reanudarRecorridoService({
-        id_recorrido: req.params.idRecorrido,
-        id_usuario: getAuthenticatedUserId(req),
-        fecha_evento: req.body.fecha_evento,
-        latitud: req.body.latitud,
-        longitud: req.body.longitud,
-        precision_gps: req.body.precision_gps,
-        observacion: req.body.observacion,
-        clave_idempotencia: getIdempotencyKey(req),
-        origen: metadata.origen,
-        ip: metadata.ip,
-        user_agent: metadata.user_agent,
-      });
+    const data = await reanudarRecorridoService({
+      id_recorrido: req.params.idRecorrido,
+      id_usuario: getAuthenticatedUserId(req),
+      fecha_evento: req.body.fecha_evento,
+      latitud: req.body.latitud,
+      longitud: req.body.longitud,
+      precision_gps: req.body.precision_gps,
+      observacion: req.body.observacion,
+      clave_idempotencia: getIdempotencyKey(req),
+      origen: metadata.origen,
+      ip: metadata.ip,
+      user_agent: metadata.user_agent,
+    });
 
     return res
       .status(200)
@@ -233,50 +207,22 @@ const reanudarRecorridoController = async (req, res, next) => {
 */
 const finalizarRecorridoController = async (req, res, next) => {
   try {
-    const metadata =
-      getRequestMetadata(req);
+    const metadata = getRequestMetadata(req);
 
-    const data =
-      await finalizarRecorridoService({
-        id_recorrido:
-          req.params
-            .idRecorrido,
-
-        id_usuario:
-          getAuthenticatedUserId(
-            req,
-          ),
-
-        fecha_evento:
-          req.body.fecha_evento,
-
-        latitud:
-          req.body.latitud,
-
-        longitud:
-          req.body.longitud,
-
-        precision_gps:
-          req.body.precision_gps,
-
-        kilometraje:
-          req.body.kilometraje,
-
-        observacion:
-          req.body.observacion,
-
-        clave_idempotencia:
-          getIdempotencyKey(req),
-
-        origen:
-          metadata.origen,
-
-        ip:
-          metadata.ip,
-
-        user_agent:
-          metadata.user_agent,
-      });
+    const data = await finalizarRecorridoService({
+      id_recorrido: req.params.idRecorrido,
+      id_usuario: getAuthenticatedUserId(req),
+      fecha_evento: req.body.fecha_evento,
+      latitud: req.body.latitud,
+      longitud: req.body.longitud,
+      precision_gps: req.body.precision_gps,
+      kilometraje: req.body.kilometraje,
+      observacion: req.body.observacion,
+      clave_idempotencia: getIdempotencyKey(req),
+      origen: metadata.origen,
+      ip: metadata.ip,
+      user_agent: metadata.user_agent,
+    });
 
     return res
       .status(200)
@@ -297,47 +243,21 @@ const finalizarRecorridoController = async (req, res, next) => {
 */
 const cancelarRecorridoController = async (req, res, next) => {
   try {
-    const metadata =
-      getRequestMetadata(req);
+    const metadata = getRequestMetadata(req);
 
-    const data =
-      await cancelarRecorridoService({
-        id_recorrido:
-          req.params
-            .idRecorrido,
-
-        id_usuario:
-          getAuthenticatedUserId(
-            req,
-          ),
-
-        motivo:
-          req.body.motivo,
-
-        fecha_evento:
-          req.body.fecha_evento,
-
-        latitud:
-          req.body.latitud,
-
-        longitud:
-          req.body.longitud,
-
-        observacion:
-          req.body.observacion,
-
-        clave_idempotencia:
-          getIdempotencyKey(req),
-
-        origen:
-          metadata.origen,
-
-        ip:
-          metadata.ip,
-
-        user_agent:
-          metadata.user_agent,
-      });
+    const data = await cancelarRecorridoService({
+      id_recorrido: req.params.idRecorrido,
+      id_usuario: getAuthenticatedUserId(req),
+      motivo: req.body.motivo,
+      fecha_evento: req.body.fecha_evento,
+      latitud: req.body.latitud,
+      longitud: req.body.longitud,
+      observacion: req.body.observacion,
+      clave_idempotencia: getIdempotencyKey(req),
+      origen: metadata.origen,
+      ip: metadata.ip,
+      user_agent: metadata.user_agent,
+    });
 
     return res
       .status(200)
@@ -366,10 +286,7 @@ const getMisRecorridosController = async (req, res, next) => {
       fecha_hasta = null,
     } = req.query;
 
-    const idUsuario =
-      req.usuario
-        .id_usuario ??
-      req.usuario.id;
+    const idUsuario = req.usuario.id_usuario ?? req.usuario.id;
 
     const result = await getMisRecorridosService({
       id_usuario: idUsuario,

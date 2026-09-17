@@ -349,21 +349,12 @@ const Recorrido = sequelize.define('Recorrido', {
   },
 },
   {
-    tableName:
-      'recorridos',
-
+    tableName: 'recorridos',
     timestamps: true,
     paranoid: true,
-
-    createdAt:
-      'created_at',
-
-    updatedAt:
-      'updated_at',
-
-    deletedAt:
-      'deleted_at',
-
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
+    deletedAt: 'deleted_at',
     indexes: [
       {
         unique: true,

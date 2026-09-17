@@ -95,27 +95,15 @@ const iniciarRecorridoService = async ({
       observacion,
     );
 
-  const idempotencyKey =
-    validateIdempotencyKey(
-      clave_idempotencia,
-    );
+  const idempotencyKey = validateIdempotencyKey(clave_idempotencia);
 
-  const eventOrigin =
-    normalizeOrigin(
-      origen,
-    );
+  const eventOrigin = normalizeOrigin(origen);
 
-  const previousEvent =
-    await findIdempotentEvent({
-      clave_idempotencia:
-        idempotencyKey,
-
-      tipo_evento:
-        TIPOS_EVENTO_RECORRIDO.INICIO,
-
-      id_usuario:
-        userId,
-    });
+  const previousEvent = await findIdempotentEvent({
+    clave_idempotencia: idempotencyKey,
+    tipo_evento: TIPOS_EVENTO_RECORRIDO.INICIO,
+    id_usuario: userId,
+  });
 
   if (previousEvent) {
     return getRecorridoDetail(
@@ -147,12 +135,8 @@ const iniciarRecorridoService = async ({
     }
 
     await assertAssignedDriver({
-      id_programacion:
-        programmingId,
-
-      id_usuario:
-        userId,
-
+      id_programacion: programmingId,
+      id_usuario: userId,
       transaction,
     });
 

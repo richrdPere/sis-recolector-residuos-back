@@ -55,48 +55,47 @@ const ROLES_DETALLE = [
 // Autenticación
 router.use(verificarToken);
 
-// ROUTES
-router.post('/:idProgramacion/iniciar',
+// ROUTES - MOVILES
+router.post('/iniciar/:idProgramacion',
     autorizarRoles(...ROLES_OPERACION),
     iniciarRecorridoController,
 );
 
+router.patch('/pausar/:idRecorrido',
+    autorizarRoles(...ROLES_OPERACION),
+    pausarRecorridoController,
+);
+
+router.patch('/reanudar/:idRecorrido',
+    autorizarRoles(...ROLES_OPERACION),
+    reanudarRecorridoController,
+);
+
+router.patch('/finalizar/:idRecorrido',
+    autorizarRoles(...ROLES_OPERACION),
+    finalizarRecorridoController,
+);
+
+router.get('/mis-recorridos',
+    autorizarRoles(...ROLES_OPERACION),
+    getMisRecorridosController,
+);
+
+// ROUTES - ADMIN
+router.patch('/cancelar/:idRecorrido',
+    autorizarRoles(...ROLES_GESTION),
+    cancelarRecorridoController,
+);
+
+// ROUTES - MOVIL Y ADMIN
 router.get('/activo',
     autorizarRoles(...ROLES_EQUIPO),
     getRecorridoActivoController,
 );
 
-router.patch('/:idRecorrido/pausar',
-    autorizarRoles(...ROLES_OPERACION),
-    pausarRecorridoController,
-);
-
-router.patch('/:idRecorrido/reanudar',
-    autorizarRoles(...ROLES_OPERACION),
-    reanudarRecorridoController,
-);
-
-router.patch('/:idRecorrido/finalizar',
-    autorizarRoles(...ROLES_OPERACION),
-    finalizarRecorridoController,
-);
-
-router.patch('/:idRecorrido/cancelar',
-    autorizarRoles(...ROLES_GESTION),
-    cancelarRecorridoController,
-);
-
-router.get('/mis-recorridos',
-    autorizarRoles(...ROLES_EQUIPO),
-    getMisRecorridosController,
-);
-
-router.get('/:idRecorrido',
+router.get('/view/:idRecorrido',
     autorizarRoles(...ROLES_DETALLE),
     getRecorridoByIdController,
 );
-
-
-
 
 module.exports = router;

@@ -154,15 +154,20 @@ const getRecorridoEventosService = async ({
 
   return {
     items: rows,
-
-    pagination: {
-      page: normalizedPage,
-      limit: normalizedLimit,
-      total: count,
-      total_pages: totalPages,
-      has_next_page: normalizedPage < totalPages,
-      has_previous_page: normalizedPage > 1,
-    },
+    page: normalizedPage,
+    limit: normalizedLimit,
+    total: count,
+    total_pages: totalPages,
+    has_next_page: normalizedPage < totalPages,
+    has_previous_page: normalizedPage > 1,
+    // pagination: {
+    //   page: normalizedPage,
+    //   limit: normalizedLimit,
+    //   total: count,
+    //   total_pages: totalPages,
+    //   has_next_page: normalizedPage < totalPages,
+    //   has_previous_page: normalizedPage > 1,
+    // },
   };
 };
 

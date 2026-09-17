@@ -53,45 +53,38 @@ const cancelarRecorridoService = async ({
   ip = null,
   user_agent = null,
 }) => {
-  const recorridoId =
-    validateId(
-      id_recorrido,
-      'identificador del recorrido',
-    );
+  const recorridoId = validateId(
+    id_recorrido,
+    'identificador del recorrido',
+  );
 
-  const userId =
-    validateId(
-      id_usuario,
-      'identificador del usuario',
-    );
+  const userId = validateId(
+    id_usuario,
+    'identificador del usuario',
+  );
 
-  const normalizedReason =
-    validateObservation(
-      motivo,
-      true,
-    );
+  const normalizedReason = validateObservation(
+    motivo,
+    true,
+  );
 
-  const location =
-    validateCoordinates({
-      latitud,
-      longitud,
-    });
+  const location = validateCoordinates({
+    latitud,
+    longitud,
+  });
 
-  const eventDate =
-    validateEventDate(
-      fecha_evento,
-    );
+  const eventDate = validateEventDate(
+    fecha_evento,
+  );
 
-  const transaction =
-    await sequelize.transaction();
+  const transaction = await sequelize.transaction();
 
   try {
-    const recorrido =
-      await getRecorridoOrFail(
-        recorridoId,
-        transaction,
-        true,
-      );
+    const recorrido = await getRecorridoOrFail(
+      recorridoId,
+      transaction,
+      true,
+    );
 
     if (
       !ESTADOS_RECORRIDO_ACTIVO
@@ -106,34 +99,24 @@ const cancelarRecorridoService = async ({
       );
     }
 
-    const programacion =
-      await getProgramacionOrFail(
-        recorrido.id_programacion,
-        transaction,
-        true,
-      );
+    const programacion = await getProgramacionOrFail(
+      recorrido.id_programacion,
+      transaction,
+      true,
+    );
 
-    const vehiculo =
-      await getVehiculoOrFail(
-        programacion.id_vehiculo,
-        transaction,
-        true,
-      );
+    const vehiculo = await getVehiculoOrFail(
+      programacion.id_vehiculo,
+      transaction,
+      true,
+    );
 
     await recorrido.update(
       {
-        id_usuario_finalizacion:
-          userId,
-
-        estado_recorrido:
-          ESTADOS_RECORRIDO
-            .CANCELADO,
-
-        fecha_hora_finalizacion:
-          eventDate,
-
-        motivo_cancelacion:
-          normalizedReason,
+        id_usuario_finalizacion: userId,
+        estado_recorrido: ESTADOS_RECORRIDO.CANCELADO,
+        fecha_hora_finalizacion: eventDate,
+        motivo_cancelacion: normalizedReason,
       },
       {
         transaction,
@@ -142,9 +125,9 @@ const cancelarRecorridoService = async ({
 
     await programacion.update(
       {
-        estado_programacion:
-          ESTADOS_PROGRAMACION
-            .CANCELADA,
+        estado_programacion: ESTADOS_PROGRAMACION.CANCELADA,
+        motivo_cancelacion: normalizedReason,
+        fecha_cancelacion: eventDate,
       },
       {
         transaction,
@@ -154,8 +137,7 @@ const cancelarRecorridoService = async ({
     await vehiculo.update(
       {
         estado_operativo:
-          ESTADOS_VEHICULO
-            .DISPONIBLE,
+          ESTADOS_VEHICULO.DISPONIBLE,
       },
       {
         transaction,

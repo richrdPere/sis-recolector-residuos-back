@@ -30,15 +30,11 @@ const activarRutaVersionService = async (idVersion) => {
         {
           include: [
             {
-              model:
-                RutaPunto,
-
+              model: RutaPunto,
               as: 'puntos',
-
               where: {
                 estado: true,
               },
-
               required: false,
             },
           ],
@@ -66,22 +62,14 @@ const activarRutaVersionService = async (idVersion) => {
       );
     }
 
-    const points =
-      version.puntos || [];
+    const points = version.puntos || [];
 
-    const hasStart =
-      points.some(
-        (point) =>
-          point.tipo_punto ===
-          'INICIO',
-      );
+    const hasStart = points.some(
+      (point) => point.tipo_punto === 'INICIO',
+    );
 
-    const hasEnd =
-      points.some(
-        (point) =>
-          point.tipo_punto ===
-          'FINAL',
-      );
+    const hasEnd = points.some((point) => point.tipo_punto === 'FINAL',
+    );
 
     if (
       points.length < 2 ||
@@ -126,15 +114,11 @@ const activarRutaVersionService = async (idVersion) => {
     return version.reload({
       include: [
         {
-          model:
-            RutaPunto,
-
+          model: RutaPunto,
           as: 'puntos',
-
           where: {
             estado: true,
           },
-
           required: false,
         },
       ],

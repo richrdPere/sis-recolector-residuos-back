@@ -38,10 +38,7 @@ const createRutaHorarioService = async (
             'identificador de la ruta',
         );
 
-    const ruta =
-        await Ruta.findByPk(
-            routeId,
-        );
+    const ruta = await Ruta.findByPk(routeId);
 
     if (!ruta) {
         throw new AppError(

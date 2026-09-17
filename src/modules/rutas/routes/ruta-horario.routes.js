@@ -10,7 +10,7 @@ const {
     deleteRutaHorarioController,
 } = require('../controllers/ruta-horario.controller');
 
-// MIddlewares
+// Middlewares
 const {
     verificarToken,
     autorizarRoles,

@@ -130,41 +130,26 @@ const getMisRecorridosService = async ({
     );
   }
 
-  const currentPage =
-    parsePositiveInteger(
-      page,
-      1,
-    );
+  const currentPage = parsePositiveInteger(page, 1);
 
-  const currentLimit =
-    parsePositiveInteger(
-      limit,
-      10,
-      100,
-    );
+  const currentLimit = parsePositiveInteger(limit, 10, 100);
 
-  const offset =
-    (
-      currentPage -
-      1
-    ) *
-    currentLimit;
+  const offset = (currentPage - 1) * currentLimit;
 
   // -------------------------------------------
   // 1. Buscar personal asociado al usuario
   // -------------------------------------------
 
-  const personal =
-    await PersonalOperativo.findOne({
-      where: {
-        id_usuario:
-          usuarioId,
-      },
+  const personal = await PersonalOperativo.findOne({
+    where: {
+      id_usuario:
+        usuarioId,
+    },
 
-      attributes: [
-        'id_personal',
-      ],
-    });
+    attributes: [
+      'id_personal',
+    ],
+  });
 
   if (!personal) {
     throw new AppError(
@@ -178,42 +163,37 @@ const getMisRecorridosService = async ({
   // 2. Obtener programaciones donde participó
   // -------------------------------------------
 
-  const asignaciones =
-    await ProgramacionPersonal.findAll({
-      where: {
-        id_personal:
-          personal.id_personal,
+  const asignaciones = await ProgramacionPersonal.findAll({
+    where: {
+      id_personal:
+        personal.id_personal,
 
-        estado_asignacion: {
-          [Op.notIn]: [
-            'RECHAZADO',
-            'RETIRADO',
-          ],
-        },
-      },
-
-      attributes: [
-        'id_programacion',
-        'funcion',
-        'es_principal',
-        'estado_asignacion',
-      ],
-
-      order: [
-        [
-          'id_programacion',
-          'DESC',
+      estado_asignacion: {
+        [Op.notIn]: [
+          'RECHAZADO',
+          'RETIRADO',
         ],
+      },
+    },
+
+    attributes: [
+      'id_programacion',
+      'funcion',
+      'es_principal',
+      'estado_asignacion',
+    ],
+
+    order: [
+      [
+        'id_programacion',
+        'DESC',
       ],
-    });
+    ],
+  });
 
-  const asignacionPorProgramacion =
-    new Map();
+  const asignacionPorProgramacion = new Map();
 
-  for (
-    const asignacion
-    of asignaciones
-  ) {
+  for (const asignacion of asignaciones) {
     const item =
       asignacion.get({
         plain: true,
@@ -414,15 +394,13 @@ const getMisRecorridosService = async ({
               required: false,
             },
             {
-              model:
-                RutaVersion,
+              model: RutaVersion,
 
               /*
               | Ajustar según tus
               | asociaciones.
               */
-              as:
-                'ruta_version',
+              as: 'version_ruta',
 
               required: false,
             },

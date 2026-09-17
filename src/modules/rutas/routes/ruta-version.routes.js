@@ -5,12 +5,9 @@ const router = express.Router();
 const {
     verificarToken,
     autorizarRoles,
-} = require(
-    '../../../middlewares/auth.middleware',
-);
+} = require('../../../middlewares/auth.middleware');
 
 router.use(verificarToken);
-
 
 // Controllers
 const {
@@ -23,7 +20,6 @@ const {
 } = require('../controllers/ruta-version.controller');
 
 // ROUTES
-
 router.post('/:idRuta/versiones',
     autorizarRoles(
         'SUPER_ADMIN',

@@ -5,12 +5,9 @@ const router = express.Router();
 const {
     verificarToken,
     autorizarRoles,
-} = require(
-    '../../../middlewares/auth.middleware',
-);
+} = require('../../../middlewares/auth.middleware');
 
 router.use(verificarToken);
-
 
 // Controller
 const {
@@ -20,7 +17,7 @@ const {
     deleteRutaPuntoController,
 } = require('../controllers/ruta-punto.controller');
 
-
+// ROUTES
 router.post('/versiones/:idVersion/puntos',
     autorizarRoles(
         'SUPER_ADMIN',

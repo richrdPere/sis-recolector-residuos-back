@@ -167,23 +167,16 @@ const assertAssignedDriver = async ({
       transaction,
     );
 
-  const assignment =
-    await ProgramacionPersonal.findOne({
-      where: {
-        id_programacion,
+  const assignment = await ProgramacionPersonal.findOne({
+    where: {
+      id_programacion,
+      id_personal: personal.id_personal,
+      funcion: 'CONDUCTOR',
+      estado_asignacion: 'ACEPTADO',
+    },
 
-        id_personal:
-          personal.id_personal,
-
-        funcion:
-          'CONDUCTOR',
-
-        estado_asignacion:
-          'ACEPTADO',
-      },
-
-      transaction,
-    });
+    transaction,
+  });
 
   if (!assignment) {
     throw new AppError(

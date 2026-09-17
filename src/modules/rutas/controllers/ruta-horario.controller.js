@@ -13,11 +13,10 @@ const {
 */
 const createRutaHorarioController = async (req, res, next) => {
   try {
-    const data =
-      await createRutaHorarioService(
-        req.params.idRuta,
-        req.body,
-      );
+    const data = await createRutaHorarioService(
+      req.params.idRuta,
+      req.body,
+    );
 
     return res.status(201).json({
       success: true,

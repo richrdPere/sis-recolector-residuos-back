@@ -104,15 +104,13 @@ const updateRutaVersionController = async (req, res, next) => {
 */
 const activarRutaVersionController = async (req, res, next) => {
   try {
-    const data =
-      await activarRutaVersionService(
-        req.params.idVersion,
-      );
+    const data = await activarRutaVersionService(
+      req.params.idVersion,
+    );
 
     return res.status(200).json({
       success: true,
-      message:
-        'Versión de ruta activada como vigente correctamente.',
+      message: 'Versión de ruta activada como vigente correctamente.',
       data,
     });
   } catch (error) {
