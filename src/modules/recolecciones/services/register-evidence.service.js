@@ -87,13 +87,12 @@ const registerEvidenceService = async (
     );
   }
 
-  const evidenceType =
-    fileData.mimetype
-      .startsWith(
-        'image/',
-      )
-      ? 'IMAGEN'
-      : 'DOCUMENTO';
+  const evidenceType = fileData.mimetype
+    .startsWith(
+      'image/',
+    )
+    ? 'IMAGEN'
+    : 'DOCUMENTO';
 
   return RecoleccionEvidencia
     .create({
@@ -127,23 +126,10 @@ const registerEvidenceService = async (
           .pop()
           ?.toLowerCase() ||
         null,
-
-      tamano_bytes:
-        fileData.size,
-
-      descripcion:
-        fileData
-          .descripcion
-          ?.trim() ||
-        null,
-
-      fecha_captura:
-        fileData
-          .fecha_captura ||
-        null,
-
-      estado_evidencia:
-        'ACTIVA',
+      tamano_bytes: fileData.size,
+      descripcion: fileData.descripcion?.trim() || null,
+      fecha_captura: fileData.fecha_captura || null,
+      estado_evidencia: 'ACTIVA',
     });
 };
 

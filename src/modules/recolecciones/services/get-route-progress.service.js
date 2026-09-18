@@ -55,21 +55,16 @@ const getRouteProgressService = async (idRecorrido) => {
   const points =
     await RutaPunto.findAll({
       where: {
-        id_ruta_version:
-          programacion
-            .id_ruta_version,
-
-        estado:
-          true,
+        id_ruta_version: programacion.id_ruta_version,
+        estado: true,
       },
 
       attributes: [
         'id_ruta_punto',
-        'es_obligatorio',
+        'obligatorio',
       ],
 
-      raw:
-        true,
+      raw: true,
     });
 
   const registeredCollections =

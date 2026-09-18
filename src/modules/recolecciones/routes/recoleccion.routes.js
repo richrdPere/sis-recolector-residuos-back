@@ -64,25 +64,23 @@ router.use(verificarToken);
 // ===============================================
 // Registro móvil
 // ===============================================
-
-router.post('/lote',
-  autorizarRoles(
-    ...ROLES_OPERACION,
-  ),
-  registerCollectionBatchController,
-);
-
-router.post('/',
+router.post('/register',
   autorizarRoles(
     ...ROLES_OPERACION,
   ),
   registerCollectionController,
 );
 
+router.post('/register-lote',
+  autorizarRoles(
+    ...ROLES_OPERACION,
+  ),
+  registerCollectionBatchController,
+);
+
 // ===============================================
 // Consultas por recorrido
 // ===============================================
-
 router.get('/recorridos/:idRecorrido/puntos',
   autorizarRoles(
     ...ROLES_DETALLE,
@@ -100,20 +98,19 @@ router.get('/recorridos/:idRecorrido/progreso',
 // ===============================================
 // Evidencias
 // ===============================================
+router.post('/evidencias/:idRecoleccion', 
+  autorizarRoles(
+    ...ROLES_OPERACION,
+  ),
+  uploadCollectionEvidence.single('archivo'),
+  registerEvidenceController,
+);
 
 router.patch('/evidencias/:idEvidencia/anular',
   autorizarRoles(
     ...ROLES_GESTION,
   ),
   annulEvidenceController,
-);
-
-router.post('/:idRecoleccion/evidencias',
-  autorizarRoles(
-    ...ROLES_OPERACION,
-  ),
-  uploadCollectionEvidence.single('archivo'),
-  registerEvidenceController,
 );
 
 router.get('/:idRecoleccion/evidencias',
@@ -133,14 +130,14 @@ router.patch('/:idRecoleccion/anular',
   annulCollectionController,
 );
 
-router.get('/:idRecoleccion',
+router.get('/view/:idRecoleccion',
   autorizarRoles(
     ...ROLES_DETALLE,
   ),
   getCollectionByIdController,
 );
 
-router.get('/:idRecorrido/capacidad',
+router.get('/capacidad/:idRecorrido',
   autorizarRoles(
     ...ROLES_DETALLE,
   ),

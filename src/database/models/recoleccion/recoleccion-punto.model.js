@@ -77,25 +77,14 @@ const RecoleccionPunto = sequelize.define('RecoleccionPunto', {
   */
 
   id_usuario: {
-    type:
-      DataTypes.BIGINT,
-
-    allowNull:
-      false,
-
+    type:      DataTypes.BIGINT,
+    allowNull:      false,
     references: {
-      model:
-        'usuarios',
-
-      key:
-        'id_usuario',
+      model:        'usuarios',
+      key:        'id_usuario',
     },
-
-    onUpdate:
-      'CASCADE',
-
-    onDelete:
-      'RESTRICT',
+    onUpdate:      'CASCADE',
+    onDelete:      'RESTRICT',
   },
 
   /*

@@ -20,23 +20,18 @@ const { getRequestMetadata } = require('../utils/recoleccion-controller.utils');
 */
 const registerCollectionController = async (req, res, next) => {
   try {
-    const metadata =
-      getRequestMetadata(
-        req,
-      );
+    const metadata = getRequestMetadata(req);
 
-    const data =
-      await registerCollectionService(
-        req.body,
-        metadata,
-      );
+    const data = await registerCollectionService(
+      req.body,
+      metadata,
+    );
 
-    return res
-      .status(
-        data.duplicada
-          ? 200
-          : 201,
-      )
+    return res.status(
+      data.duplicada
+        ? 200
+        : 201,
+    )
       .json({
         success: true,
         message: data.duplicada
@@ -130,8 +125,7 @@ const getRouteCollectionPointsController = async (req, res, next) => {
 const getRouteProgressController = async (req, res, next) => {
   try {
     const data = await getRouteProgressService(
-      req.params
-        .idRecorrido,
+      req.params.idRecorrido,
     );
 
     return res
@@ -178,34 +172,21 @@ const annulCollectionController = async (req, res, next) => {
 */
 const registerEvidenceController = async (req, res, next) => {
   try {
-    const metadata =
-      getRequestMetadata(
-        req,
-      );
+    const metadata = getRequestMetadata(req);
 
-    const fileData =
-      req.file
-        ? {
-          ...req.file,
-          descripcion:
-            req.body
-              .descripcion,
+    const fileData = req.file
+      ? {
+        ...req.file,
+        descripcion: req.body.descripcion,
+        fecha_captura: req.body.fecha_captura,
+      }
+      : null;
 
-          fecha_captura:
-            req.body
-              .fecha_captura,
-        }
-        : null;
-
-    const data =
-      await registerEvidenceService(
-        req.params
-          .idRecoleccion,
-
-        fileData,
-
-        metadata,
-      );
+    const data = await registerEvidenceService(
+      req.params.idRecoleccion,
+      fileData,
+      metadata,
+    );
 
     return res
       .status(201)
@@ -252,20 +233,13 @@ const getCollectionEvidencesController = async (req, res, next) => {
 */
 const annulEvidenceController = async (req, res, next) => {
   try {
-    const metadata =
-      getRequestMetadata(
-        req,
-      );
+    const metadata = getRequestMetadata(req);
 
-    const data =
-      await annulEvidenceService(
-        req.params
-          .idEvidencia,
-
-        req.body,
-
-        metadata,
-      );
+    const data = await annulEvidenceService(
+      req.params.idEvidencia,
+      req.body,
+      metadata,
+    );
 
     return res
       .status(200)

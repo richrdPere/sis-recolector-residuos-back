@@ -18,15 +18,15 @@ const monitoreoRoutes = require("../modules/monitoreo/routes/monitoreo.routes");
 const dashboardRoutes = require('../modules/monitoreo/routes/dashboard.routes');
 
 // Rutas
-router.use("/auth", authRoutes);
-router.use("/vehiculos", vehiculoRoutes);
-router.use('/personal', personalRoutes);
-router.use('/rutas', rutasRoutes);
-router.use('/zonas', zonasRoutes);
-router.use('/programaciones', programacionRoutes);
-router.use('/recorridos', recorridoRoutes);
+router.use("/auth", authRoutes); // COMPLETE
+router.use("/vehiculos", vehiculoRoutes); // COMPLETE
+router.use('/personal', personalRoutes); // COMPLETE
+router.use('/rutas', rutasRoutes); // COMPLETE
+router.use('/zonas', zonasRoutes); // COMPLETE
+router.use('/programaciones', programacionRoutes); // COMPLETE
+router.use('/recorridos', recorridoRoutes); // COMPLETE
 router.use('/tracking', trackingRoutes);
-router.use('/recolecciones', recoleccionRoutes);
+router.use('/recolecciones', recoleccionRoutes); // FALTA
 router.use('/notificaciones', notificationRoutes);
 router.use('/ciudadanos', ciudadanoRoutes);
 router.use('/codigos-qr', codigoQrRoutes);

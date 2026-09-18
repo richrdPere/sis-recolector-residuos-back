@@ -76,79 +76,52 @@ const registerCollectionService = async (
     };
   }
 
-  const transaction =
-    await sequelize.transaction();
+  const transaction = await sequelize.transaction();
 
   try {
     const {
       programacion,
     } =
       await getOperationalContext({
-        id_recorrido:
-          recorridoId,
-
-        id_usuario:
-          userId,
-
+        id_recorrido: recorridoId,
+        id_usuario: userId,
         transaction,
       });
 
-    const punto =
-      await getRoutePointOrFail({
-        id_ruta_punto:
-          routePointId,
+    const punto = await getRoutePointOrFail({
+      id_ruta_punto: routePointId,
+      id_ruta_version: programacion.id_ruta_version,
+      transaction,
+    });
 
-        id_ruta_version:
-          programacion
-            .id_ruta_version,
+    const existingCollection = await RecoleccionPunto
+      .findOne({
+        where: {
+          id_recorrido: recorridoId,
+          id_ruta_punto: routePointId,
+          estado_recoleccion: 'REGISTRADA',
+        },
 
         transaction,
+
+        lock:
+          transaction
+            .LOCK.UPDATE,
       });
-
-    const existingCollection =
-      await RecoleccionPunto
-        .findOne({
-          where: {
-            id_recorrido:
-              recorridoId,
-
-            id_ruta_punto:
-              routePointId,
-
-            estado_recoleccion:
-              'REGISTRADA',
-          },
-
-          transaction,
-
-          lock:
-            transaction
-              .LOCK.UPDATE,
-        });
 
     if (existingCollection) {
-      const error =
-        new Error();
-
-      error.name =
-        'ACTIVE_COLLECTION_EXISTS';
-
-      error.existingCollection =
-        existingCollection;
+      const error = new Error();
+      error.name = 'ACTIVE_COLLECTION_EXISTS';
+      error.existingCollection = existingCollection;
 
       throw error;
     }
 
     const distance =
       calculateDistanceMeters(
-        normalizedData
-          .latitud,
-
-        normalizedData
-          .longitud,
-
+        normalizedData.latitud,
+        normalizedData.longitud,
         punto.latitud,
-
         punto.longitud,
       );
 
@@ -156,63 +129,24 @@ const registerCollectionService = async (
       await RecoleccionPunto
         .create(
           {
-            id_recorrido:
-              recorridoId,
-
-            id_ruta_punto:
-              routePointId,
-
-            id_usuario:
-              userId,
-
-            fecha_dispositivo:
-              normalizedData
-                .fecha_dispositivo,
-
-            fecha_recepcion:
-              new Date(),
-
-            latitud:
-              normalizedData
-                .latitud,
-
-            longitud:
-              normalizedData
-                .longitud,
-
-            precision_gps:
-              normalizedData
-                .precision_gps,
-
-            distancia_punto_metros:
-              distance,
-
-            dentro_radio_permitido:
-              distance === null
-                ? null
-                : distance <=
-                DEFAULT_ALLOWED_RADIUS,
-
-            cantidad_recolectada:
-              normalizedData
-                .cantidad_recolectada,
-
-            unidad_medida:
-              normalizedData
-                .unidad_medida,
-
-            observacion:
-              normalizedData
-                .observacion,
-
-            clave_idempotencia:
-              normalizedData
-                .clave_idempotencia,
-
+            id_recorrido: recorridoId,
+            id_ruta_punto: routePointId,
+            id_usuario: userId,
+            fecha_dispositivo: normalizedData.fecha_dispositivo,
+            fecha_recepcion: new Date(),
+            latitud: normalizedData.latitud,
+            longitud: normalizedData.longitud,
+            precision_gps: normalizedData.precision_gps,
+            distancia_punto_metros: distance,
+            dentro_radio_permitido: distance === null
+              ? null
+              : distance <= DEFAULT_ALLOWED_RADIUS,
+            cantidad_recolectada: normalizedData.cantidad_recolectada,
+            unidad_medida: normalizedData.unidad_medida,
+            observacion: normalizedData.observacion,
+            clave_idempotencia: normalizedData.clave_idempotencia,
             origen,
-
-            estado_recoleccion:
-              'REGISTRADA',
+            estado_recoleccion: 'REGISTRADA',
           },
           {
             transaction,
@@ -222,13 +156,9 @@ const registerCollectionService = async (
     await transaction.commit();
 
     return {
-      recoleccion:
-        collection,
-
+      recoleccion: collection,
       punto,
-
-      duplicada:
-        false,
+      duplicada: false,
     };
   } catch (error) {
     if (
@@ -238,14 +168,8 @@ const registerCollectionService = async (
         .rollback();
     }
 
-    if (
-      error.name ===
-      'ACTIVE_COLLECTION_EXISTS'
-    ) {
-      const AppError =
-        require(
-          '../../../utils/app-error',
-        );
+    if (error.name === 'ACTIVE_COLLECTION_EXISTS') {
+      const AppError = require('../../../utils/app-error');
 
       throw new AppError(
         'El punto ya fue atend atendido durante este recorrido.',
@@ -254,10 +178,7 @@ const registerCollectionService = async (
       );
     }
 
-    if (
-      error.name ===
-      'SequelizeUniqueConstraintError'
-    ) {
+    if (error.name === 'SequelizeUniqueConstraintError') {
       const duplicated =
         await RecoleccionPunto
           .findOne({

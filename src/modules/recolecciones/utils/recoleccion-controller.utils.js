@@ -36,25 +36,15 @@ const getRequestMetadata = (
             : null;
 
     return {
-        id_usuario:
-            getAuthenticatedUserId(
-                req,
-            ),
-
-        origen:
-            'MOVIL',
-
-        ip:
-            forwardedIp ||
+        id_usuario: getAuthenticatedUserId(req),
+        origen: 'MOVIL',
+        ip: forwardedIp ||
             req.ip ||
             req.socket
                 ?.remoteAddress ||
             null,
 
-        user_agent:
-            req.get(
-                'user-agent',
-            ) || null,
+        user_agent: req.get('user-agent') || null,
     };
 };
 
