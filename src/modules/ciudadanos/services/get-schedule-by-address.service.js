@@ -184,17 +184,15 @@ const scheduleAppliesToDate = (
     );
 
   if (
-    schedule.fecha_inicio &&
-    candidateDateOnly <
-    schedule.fecha_inicio
+    schedule.fecha_vigencia_desde &&
+    candidateDateOnly < schedule.fecha_vigencia_desde
   ) {
     return false;
   }
 
   if (
-    schedule.fecha_fin &&
-    candidateDateOnly >
-    schedule.fecha_fin
+    schedule.fecha_vigencia_hasta &&
+    candidateDateOnly > schedule.fecha_vigencia_hasta
   ) {
     return false;
   }
@@ -216,10 +214,7 @@ const scheduleAppliesToDate = (
    * comparar el día de la semana.
    */
 
-  if (
-    frequency ===
-    'DIARIA'
-  ) {
+  if (frequency === 'DIARIA') {
     return true;
   }
 
@@ -238,27 +233,20 @@ const scheduleAppliesToDate = (
    */
 
   if (
-    frequency ===
-    'QUINCENAL' &&
-    schedule.fecha_inicio
+    frequency === 'QUINCENAL' &&
+    schedule.fecha_vigencia_desde
   ) {
-    const startDate =
-      parseDateOnly(
-        schedule
-          .fecha_inicio,
-        'fecha inicial del horario',
-      );
+    const startDate = parseDateOnly(
+      schedule.fecha_vigencia_desde,
+      'fecha inicial del horario',
+    );
 
-    const days =
-      differenceInDays(
-        startDate,
-        candidateDate,
-      );
+    const days = differenceInDays(
+      startDate,
+      candidateDate,
+    );
 
-    const weeks =
-      Math.floor(
-        days / 7,
-      );
+    const weeks = Math.floor(days / 7);
 
     return (
       weeks >= 0 &&
@@ -459,59 +447,32 @@ const getScheduleByAddressService = async ({
    * dentro de los siguientes 90 días.
    */
 
-  const schedules =
-    await RutaHorario.findAll({
-      where: {
-        id_ruta:
-          domicilio.id_ruta,
+  const schedules = await RutaHorario.findAll({
+    where: {
+      id_ruta: domicilio.id_ruta,
+      estado: true,
 
-        estado: true,
-
-        [Op.and]: [
-          {
-            [Op.or]: [
-              {
-                fecha_inicio:
-                  null,
-              },
-              {
-                fecha_inicio: {
-                  [Op.lte]:
-                    searchEndDate,
-                },
-              },
-            ],
-          },
-          {
-            [Op.or]: [
-              {
-                fecha_fin:
-                  null,
-              },
-              {
-                fecha_fin: {
-                  [Op.gte]:
-                    formatDateOnly(
-                      referenceDate,
-                    ),
-                },
-              },
-            ],
-          },
-        ],
+      fecha_vigencia_desde: {
+        [Op.lte]: searchEndDate,
       },
 
-      order: [
-        [
-          'dia_semana',
-          'ASC',
-        ],
-        [
-          'hora_inicio',
-          'ASC',
-        ],
+      [Op.or]: [
+        {
+          fecha_vigencia_hasta: null,
+        },
+        {
+          fecha_vigencia_hasta: {
+            [Op.gte]: formatDateOnly(referenceDate),
+          },
+        },
       ],
-    });
+    },
+
+    order: [
+      ['dia_semana', 'ASC'],
+      ['hora_inicio', 'ASC'],
+    ],
+  });
 
   if (!schedules.length) {
     throw new AppError(

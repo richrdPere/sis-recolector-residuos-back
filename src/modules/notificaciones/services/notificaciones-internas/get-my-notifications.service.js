@@ -246,29 +246,23 @@ const getMyNotificationsService = async ({
       : 0;
 
   return {
-    items:
-      rows,
+    items: rows,
 
-    pagination: {
-      page:
-        currentPage,
+    page: currentPage,
+    limit: currentLimit,
+    total: count,
+    total_pages: totalPages,
+    has_next_page: currentPage < totalPages,
+    has_previous_page: currentPage > 1,
 
-      limit:
-        currentLimit,
-
-      total:
-        count,
-
-      total_pages:
-        totalPages,
-
-      has_next_page:
-        currentPage <
-        totalPages,
-
-      has_previous_page:
-        currentPage > 1,
-    },
+    // pagination: {
+    //   page: currentPage,
+    //   limit: currentLimit,
+    //   total: count,
+    //   total_pages: totalPages,
+    //   has_next_page: currentPage < totalPages,
+    //   has_previous_page: currentPage > 1,
+    // },
   };
 };
 

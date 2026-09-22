@@ -186,23 +186,17 @@ const getQrCodesService = async ({
 
   return {
     items,
+    page: normalizedPage,
+    limit: normalizedLimit,
+    total: count,
+    total_pages: Math.ceil(count / normalizedLimit),
 
-    pagination: {
-      page:
-        normalizedPage,
-
-      limit:
-        normalizedLimit,
-
-      total:
-        count,
-
-      total_pages:
-        Math.ceil(
-          count /
-          normalizedLimit,
-        ),
-    },
+    // pagination: {
+    //   page: normalizedPage,
+    //   limit: normalizedLimit,
+    //   total: count,
+    //   total_pages: Math.ceil(count / normalizedLimit),
+    // },
   };
 };
 

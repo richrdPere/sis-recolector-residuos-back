@@ -40,23 +40,22 @@ const deactivateDeviceByTokenService = async (
     await sequelize.transaction();
 
   try {
-    const device =
-      await UsuarioDispositivo
-        .findOne({
-          where: {
-            id_usuario:
-              userId,
+    const device = await UsuarioDispositivo
+      .findOne({
+        where: {
+          id_usuario:
+            userId,
 
-            token_push:
-              pushToken,
-          },
+          token_push:
+            pushToken,
+        },
 
-          transaction,
+        transaction,
 
-          lock:
-            transaction
-              .LOCK.UPDATE,
-        });
+        lock:
+          transaction
+            .LOCK.UPDATE,
+      });
 
     /*
     | La operación es idempotente. Si el token ya fue
@@ -78,17 +77,10 @@ const deactivateDeviceByTokenService = async (
 
     await device.update(
       {
-        token_push:
-          null,
-
-        estado_dispositivo:
-          'INACTIVO',
-
-        fecha_desactivacion:
-          new Date(),
-
-        motivo_desactivacion:
-          'Token desactivado durante el cierre de sesión.',
+        token_push: null,
+        estado_dispositivo: 'INACTIVO',
+        fecha_desactivacion: new Date(),
+        motivo_desactivacion: 'Token desactivado durante el cierre de sesión.',
       },
       {
         transaction,
@@ -98,15 +90,9 @@ const deactivateDeviceByTokenService = async (
     await transaction.commit();
 
     return {
-      id_dispositivo:
-        device
-          .id_dispositivo,
-
-      desactivado:
-        true,
-
-      ya_estaba_desactivado:
-        false,
+      id_dispositivo: device.id_dispositivo,
+      desactivado: true,
+      ya_estaba_desactivado: false,
     };
   } catch (error) {
     if (

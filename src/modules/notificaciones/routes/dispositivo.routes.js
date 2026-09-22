@@ -18,7 +18,7 @@ router.use(verificarToken);
 // =======================================================
 // Registrar o renovar token FCM
 // =======================================================
-router.post('/', registerDeviceController);
+router.post('/register', registerDeviceController);
 
 // =======================================================
 // Consultar dispositivos propios

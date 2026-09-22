@@ -261,11 +261,10 @@ const Recorrido = sequelize.define('Recorrido', {
   },
 
   kilometraje_final: {
-    type:
-      DataTypes.DECIMAL(
-        12,
-        2,
-      ),
+    type: DataTypes.DECIMAL(
+      12,
+      2,
+    ),
 
     allowNull: true,
 
@@ -281,27 +280,20 @@ const Recorrido = sequelize.define('Recorrido', {
   */
 
   distancia_recorrida_metros: {
-    type:
-      DataTypes.DECIMAL(
-        14,
-        2,
-      ),
-
+    type: DataTypes.DECIMAL(
+      14,
+      2,
+    ),
     allowNull: true,
-
     validate: {
       min: 0,
     },
 
-    comment:
-      'Distancia calculada utilizando las posiciones GPS.',
+    comment: 'Distancia calculada utilizando las posiciones GPS.',
   },
 
   duracion_segundos: {
-    type:
-      DataTypes.INTEGER
-        .UNSIGNED,
-
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: true,
   },
 
@@ -310,27 +302,18 @@ const Recorrido = sequelize.define('Recorrido', {
   | Observaciones
   |--------------------------------------------------------------------------
   */
-
   observacion_inicio: {
-    type:
-      DataTypes.TEXT,
-
+    type: DataTypes.TEXT,
     allowNull: true,
   },
 
   observacion_finalizacion: {
-    type:
-      DataTypes.TEXT,
-
+    type: DataTypes.TEXT,
     allowNull: true,
   },
 
   motivo_cancelacion: {
-    type:
-      DataTypes.STRING(
-        500,
-      ),
-
+    type: DataTypes.STRING(500),
     allowNull: true,
   },
 
@@ -341,9 +324,7 @@ const Recorrido = sequelize.define('Recorrido', {
   */
 
   estado: {
-    type:
-      DataTypes.BOOLEAN,
-
+    type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: true,
   },

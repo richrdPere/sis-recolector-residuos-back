@@ -40,17 +40,13 @@ router.use(verificarToken);
 // ==========================================================
 // Listado y creación
 // ==========================================================
-router.post('/',
-  autorizarRoles(
-    ...ROLES_GESTION,
-  ),
+router.post('/create',
+  autorizarRoles(...ROLES_GESTION),
   createQrCodeController,
 );
 
-router.get('/',
-  autorizarRoles(
-    ...ROLES_CONSULTA,
-  ),
+router.get('/paginado',
+  autorizarRoles(...ROLES_CONSULTA),
   getQrCodesController,
 );
 
@@ -61,8 +57,7 @@ router.get('/',
 // Esta ruta debe declararse antes del detalle general.
 //
 
-router.get(
-  '/:idCodigoQr/imagen',
+router.get('/:idCodigoQr/imagen',
   autorizarRoles(
     ...ROLES_CONSULTA,
   ),
@@ -72,17 +67,14 @@ router.get(
 // ==========================================================
 // Cambios administrativos
 // ==========================================================
-
-router.patch(
-  '/:idCodigoQr/estado',
+router.patch('/:idCodigoQr/estado',
   autorizarRoles(
     ...ROLES_GESTION,
   ),
   changeQrCodeStatusController,
 );
 
-router.patch(
-  '/:idCodigoQr/regenerar',
+router.patch('/:idCodigoQr/regenerar',
   autorizarRoles(
     ...ROLES_GESTION,
   ),
@@ -94,7 +86,7 @@ router.patch(
 // ==========================================================
 
 router.get(
-  '/:idCodigoQr',
+  '/view/:idCodigoQr',
   autorizarRoles(
     ...ROLES_CONSULTA,
   ),

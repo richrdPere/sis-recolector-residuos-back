@@ -193,17 +193,21 @@ const getRoutePositionsService = async ({
       : 0;
 
   return {
-    items:
-      rows,
-
-    pagination: {
-      page: currentPage,
-      limit: currentLimit,
-      total: count,
-      total_pages: totalPages,
-      has_next_page: currentPage < totalPages,
-      has_previous_page: currentPage > 1,
-    },
+    items: rows,
+    page: currentPage,
+    limit: currentLimit,
+    total: count,
+    total_pages: totalPages,
+    has_next_page: currentPage < totalPages,
+    has_previous_page: currentPage > 1,
+    // pagination: {
+    //   page: currentPage,
+    //   limit: currentLimit,
+    //   total: count,
+    //   total_pages: totalPages,
+    //   has_next_page: currentPage < totalPages,
+    //   has_previous_page: currentPage > 1,
+    // },
   };
 };
 

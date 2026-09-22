@@ -50,8 +50,7 @@ const UsuarioDispositivo = sequelize.define('UsuarioDispositivo', {
         512,
       ),
 
-    allowNull:
-      true,
+    allowNull: true,
   },
 
   plataforma: {

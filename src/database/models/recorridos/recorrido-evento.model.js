@@ -3,9 +3,7 @@ const sequelize = require('../../../config/database');
 
 const RecorridoEvento = sequelize.define('RecorridoEvento', {
   id_recorrido_evento: {
-    type:
-      DataTypes.BIGINT,
-
+    type: DataTypes.BIGINT,
     primaryKey: true,
     autoIncrement: true,
   },
@@ -17,24 +15,14 @@ const RecorridoEvento = sequelize.define('RecorridoEvento', {
   */
 
   id_recorrido: {
-    type:
-      DataTypes.BIGINT,
-
+    type: DataTypes.BIGINT,
     allowNull: false,
-
     references: {
-      model:
-        'recorridos',
-
-      key:
-        'id_recorrido',
+      model: 'recorridos',
+      key: 'id_recorrido',
     },
-
-    onUpdate:
-      'CASCADE',
-
-    onDelete:
-      'RESTRICT',
+    onUpdate: 'CASCADE',
+    onDelete: 'RESTRICT',
   },
 
   /*
@@ -42,26 +30,16 @@ const RecorridoEvento = sequelize.define('RecorridoEvento', {
   | Usuario responsable
   |--------------------------------------------------------------------------
   */
-
   id_usuario: {
-    type:
-      DataTypes.BIGINT,
-
+    type: DataTypes.BIGINT,
     allowNull: true,
 
     references: {
-      model:
-        'usuarios',
-
-      key:
-        'id_usuario',
+      model: 'usuarios',
+      key: 'id_usuario',
     },
-
-    onUpdate:
-      'CASCADE',
-
-    onDelete:
-      'SET NULL',
+    onUpdate: 'CASCADE',
+    onDelete: 'SET NULL',
   },
 
   /*

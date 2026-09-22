@@ -15,43 +15,38 @@ const {
 // =======================================================
 const deactivateDeviceService = async (idDispositivo, {
     id_usuario,
-    motivo =
-    'Dispositivo desactivado por el usuario.',
+    motivo = 'Dispositivo desactivado por el usuario.',
 },
 ) => {
-    const deviceId =
-        validateId(
-            idDispositivo,
-            'identificador del dispositivo',
-        );
+    const deviceId = validateId(
+        idDispositivo,
+        'identificador del dispositivo',
+    );
 
-    const userId =
-        validateId(
-            id_usuario,
-            'identificador del usuario',
-        );
+    const userId = validateId(
+        id_usuario,
+        'identificador del usuario',
+    );
 
-    const transaction =
-        await sequelize.transaction();
+    const transaction = await sequelize.transaction();
 
     try {
-        const device =
-            await UsuarioDispositivo
-                .findOne({
-                    where: {
-                        id_dispositivo:
-                            deviceId,
+        const device = await UsuarioDispositivo
+            .findOne({
+                where: {
+                    id_dispositivo:
+                        deviceId,
 
-                        id_usuario:
-                            userId,
-                    },
+                    id_usuario:
+                        userId,
+                },
 
-                    transaction,
+                transaction,
 
-                    lock:
-                        transaction
-                            .LOCK.UPDATE,
-                });
+                lock:
+                    transaction
+                        .LOCK.UPDATE,
+            });
 
         if (!device) {
             throw new AppError(
@@ -88,25 +83,18 @@ const deactivateDeviceService = async (idDispositivo, {
 
         await device.update(
             {
-                token_push:
-                    null,
-
-                estado_dispositivo:
-                    'INACTIVO',
-
-                fecha_desactivacion:
-                    new Date(),
-
-                motivo_desactivacion:
-                    String(
-                        motivo ||
-                        'Dispositivo desactivado por el usuario.',
-                    )
-                        .trim()
-                        .slice(
-                            0,
-                            500,
-                        ),
+                token_push: null,
+                estado_dispositivo: 'INACTIVO',
+                fecha_desactivacion: new Date(),
+                motivo_desactivacion: String(
+                    motivo ||
+                    'Dispositivo desactivado por el usuario.',
+                )
+                    .trim()
+                    .slice(
+                        0,
+                        500,
+                    ),
             },
             {
                 transaction,
@@ -131,11 +119,45 @@ const deactivateDeviceService = async (idDispositivo, {
                 false,
         };
     } catch (error) {
-        if (
-            !transaction.finished
-        ) {
-            await transaction
-                .rollback();
+        // if (
+        //     !transaction.finished
+        // ) {
+        //     await transaction
+        //         .rollback();
+        // }
+
+        // throw error;
+
+        const dbError =
+            error.original ||
+            error.parent ||
+            error.cause;
+
+        console.error('[deactivateDeviceService]', {
+            id_dispositivo: deviceId,
+            id_usuario: userId,
+            nombre: error.name,
+            mensaje: error.message,
+            codigo: dbError?.code,
+            errno: dbError?.errno,
+            sqlState: dbError?.sqlState,
+            mensajeMySQL: dbError?.sqlMessage,
+            validaciones: error.errors?.map((item) => ({
+                campo: item.path,
+                mensaje: item.message,
+                tipo: item.type,
+            })),
+        });
+
+        if (!transaction.finished) {
+            try {
+                await transaction.rollback();
+            } catch (rollbackError) {
+                console.error(
+                    '[deactivateDeviceService] Error en rollback:',
+                    rollbackError.message,
+                );
+            }
         }
 
         throw error;

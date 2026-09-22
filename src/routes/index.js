@@ -25,13 +25,13 @@ router.use('/rutas', rutasRoutes); // COMPLETE
 router.use('/zonas', zonasRoutes); // COMPLETE
 router.use('/programaciones', programacionRoutes); // COMPLETE
 router.use('/recorridos', recorridoRoutes); // COMPLETE
-router.use('/tracking', trackingRoutes);
-router.use('/recolecciones', recoleccionRoutes); // FALTA
-router.use('/notificaciones', notificationRoutes);
-router.use('/ciudadanos', ciudadanoRoutes);
-router.use('/codigos-qr', codigoQrRoutes);
-router.use('/publico/qr', codigoQrPublicRoutes);
-router.use('/monitoreo', monitoreoRoutes);
+router.use('/tracking', trackingRoutes); // COMPLETE
+router.use('/recolecciones', recoleccionRoutes); // COMPLETE
+router.use('/notificaciones', notificationRoutes); // COMPLETE
+router.use('/ciudadanos', ciudadanoRoutes); // COMPLETE
+router.use('/codigos-qr', codigoQrRoutes); // COMPLETE
+router.use('/publico/qr', codigoQrPublicRoutes); // COMPLETE
+router.use('/monitoreo', monitoreoRoutes); // 
 router.use('/dashboard', dashboardRoutes);
 
 module.exports = router;

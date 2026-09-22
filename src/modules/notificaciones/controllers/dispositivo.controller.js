@@ -101,16 +101,10 @@ const deactivateDeviceController = async (req, res, next) => {
 
     const data =
       await deactivateDeviceService(
-        req.params
-          .idDispositivo,
+        req.params.idDispositivo,
         {
-          id_usuario:
-            idUsuario,
-
-          motivo:
-            req.body
-              .motivo ||
-            'Dispositivo desactivado por el usuario.',
+          id_usuario: idUsuario,
+          motivo: req.body.motivo,
         },
       );
 

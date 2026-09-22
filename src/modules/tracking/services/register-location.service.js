@@ -33,53 +33,33 @@ const registerLocationService = async (payload,
     origen = 'MOVIL',
   },
 ) => {
-  const recorridoId =
-    validateId(
-      payload.id_recorrido,
-      'identificador del recorrido',
-    );
+  const recorridoId = validateId(payload.id_recorrido, 'identificador del recorrido');
 
-  const usuarioId =
-    validateId(
-      id_usuario,
-      'identificador del usuario',
-    );
+  const usuarioId = validateId(id_usuario, 'identificador del usuario');
 
-  const location =
-    normalizeLocation(
-      payload,
-    );
+  const location = normalizeLocation(payload);
 
   /*
   | Primero comprobamos la idempotencia sin
   | abrir una transacción.
   */
 
-  const existingPosition =
-    await RecorridoPosicion
-      .findOne({
-        where: {
-          clave_idempotencia:
-            location
-              .clave_idempotencia,
-        },
-      });
+  const existingPosition = await RecorridoPosicion
+    .findOne({
+      where: {
+        clave_idempotencia: location.clave_idempotencia,
+      },
+    });
 
   if (existingPosition) {
     return {
-      posicion:
-        existingPosition,
-
-      duplicada:
-        true,
-
-      ultima_ubicacion_actualizada:
-        false,
+      posicion: existingPosition,
+      duplicada: true,
+      ultima_ubicacion_actualizada: false,
     };
   }
 
-  const transaction =
-    await sequelize.transaction();
+  const transaction = await sequelize.transaction();
 
   try {
     /*
@@ -87,25 +67,19 @@ const registerLocationService = async (payload,
     | posiciones concurrentes del mismo recorrido.
     */
 
-    const recorrido =
-      await getRecorridoOrFail(
-        recorridoId,
-        {
-          transaction,
-          lock: true,
-        },
-      );
-
-    assertRecorridoAllowsTracking(
-      recorrido,
+    const recorrido = await getRecorridoOrFail(
+      recorridoId,
+      {
+        transaction,
+        lock: true,
+      },
     );
+
+    assertRecorridoAllowsTracking(recorrido);
 
     await assertTrackingTransmitter({
       recorrido,
-
-      id_usuario:
-        usuarioId,
-
+      id_usuario: usuarioId,
       transaction,
     });
 
@@ -114,46 +88,30 @@ const registerLocationService = async (payload,
     | para auditoría, pero se marcan inválidas.
     */
 
-    const isValid =
-      !location
-        .es_ubicacion_simulada;
+    const isValid = !location.es_ubicacion_simulada;
 
-    const invalidReason =
-      location
-        .es_ubicacion_simulada
-        ? 'La ubicación fue reportada como simulada por el dispositivo.'
-        : null;
+    const invalidReason = location.es_ubicacion_simulada
+      ? 'La ubicación fue reportada como simulada por el dispositivo.'
+      : null;
 
-    const receptionDate =
-      new Date();
+    const receptionDate = new Date();
 
-    const posicion =
-      await RecorridoPosicion
-        .create(
-          {
-            id_recorrido:
-              recorridoId,
+    const posicion = await RecorridoPosicion
+      .create(
+        {
+          id_recorrido: recorridoId,
+          id_usuario: usuarioId,
 
-            id_usuario:
-              usuarioId,
-
-            ...location,
-
-            fecha_recepcion:
-              receptionDate,
-
-            es_valida:
-              isValid,
-
-            motivo_invalidez:
-              invalidReason,
-
-            origen,
-          },
-          {
-            transaction,
-          },
-        );
+          ...location,
+          fecha_recepcion: receptionDate,
+          es_valida: isValid,
+          motivo_invalidez: invalidReason,
+          origen,
+        },
+        {
+          transaction,
+        },
+      );
 
     const {
       updated,
@@ -168,15 +126,9 @@ const registerLocationService = async (payload,
 
     return {
       posicion,
-
-      duplicada:
-        false,
-
-      ultima_ubicacion_actualizada:
-        updated,
-
-      ultima_ubicacion:
-        lastLocation,
+      duplicada: false,
+      ultima_ubicacion_actualizada: updated,
+      ultima_ubicacion: lastLocation,
     };
   } catch (error) {
     if (
@@ -192,32 +144,18 @@ const registerLocationService = async (payload,
     | última protección.
     */
 
-    if (
-      error.name ===
-      'SequelizeUniqueConstraintError'
-    ) {
-      const duplicatedPosition =
-        await RecorridoPosicion
-          .findOne({
-            where: {
-              clave_idempotencia:
-                location
-                  .clave_idempotencia,
-            },
-          });
+    if (error.name === 'SequelizeUniqueConstraintError') {
+      const duplicatedPosition = await RecorridoPosicion.findOne({
+        where: {
+          clave_idempotencia: location.clave_idempotencia,
+        },
+      });
 
-      if (
-        duplicatedPosition
-      ) {
+      if (duplicatedPosition) {
         return {
-          posicion:
-            duplicatedPosition,
-
-          duplicada:
-            true,
-
-          ultima_ubicacion_actualizada:
-            false,
+          posicion: duplicatedPosition,
+          duplicada: true,
+          ultima_ubicacion_actualizada: false,
         };
       }
     }

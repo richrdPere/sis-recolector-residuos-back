@@ -1,74 +1,107 @@
 require("dotenv").config();
 const app = require("./src/app.js");
 const http = require("http");
-const socketIO = require("socket.io");
-const jwt = require("jsonwebtoken");
 
-const PORT = process.env.PORT || 3000;
+const { initSocket } = require('./src/socket');
+const { emitToUser } = require('./src/socket/usuarios-manager');
 
+async function start() {
+  await app.initialize();
+  const server = http.createServer(app);
+  const io = initSocket(server);
 
-// Crear servidor HTTP encima del express
-const server = http.createServer(app);
+  // Compatibilidad con el helper anterior; no persiste ni envía push.
+  global.sendNotification = (userId, data) =>
+    emitToUser(io, userId, 'notificacion', data)
+      .catch(
+        (error) => console.error('[notification:socket]', error.name)
+      );
 
-// Inicializar Socket.IO
-const io = socketIO(server, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"]
+  server.on('error',
+    (error) => {
+      console.error('Error HTTP:', error.code);
+      process.exitCode = 1;
+    }
+  );
+  server.listen(
+    process.env.PORT || 3000,
+    () => console.log('Backend y Socket.IO iniciados.')
+  );
+}
+
+start().catch(
+  (error) => {
+    console.error('No se pudo iniciar el backend:', error.message);
+    process.exitCode = 1;
   }
-});
+);
 
 
-// Guardamos sockets conectados por usuario
-const usuariosConectados = new Map();
+// // Crear servidor HTTP encima del express
+// const server = http.createServer(app);
 
-/**
- * Middleware del token para sockets
- */
-io.use((socket, next) => {
-  const token = socket.handshake.auth.token;
+// // Inicializar Socket.IO
+// const io = socketIO(server, {
+//   cors: {
+//     origin: "*",
+//     methods: ["GET", "POST"]
+//   }
+// });
 
-  if (!token) return next(new Error("No token"));
 
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    socket.usuario = decoded;
-    next();
-  } catch (error) {
-    next(new Error("Token inválido"));
-  }
-});
+// // Guardamos sockets conectados por usuario
+// const usuariosConectados = new Map();
 
-/**
- * Evento principal de conexión
- */
-io.on("connection", (socket) => {
-  const userId = socket.usuario.id;
+// /**
+//  * Middleware del token para sockets
+//  */
+// io.use((socket, next) => {
+//   const token = socket.handshake.auth.token;
 
-  console.log("Usuario conectado vía WebSocket:", userId);
+//   if (!token) return next(new Error("No token"));
 
-  // Guardamos relación usuario → socket
-  usuariosConectados.set(userId, socket.id);
+//   try {
+//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+//     socket.usuario = decoded;
+//     next();
+//   } catch (error) {
+//     next(new Error("Token inválido"));
+//   }
+// });
 
-  socket.on("disconnect", () => {
-    console.log("Usuario desconectado:", userId);
-    usuariosConectados.delete(userId);
-  });
-});
+// /**
+//  * Evento principal de conexión
+//  */
+// io.on("connection", (socket) => {
+//   const userId = socket.usuario.id;
 
-/**
- * Función global para enviar notificaciones
- */
-const sendNotification = (userId, data) => {
-  const socketId = usuariosConectados.get(userId);
-  if (socketId) {
-    io.to(socketId).emit("notificacion", data);
-  }
-};
+//   console.log("Usuario conectado vía WebSocket:", userId);
 
-// La hacemos global para usarla desde controladores
-global.sendNotification = sendNotification;
+//   // Guardamos relación usuario → socket
+//   usuariosConectados.set(userId, socket.id);
 
-server.listen(PORT, () => {
-  console.log(`🚀 Servidor backend corriendo con WebSockets en el puerto ${PORT}`);
-});
+//   socket.on("disconnect", () => {
+//     console.log("Usuario desconectado:", userId);
+//     usuariosConectados.delete(userId);
+//   });
+// });
+
+// /**
+//  * Función global para enviar notificaciones
+//  */
+// const sendNotification = (userId, data) => {
+//   const socketId = usuariosConectados.get(userId);
+//   if (socketId) {
+//     io.to(socketId).emit("notificacion", data);
+//   }
+// };
+
+// // La hacemos global para usarla desde controladores
+// global.sendNotification = sendNotification;
+
+// // Inicializar Socket.IO
+// initSocket(server);
+
+// server.listen(PORT, () => {
+//   console.log(`🚀 Servidor backend corriendo con WebSockets en el puerto ${PORT}`);
+// });

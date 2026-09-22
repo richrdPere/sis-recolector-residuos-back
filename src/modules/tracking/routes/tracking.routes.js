@@ -39,24 +39,24 @@ router.use(verificarToken);
 // ===============================================
 // Transmisión desde la aplicación móvil
 // ===============================================
-router.post('/ubicaciones/lote',
-  autorizarRoles(
-    ...ROLES_TRANSMISION,
-  ),
-  registerLocationBatchController,
-);
-
-router.post('/ubicaciones',
+router.post('/ubicaciones', // Movil
   autorizarRoles(
     ...ROLES_TRANSMISION,
   ),
   registerLocationController,
 );
 
+router.post('/ubicaciones/lote', // Movil
+  autorizarRoles(
+    ...ROLES_TRANSMISION,
+  ),
+  registerLocationBatchController,
+);
+
 // ===============================================
 // Monitoreo municipal
 // ===============================================
-router.get('/vehiculos-activos',
+router.get('/vehiculos-activos', 
   autorizarRoles(
     ...ROLES_CONSULTA,
   ),

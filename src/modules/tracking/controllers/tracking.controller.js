@@ -228,10 +228,7 @@ const getRoutePositionsController = async (req, res, next) => {
 
     const data =
       await getRoutePositionsService({
-        id_recorrido:
-          req.params
-            .idRecorrido,
-
+        id_recorrido: req.params.idRecorrido,
         page,
         limit,
         fecha_desde,

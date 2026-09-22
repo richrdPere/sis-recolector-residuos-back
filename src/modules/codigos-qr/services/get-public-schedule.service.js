@@ -20,7 +20,7 @@ const {
   findNextCollection,
   getRoutePublicName,
   getZonePublicName,
-} = require(  '../utils/public-consultation.utils');
+} = require('../utils/public-consultation.utils');
 
 // Modelos
 const {
@@ -32,129 +32,200 @@ const {
 // ===============================================
 // SERVICE: Obtener cronograma publico
 // ===============================================
-const getRouteSchedule =
-  async ({
-    ruta,
-    referenceDate,
-  }) => {
-    const referenceDateOnly =
-      formatDateOnly(
-        referenceDate,
-      );
+// const getRouteSchedule = async ({
+//   ruta,
+//   referenceDate,
+// }) => {
+//   const referenceDateOnly =
+//     formatDateOnly(
+//       referenceDate,
+//     );
 
-    const searchEnd =
-      formatDateOnly(
-        addDays(
-          referenceDate,
-          90,
-        ),
-      );
+//   const searchEnd =
+//     formatDateOnly(
+//       addDays(
+//         referenceDate,
+//         90,
+//       ),
+//     );
 
-    const horarios =
-      await RutaHorario.findAll({
-        where: {
-          id_ruta:
-            ruta.id_ruta,
+//   const horarios =
+//     await RutaHorario.findAll({
+//       where: {
+//         id_ruta:
+//           ruta.id_ruta,
 
-          estado: true,
+//         estado: true,
 
-          [Op.and]: [
-            {
-              [Op.or]: [
-                {
-                  fecha_inicio:
-                    null,
-                },
-                {
-                  fecha_inicio: {
-                    [Op.lte]:
-                      searchEnd,
-                  },
-                },
-              ],
-            },
-            {
-              [Op.or]: [
-                {
-                  fecha_fin:
-                    null,
-                },
-                {
-                  fecha_fin: {
-                    [Op.gte]:
-                      referenceDateOnly,
-                  },
-                },
-              ],
-            },
-          ],
-        },
+//         [Op.and]: [
+//           {
+//             [Op.or]: [
+//               {
+//                 fecha_inicio:
+//                   null,
+//               },
+//               {
+//                 fecha_inicio: {
+//                   [Op.lte]:
+//                     searchEnd,
+//                 },
+//               },
+//             ],
+//           },
+//           {
+//             [Op.or]: [
+//               {
+//                 fecha_fin:
+//                   null,
+//               },
+//               {
+//                 fecha_fin: {
+//                   [Op.gte]:
+//                     referenceDateOnly,
+//                 },
+//               },
+//             ],
+//           },
+//         ],
+//       },
 
-        order: [
-          [
-            'dia_semana',
-            'ASC',
-          ],
-          [
-            'hora_inicio',
-            'ASC',
-          ],
-        ],
-      });
+//       order: [
+//         [
+//           'dia_semana',
+//           'ASC',
+//         ],
+//         [
+//           'hora_inicio',
+//           'ASC',
+//         ],
+//       ],
+//     });
 
-    const scheduleData =
-      horarios.map(
-        (horario) => {
-          const item =
-            horario.get({
-              plain: true,
-            });
+//   const scheduleData =
+//     horarios.map(
+//       (horario) => {
+//         const item =
+//           horario.get({
+//             plain: true,
+//           });
 
-          return {
-            dia_semana:
-              item.dia_semana,
+//         return {
+//           dia_semana:
+//             item.dia_semana,
 
-            hora_inicio:
-              item.hora_inicio,
+//           hora_inicio:
+//             item.hora_inicio,
 
-            hora_fin:
-              item.hora_fin,
+//           hora_fin:
+//             item.hora_fin,
 
-            frecuencia:
-              item.frecuencia,
+//           frecuencia:
+//             item.frecuencia,
 
-            fecha_inicio:
-              item.fecha_inicio,
+//           fecha_inicio:
+//             item.fecha_inicio,
 
-            fecha_fin:
-              item.fecha_fin,
-          };
-        },
-      );
+//           fecha_fin:
+//             item.fecha_fin,
+//         };
+//       },
+//     );
 
-    return {
-      ruta: {
-        id_ruta:
-          ruta.id_ruta,
+//   return {
+//     ruta: {
+//       id_ruta:
+//         ruta.id_ruta,
 
-        nombre:
-          getRoutePublicName(
-            ruta,
-          ),
+//       nombre:
+//         getRoutePublicName(
+//           ruta,
+//         ),
+//     },
+
+//     horarios:
+//       scheduleData,
+
+//     proxima_recoleccion:
+//       findNextCollection({
+//         schedules:
+//           scheduleData,
+
+//         referenceDate,
+//       }),
+//   };
+// };
+const getRouteSchedule = async ({
+  ruta,
+  referenceDate,
+}) => {
+  const referenceDateOnly = formatDateOnly(referenceDate);
+
+  const searchEnd = formatDateOnly(
+    addDays(referenceDate, 90),
+  );
+
+  const horarios = await RutaHorario.findAll({
+    where: {
+      id_ruta: ruta.id_ruta,
+      estado: true,
+
+      // El horario comienza antes o dentro del intervalo.
+      fecha_vigencia_desde: {
+        [Op.lte]: searchEnd,
       },
 
-      horarios:
-        scheduleData,
+      // No tiene fecha final o todavía está vigente
+      // al inicio del intervalo consultado.
+      [Op.or]: [
+        {
+          fecha_vigencia_hasta: null,
+        },
+        {
+          fecha_vigencia_hasta: {
+            [Op.gte]: referenceDateOnly,
+          },
+        },
+      ],
+    },
 
-      proxima_recoleccion:
-        findNextCollection({
-          schedules:
-            scheduleData,
+    order: [
+      ['dia_semana', 'ASC'],
+      ['hora_inicio', 'ASC'],
+    ],
+  });
 
-          referenceDate,
-        }),
+  const scheduleData = horarios.map((horario) => {
+    const item = horario.get({
+      plain: true,
+    });
+
+    return {
+      dia_semana: item.dia_semana,
+      hora_inicio: item.hora_inicio,
+      hora_fin: item.hora_fin,
+      frecuencia: item.frecuencia,
+
+      // Conservamos los nombres usados en tu contrato público.
+      // Los valores se obtienen de las columnas reales.
+      fecha_inicio: item.fecha_vigencia_desde,
+      fecha_fin: item.fecha_vigencia_hasta,
     };
+  });
+
+  return {
+    ruta: {
+      id_ruta: ruta.id_ruta,
+      nombre: getRoutePublicName(ruta),
+    },
+
+    horarios: scheduleData,
+
+    proxima_recoleccion: findNextCollection({
+      schedules: scheduleData,
+      referenceDate,
+    }),
   };
+};
 
 const getPublicScheduleService =
   async ({

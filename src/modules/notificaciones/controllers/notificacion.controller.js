@@ -173,10 +173,9 @@ const createNotificationController = async (req, res, next) => {
 */
 const getMyNotificationsController = async (req, res, next) => {
   try {
-    const idUsuario =
-      getAuthenticatedUserId(
-        req,
-      );
+    const idUsuario = getAuthenticatedUserId(
+      req,
+    );
 
     const {
       page = 1,
@@ -188,19 +187,17 @@ const getMyNotificationsController = async (req, res, next) => {
       search = null,
     } = req.query;
 
-    const data =
-      await getMyNotificationsService({
-        id_usuario:
-          idUsuario,
+    const data = await getMyNotificationsService({
+      id_usuario: idUsuario,
 
-        page,
-        limit,
-        leida,
-        archivada,
-        tipo_notificacion,
-        prioridad,
-        search,
-      });
+      page,
+      limit,
+      leida,
+      archivada,
+      tipo_notificacion,
+      prioridad,
+      search,
+    });
 
     return res
       .status(200)
@@ -229,8 +226,7 @@ const getMyNotificationByIdController = async (req, res, next) => {
 
     const data =
       await getMyNotificationByIdService({
-        id_notificacion_usuario:
-          req.params.idNotificacionUsuario,
+        id_notificacion_usuario: req.params.idNotificacionUsuario,
         id_usuario: idUsuario,
       });
 

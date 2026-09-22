@@ -79,20 +79,10 @@ const assertTrackingTransmitter = async ({
     await ProgramacionPersonal
       .findOne({
         where: {
-          id_programacion:
-            recorrido
-              .id_programacion,
-
-          id_personal:
-            personal
-              .id_personal,
-
-          funcion:
-            'CONDUCTOR',
-
-          es_principal:
-            true,
-
+          id_programacion: recorrido.id_programacion,
+          id_personal: personal.id_personal,
+          funcion: 'CONDUCTOR',
+          es_principal: true,
           estado_asignacion: {
             [Op.in]: [
               'ACEPTADO',
@@ -123,11 +113,7 @@ const assertTrackingTransmitter = async ({
 // ===============================================
 
 const assertRecorridoAllowsTracking = (recorrido,) => {
-  if (
-    recorrido
-      .estado_recorrido !==
-    'EN_CURSO'
-  ) {
+  if (recorrido.estado_recorrido !== 'EN_CURSO') {
     throw new AppError(
       'El recorrido no se encuentra en curso.',
       409,
@@ -135,10 +121,7 @@ const assertRecorridoAllowsTracking = (recorrido,) => {
     );
   }
 
-  if (
-    recorrido.estado ===
-    false
-  ) {
+  if (recorrido.estado === false) {
     throw new AppError(
       'El recorrido se encuentra inactivo.',
       409,
@@ -160,37 +143,26 @@ const updateLastLocation = async ({
   | Eso serializa las ubicaciones del mismo recorrido.
   */
 
-  const currentLastLocation =
-    await RecorridoUltimaUbicacion
-      .findOne({
-        where: {
-          id_recorrido:
-            posicion
-              .id_recorrido,
-        },
-
-        transaction,
-
-        lock:
-          transaction.LOCK
-            .UPDATE,
-      });
+  const currentLastLocation = await RecorridoUltimaUbicacion
+    .findOne({
+      where: {
+        id_recorrido: posicion.id_recorrido,
+      },
+      transaction,
+      lock:
+        transaction.LOCK
+          .UPDATE,
+    });
 
   /*
   | Una posición inválida queda en el historial,
   | pero no reemplaza la última ubicación válida.
   */
 
-  if (
-    posicion.es_valida ===
-    false
-  ) {
+  if (posicion.es_valida === false) {
     return {
-      updated:
-        false,
-
-      lastLocation:
-        currentLastLocation,
+      updated: false,
+      lastLocation: currentLastLocation,
     };
   }
 

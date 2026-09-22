@@ -70,5 +70,4 @@ router.get('/:idNotificacionUsuario', getMyNotificationByIdController);
 router.patch('/:idNotificacionUsuario/leer', markNotificationReadController);
 router.patch('/:idNotificacionUsuario/archivar', archiveNotificationController);
 
-module.exports =
-    router;
+module.exports = router;
