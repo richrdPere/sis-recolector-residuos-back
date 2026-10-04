@@ -11,8 +11,7 @@ const {
 // SERVICE: Obtener incidadores de recoleccion
 // =======================================================
 const getCollectionIndicatorsService = async (filters = {}) => {
-  const normalizedFilters =
-    validateDashboardFilters(filters);
+  const normalizedFilters = validateDashboardFilters(filters);
 
   const dataset = await getDashboardDataset(
     normalizedFilters,

@@ -18,6 +18,7 @@ const {
     updateVehiculoController,
     changeEstadoVehiculoController,
     deleteVehiculoController,
+    getLastCodigoVehiculoController,
 } = require('../controllers/vehiculo.controller');
 
 // ROUTES
@@ -31,7 +32,7 @@ router.get('/paginado',
         'ADMIN',
         'SUPERVISOR',
         'OPERADOR',
-    ), 
+    ),
     getVehiculosPaginadoController,
 );
 
@@ -53,5 +54,6 @@ router.post('/create', autorizarRoles('ADMIN'), createVehiculoController);
 router.put('/update/:id', autorizarRoles('ADMIN'), updateVehiculoController);
 router.patch('/estado/:id', autorizarRoles('ADMIN'), changeEstadoVehiculoController);
 router.delete('/delete/:id', autorizarRoles('ADMIN'), deleteVehiculoController);
+router.get('/codigo', autorizarRoles('ADMIN'), getLastCodigoVehiculoController);
 
 module.exports = router;

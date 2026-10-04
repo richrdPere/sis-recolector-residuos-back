@@ -292,8 +292,7 @@ const loginService = async ({
 
     await usuario.update(
       {
-        ultimo_acceso:
-          loginDate,
+        ultimo_acceso: loginDate,
       },
       {
         transaction,
@@ -342,72 +341,32 @@ const loginService = async ({
   */
 
   const usuarioData = {
-    id_usuario:
-      usuario.id_usuario,
-
-    id_persona:
-      usuario.id_persona,
-
-    email:
-      usuario.email,
-
-    username:
-      usuario.username,
-
-    estado:
-      usuario.estado,
-
-    ultimo_acceso:
-      loginDate,
+    id_usuario: usuario.id_usuario,
+    id_persona: usuario.id_persona,
+    email: usuario.email,
+    username: usuario.username,
+    estado: usuario.estado,
+    ultimo_acceso: loginDate,
 
     persona: {
-      id_persona:
-        usuario.persona.id_persona,
-
-      nombres:
-        usuario.persona.nombres,
-
-      apellidos:
-        usuario.persona.apellidos,
-
-      tipo_documento:
-        usuario.persona
-          .tipo_documento,
-
-      numero_documento:
-        usuario.persona
-          .numero_documento,
-
-      fecha_nacimiento:
-        usuario.persona
-          .fecha_nacimiento,
-
-      celular:
-        usuario.persona.celular,
-
-      direccion:
-        usuario.persona.direccion,
-
-      foto_url:
-        usuario.persona.foto_url,
-
-      genero:
-        usuario.persona.genero,
-
-      estado:
-        usuario.persona.estado,
+      id_persona: usuario.persona.id_persona,
+      nombres: usuario.persona.nombres,
+      apellidos: usuario.persona.apellidos,
+      tipo_documento: usuario.persona.tipo_documento,
+      numero_documento: usuario.persona.numero_documento,
+      fecha_nacimiento: usuario.persona.fecha_nacimiento,
+      celular: usuario.persona.celular,
+      direccion: usuario.persona.direccion,
+      foto_url: usuario.persona.foto_url,
+      genero: usuario.persona.genero,
+      estado: usuario.persona.estado,
     },
 
     roles:
       usuario.roles.map((rol) => ({
-        id_rol:
-          rol.id_rol,
-
-        nombre:
-          rol.nombre,
-
-        descripcion:
-          rol.descripcion,
+        id_rol: rol.id_rol,
+        nombre: rol.nombre,
+        descripcion: rol.descripcion,
       })),
   };
 
@@ -418,23 +377,12 @@ const loginService = async ({
   */
 
   return {
-    access_token:
-      accessToken,
-
-    refresh_token:
-      refreshToken,
-
-    token_type:
-      'Bearer',
-
-    expires_in:
-      accessTokenExpiresIn,
-
-    refresh_expires_in:
-      refreshTokenExpiresIn,
-
-    usuario:
-      usuarioData,
+    access_token: accessToken,
+    refresh_token: refreshToken,
+    token_type: 'Bearer',
+    expires_in: accessTokenExpiresIn,
+    refresh_expires_in: refreshTokenExpiresIn,
+    usuario: usuarioData,
   };
 };
 

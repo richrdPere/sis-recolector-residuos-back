@@ -99,8 +99,7 @@ router.patch('/estado/:id',
     changeRutaEstadoController,
 );
 
-router.delete(
-    '/delete/:id',
+router.delete('/delete/:id',
     autorizarRoles(
         'SUPER_ADMIN',
         'ADMIN',

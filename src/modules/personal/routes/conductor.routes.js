@@ -20,8 +20,7 @@ const {
 
 
 // ROUTES
-router.post(
-    '/:idPersonal/conductor',
+router.post('/:idPersonal/conductor',
     autorizarRoles(
         'SUPER_ADMIN',
         'ADMIN',
@@ -29,8 +28,7 @@ router.post(
     createConductorController,
 );
 
-router.get(
-    '/:idPersonal/conductor',
+router.get('/:idPersonal/conductor',
     autorizarRoles(
         'SUPER_ADMIN',
         'ADMIN',
@@ -40,8 +38,7 @@ router.get(
     getConductorByIdController,
 );
 
-router.put(
-    '/:idPersonal/conductor',
+router.put('/:idPersonal/conductor',
     autorizarRoles(
         'SUPER_ADMIN',
         'ADMIN',
@@ -49,8 +46,7 @@ router.put(
     updateConductorController,
 );
 
-router.patch(
-    '/:idPersonal/conductor/estado',
+router.patch('/:idPersonal/conductor/estado',
     autorizarRoles(
         'SUPER_ADMIN',
         'ADMIN',

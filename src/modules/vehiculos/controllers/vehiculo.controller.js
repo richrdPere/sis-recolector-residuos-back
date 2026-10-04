@@ -5,6 +5,7 @@ const {
     updateVehiculoService,
     changeEstadoVehiculoService,
     deleteVehiculoService,
+    getLastCodigoVehiculoService,
 } = require('../services');
 
 /*
@@ -12,7 +13,6 @@ const {
 | 1. Crear vehículo
 |--------------------------------------------------------------------------
 */
-
 const createVehiculoController = async (
     req,
     res,
@@ -32,13 +32,11 @@ const createVehiculoController = async (
         next(error);
     }
 };
-
 /*
 |--------------------------------------------------------------------------
 | 2. Listar vehículos + Paginado
 |--------------------------------------------------------------------------
 */
-
 const getVehiculosPaginadoController = async (
     req,
     res,
@@ -65,13 +63,11 @@ const getVehiculosPaginadoController = async (
         next(error);
     }
 };
-
 /*
 |--------------------------------------------------------------------------
 | 3. Obtener vehículo
 |--------------------------------------------------------------------------
 */
-
 const getVehiculoByIdController = async (
     req,
     res,
@@ -93,13 +89,11 @@ const getVehiculoByIdController = async (
         next(error);
     }
 };
-
 /*
 |--------------------------------------------------------------------------
 | 4. Actualizar vehículo
 |--------------------------------------------------------------------------
 */
-
 const updateVehiculoController = async (
     req,
     res,
@@ -122,54 +116,60 @@ const updateVehiculoController = async (
         next(error);
     }
 };
-
 /*
 |--------------------------------------------------------------------------
 | 5. Activar o desactivar vehículo
 |--------------------------------------------------------------------------
 */
-
-const changeEstadoVehiculoController =
-    async (req, res, next) => {
-        try {
-            const vehiculo =
-                await changeEstadoVehiculoService({
-                    id_vehiculo: req.params.id,
-                    estado: req.body.estado,
-                });
-
-            return res.status(200).json({
-                success: true,
-                message:
-                    'Estado del vehículo actualizado correctamente.',
-                data: vehiculo,
+const changeEstadoVehiculoController = async (req, res, next) => {
+    try {
+        const vehiculo =
+            await changeEstadoVehiculoService({
+                id_vehiculo: req.params.id,
+                estado: req.body.estado,
             });
-        } catch (error) {
-            next(error);
-        }
-    };
 
+        return res.status(200).json({
+            success: true,
+            message:
+                'Estado del vehículo actualizado correctamente.',
+            data: vehiculo,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
 /*
 |--------------------------------------------------------------------------
 | 6. Eliminar vehículo
 |--------------------------------------------------------------------------
 */
-
-const deleteVehiculoController = async (
-    req,
-    res,
-    next,
-) => {
+const deleteVehiculoController = async (req, res, next) => {
     try {
-        const result =
-            await deleteVehiculoService(
-                req.params.id,
-            );
+        const result = await deleteVehiculoService(req.params.id);
 
         return res.status(200).json({
             success: true,
             message: 'Vehículo eliminado correctamente.',
             data: result,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+/*
+|--------------------------------------------------------------------------
+| 7. Obtener ultimo codigo de vehículo
+|--------------------------------------------------------------------------
+*/
+const getLastCodigoVehiculoController = async (req, res, next) => {
+    try {
+        const codigo = await getLastCodigoVehiculoService();
+
+        return res.status(200).json({
+            success: true,
+            message: 'Código de vehículo obtenido correctamente.',
+            data: { codigo },
         });
     } catch (error) {
         next(error);
@@ -183,4 +183,5 @@ module.exports = {
     updateVehiculoController,
     changeEstadoVehiculoController,
     deleteVehiculoController,
+    getLastCodigoVehiculoController,
 };

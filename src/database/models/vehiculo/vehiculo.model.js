@@ -341,8 +341,7 @@ const Vehiculo = sequelize.define('Vehiculo', {
     validate: {
       len: {
         args: [0, 500],
-        msg:
-          'La URL de la fotografía puede tener hasta 500 caracteres.',
+        msg: 'La URL de la fotografía puede tener hasta 500 caracteres.',
       },
     },
   },
