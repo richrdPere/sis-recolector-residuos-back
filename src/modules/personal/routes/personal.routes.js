@@ -17,6 +17,7 @@ const {
     updatePersonalController,
     changePersonalEstadoController,
     deletePersonalController,
+    getLastCodigoPersonalController,
 } = require('../controllers/personal.controller');
 
 // ROUTES
@@ -71,6 +72,17 @@ router.delete('/delete/:id',
     ),
     deletePersonalController,
 );
+
+router.get('/codigo',
+    autorizarRoles(
+        'SUPER_ADMIN',
+        'ADMIN',
+        'SUPERVISOR',
+        'OPERADOR',
+    ),
+    getLastCodigoPersonalController
+);
+
 
 module.exports = router;
 

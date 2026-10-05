@@ -3,7 +3,7 @@ const {
   getConductoresDisponiblesService,
   getRecolectoresDisponiblesService,
   getPersonalByRolService,
-} = require('../services/disponibilidad/disponibilidad.service');
+} = require('../services/disponibilidad');
 
 /*
 |--------------------------------------------------------------------------
@@ -63,6 +63,7 @@ const getPersonalByRolController = async (req, res, next) => {
     next(error);
   }
 };
+
 
 module.exports = {
   getConductoresDisponiblesController,

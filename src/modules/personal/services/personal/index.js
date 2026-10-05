@@ -4,7 +4,7 @@ const deletePersonalService = require('./delete-personal.service');
 const getPersonalPaginatedService = require('./get-personal-paginated.service');
 const getPersonalByIdService = require('./get-personal-by-id.service');
 const updatePersonalService = require('./update-personal.service');
-
+const getLastCodigoPersonalService = require("./get-last-codigo-personal.service");
 
 module.exports = {
     changePersonalEstadoService,
@@ -13,4 +13,5 @@ module.exports = {
     getPersonalPaginatedService,
     getPersonalByIdService,
     updatePersonalService,
+    getLastCodigoPersonalService,
 };

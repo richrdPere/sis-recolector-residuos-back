@@ -16,6 +16,8 @@ db.RefreshToken = require('./auth/refresh_token.model');
 
 // - Vehículos
 db.Vehiculo = require("./vehiculo/vehiculo.model");
+db.VehiculoMantenimiento = require("./vehiculo/vehiculo-mantenimiento.model");
+db.VehiculoMantenimientoHistorial = require("./vehiculo/vehiculo-mantenimiento-historial.model");
 
 // - Personal operativo
 db.PersonalOperativo = require('./personal/personal_operativo.model');

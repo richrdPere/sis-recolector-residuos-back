@@ -117,6 +117,14 @@ const PersonalOperativo = sequelize.define('PersonalOperativo', {
         allowNull: true,
     },
 
+    // permanencia_laboral: {
+    //     type: DataTypes.ENUM(
+    //         'PERMANENTE',
+    //         'TEMPORAL',
+    //     ),
+    //     allowNull: false,
+    // },
+
     estado_laboral: {
         type: DataTypes.ENUM(
             'ACTIVO',

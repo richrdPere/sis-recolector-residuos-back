@@ -9,7 +9,6 @@ const {
 
 router.use(verificarToken);
 
-
 // Controllers
 const {
     createConductorController,

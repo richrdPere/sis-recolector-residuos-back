@@ -6,6 +6,7 @@ const {
   updatePersonalService,
   changePersonalEstadoService,
   deletePersonalService,
+  getLastCodigoPersonalService,
 } = require('../services/personal');
 
 
@@ -16,10 +17,9 @@ const {
 */
 const createPersonalController = async (req, res, next) => {
   try {
-    const data =
-      await createPersonalService(
-        req.body,
-      );
+    const data = await createPersonalService(
+      req.body,
+    );
 
     return res.status(201).json({
       success: true,
@@ -138,6 +138,24 @@ const deletePersonalController = async (req, res, next) => {
     next(error);
   }
 };
+/*
+|--------------------------------------------------------------------------
+| 7. Obtener ultimo codigo de personal operativo
+|--------------------------------------------------------------------------
+*/
+const getLastCodigoPersonalController = async (req, res, next) => {
+  try {
+    const codigo = await getLastCodigoPersonalService();
+
+    return res.status(200).json({
+      success: true,
+      message: 'Código de personal obtenido correctamente.',
+      data: { codigo },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 module.exports = {
   createPersonalController,
@@ -146,4 +164,5 @@ module.exports = {
   updatePersonalController,
   changePersonalEstadoController,
   deletePersonalController,
+  getLastCodigoPersonalController,
 };

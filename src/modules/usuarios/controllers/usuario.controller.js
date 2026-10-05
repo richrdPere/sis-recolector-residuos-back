@@ -10,7 +10,8 @@ const {
   deleteUsuarioService,
   resetPasswordUsuarioService,
   updateUsuarioService,
-  getRolesService
+  getRolesService,
+  getUsuariosSinPersonalService,
 } = require("../services");
 
 // *********************************************************
@@ -152,7 +153,7 @@ const getUsuarioRolesController = async (req, res) => {
 };
 
 // *********************************************************
-// 6. ROLES DE UN USUARIO
+// 7. ROLES DE UN USUARIO
 // *********************************************************
 const changeEstadoUsuarioController = async (req, res) => {
   return responderSolicitud(
@@ -168,7 +169,7 @@ const changeEstadoUsuarioController = async (req, res) => {
 };
 
 // *********************************************************
-// 7. CREAR USUARIO
+// 8. CREAR USUARIO
 // *********************************************************
 const createUsuarioController = async (req, res) => {
   return responderSolicitud(
@@ -180,7 +181,7 @@ const createUsuarioController = async (req, res) => {
 };
 
 // *********************************************************
-// 8. ACTUALIZAR USUARIO
+// 9. ACTUALIZAR USUARIO
 // *********************************************************
 const updateUsuarioController = async (req, res) => {
   return responderSolicitud(
@@ -198,7 +199,7 @@ const updateUsuarioController = async (req, res) => {
 };
 
 // *********************************************************
-// 9. ACTUALIZAR USUARIO
+// 10. ACTUALIZAR USUARIO
 // *********************************************************
 const deleteUsuarioController = async (req, res) => {
   return responderSolicitud(
@@ -213,7 +214,7 @@ const deleteUsuarioController = async (req, res) => {
 };
 
 // *********************************************************
-// 10. RESTABLECER CONTRASEÑA
+// 11. RESTABLECER CONTRASEÑA
 // *********************************************************
 const resetPasswordUsuarioController = async (req, res) => {
   return responderSolicitud(
@@ -229,7 +230,7 @@ const resetPasswordUsuarioController = async (req, res) => {
 };
 
 // *********************************************************
-// 11. OBTENER CATÁLOGO DE ROLES
+// 12. OBTENER CATÁLOGO DE ROLES
 // *********************************************************
 const getRolesController = async (req, res) => {
   return responderSolicitud(
@@ -240,6 +241,17 @@ const getRolesController = async (req, res) => {
   );
 };
 
+// *********************************************************
+// 13. OBTENER CATÁLOGO DE ROLES
+// *********************************************************
+const getUsuariosSinPersonalController = async (req, res) => {
+  return responderSolicitud(
+    res,
+    () => getUsuariosSinPersonalService(),
+    "Usuarios sin personal obtenidos correctamente.",
+    "getUsuariosSinPersonalController"
+  );
+};
 
 module.exports = {
   getUsuariosPaginatedController,
@@ -254,4 +266,5 @@ module.exports = {
   deleteUsuarioController,
   resetPasswordUsuarioController,
   getRolesController,
+  getUsuariosSinPersonalController,
 };

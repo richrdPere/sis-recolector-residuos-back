@@ -17,6 +17,7 @@ const codigoQrPublicRoutes = require('../modules/codigos-qr/routes/codigo-qr-pub
 const monitoreoRoutes = require("../modules/monitoreo/routes/monitoreo.routes");
 const dashboardRoutes = require('../modules/monitoreo/routes/dashboard.routes');
 const usuarioRoutes = require('../modules/usuarios/routes/usuario.routes');
+const mantenimientosRoutes = require('../modules/mantenimientos/routes/mantenimientos.routes');
 
 // Rutas
 router.use("/auth", authRoutes); // COMPLETE 
@@ -34,6 +35,7 @@ router.use('/codigos-qr', codigoQrRoutes); // COMPLETE
 router.use('/publico/qr', codigoQrPublicRoutes); // COMPLETE
 router.use('/monitoreo', monitoreoRoutes); // COMPLETE
 router.use('/dashboard', dashboardRoutes); // COMPLETE
-router.use('/usuarios', usuarioRoutes); 
+router.use('/usuarios', usuarioRoutes); // COMPLETE
+router.use("/mantenimientos", mantenimientosRoutes);  
 
 module.exports = router;

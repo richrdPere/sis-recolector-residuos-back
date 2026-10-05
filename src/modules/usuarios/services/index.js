@@ -10,6 +10,7 @@ const deleteUsuarioService = require("./delete.usuario.service");
 const resetPasswordUsuarioService = require("./reset-password.service");
 const updateUsuarioService = require("./update-usuario.service");
 const getRolesService = require("./get-roles.service");
+const getUsuariosSinPersonalService = require("./get-usuarios-sin-personal.service");
 
 
 module.exports = {
@@ -25,4 +26,5 @@ module.exports = {
     resetPasswordUsuarioService,
     updateUsuarioService,
     getRolesService,
+    getUsuariosSinPersonalService,
 }

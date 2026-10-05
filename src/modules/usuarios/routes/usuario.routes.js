@@ -15,6 +15,7 @@ const {
   deleteUsuarioController,
   resetPasswordUsuarioController,
   getRolesController,
+  getUsuariosSinPersonalController,
 } = require("../controllers/usuario.controller");
 
 // Middlewares
@@ -104,6 +105,12 @@ router.delete("/delete/:id_usuario",
 router.get("/roles",
   autorizarRoles(...ROLES_CONSULTA),
   getRolesController
+);
+
+// GET /usuarios/sin-personal
+router.get("/sin-personal",
+  autorizarRoles(...ROLES_CONSULTA),
+  getUsuariosSinPersonalController
 );
 
 // *********************************************************

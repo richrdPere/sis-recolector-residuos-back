@@ -2,56 +2,89 @@
 
 module.exports = (db) => {
 
-  // ==========================================================
-  // TODO: Vehiculo - Mantenimiento Vehiculo
-  // ==========================================================
-  // db.Vehiculo.hasMany(db.MantenimientoVehiculo, {
-  //   foreignKey: 'id_vehiculo',
-  //   as: 'mantenimientos',
-  //   onUpdate: 'CASCADE',
-  //   onDelete: 'RESTRICT',
-  // });
-
-  // db.MantenimientoVehiculo.belongsTo(db.Vehiculo, {
-  //   foreignKey: 'id_vehiculo',
-  //   as: 'vehiculo',
-  //   onUpdate: 'CASCADE',
-  //   onDelete: 'RESTRICT',
-  // });
+  const {
+    Vehiculo,
+    VehiculoMantenimiento,
+    VehiculoMantenimientoHistorial,
+    Usuario
+  } = db;
 
   // ==========================================================
-  // TODO: Vehiculo - Programacion Ruta
+  // Vehiculo - Mantenimiento
   // ==========================================================
-  // db.Vehiculo.hasMany(db.ProgramacionRuta, {
-  //   foreignKey: 'id_vehiculo',
-  //   as: 'programaciones',
-  //   onUpdate: 'CASCADE',
-  //   onDelete: 'RESTRICT',
-  // });
+  Vehiculo.hasMany(VehiculoMantenimiento, {
+    foreignKey: 'id_vehiculo',
+    as: 'mantenimientos',
+  });
 
-  // db.ProgramacionRuta.belongsTo(db.Vehiculo, {
-  //   foreignKey: 'id_vehiculo',
-  //   as: 'vehiculo',
-  //   onUpdate: 'CASCADE',
-  //   onDelete: 'RESTRICT',
-  // });
+  VehiculoMantenimiento.belongsTo(Vehiculo, {
+    foreignKey: 'id_vehiculo',
+    as: 'vehiculo',
+  });
+  const responsablesMantenimiento = [
+    {
+      foreignKey: 'id_usuario_creacion',
+      aliasUsuario: 'creador',
+      aliasMantenimientos: 'mantenimientos_creados',
+    },
+    {
+      foreignKey: 'id_usuario_inicio',
+      aliasUsuario: 'usuario_inicio',
+      aliasMantenimientos: 'mantenimientos_iniciados',
+    },
+    {
+      foreignKey: 'id_usuario_finalizacion',
+      aliasUsuario: 'usuario_finalizacion',
+      aliasMantenimientos: 'mantenimientos_finalizados',
+    },
+    {
+      foreignKey: 'id_usuario_cancelacion',
+      aliasUsuario: 'usuario_cancelacion',
+      aliasMantenimientos: 'mantenimientos_cancelados',
+    },
+  ];
 
+  for (const relacion of responsablesMantenimiento) {
+    Usuario.hasMany(VehiculoMantenimiento, {
+      foreignKey: relacion.foreignKey,
+      as: relacion.aliasMantenimientos,
+    });
+
+    VehiculoMantenimiento.belongsTo(Usuario, {
+      foreignKey: relacion.foreignKey,
+      as: relacion.aliasUsuario,
+    });
+  }
 
   // ==========================================================
-  // TODO:Vehiculo - Ubicacion Vehiculo
+  // MANTENIMIENTO - HISTORIAL
   // ==========================================================
-  // db.Vehiculo.hasMany(db.UbicacionVehiculo, {
-  //   foreignKey: 'id_vehiculo',
-  //   as: 'ubicaciones',
-  //   onUpdate: 'CASCADE',
-  //   onDelete: 'RESTRICT',
-  // });
+  VehiculoMantenimiento.hasMany(VehiculoMantenimientoHistorial,
+    {
+      foreignKey: 'id_mantenimiento',
+      as: 'historial',
+    },
+  );
 
-  // db.UbicacionVehiculo.belongsTo(db.Vehiculo, {
-  //   foreignKey: 'id_vehiculo',
-  //   as: 'vehiculo',
-  //   onUpdate: 'CASCADE',
-  //   onDelete: 'RESTRICT',
-  // });
+  VehiculoMantenimientoHistorial.belongsTo(VehiculoMantenimiento,
+    {
+      foreignKey: 'id_mantenimiento',
+      as: 'mantenimiento',
+    },
+  );
+
+  // ==========================================================
+  // USUARIO → HISTORIAL
+  // ==========================================================
+
+  Usuario.hasMany(VehiculoMantenimientoHistorial, {
+    foreignKey: 'id_usuario',
+    as: 'eventos_mantenimiento',
+  });
+
+  VehiculoMantenimientoHistorial.belongsTo(Usuario, {
+    foreignKey: 'id_usuario',
+    as: 'actor',
+  });
 
 };
