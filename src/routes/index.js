@@ -36,6 +36,6 @@ router.use('/publico/qr', codigoQrPublicRoutes); // COMPLETE
 router.use('/monitoreo', monitoreoRoutes); // COMPLETE
 router.use('/dashboard', dashboardRoutes); // COMPLETE
 router.use('/usuarios', usuarioRoutes); // COMPLETE
-router.use("/mantenimientos", mantenimientosRoutes);  
+router.use("/mantenimientos", mantenimientosRoutes); // COMPLETE
 
 module.exports = router;

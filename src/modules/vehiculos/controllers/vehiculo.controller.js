@@ -6,6 +6,7 @@ const {
     changeEstadoVehiculoService,
     deleteVehiculoService,
     getLastCodigoVehiculoService,
+    getVehiculosSelectorService,
 } = require('../services');
 
 /*
@@ -13,11 +14,7 @@ const {
 | 1. Crear vehículo
 |--------------------------------------------------------------------------
 */
-const createVehiculoController = async (
-    req,
-    res,
-    next,
-) => {
+const createVehiculoController = async (req, res, next) => {
     try {
         const vehiculo =
             await createVehiculoService(req.body);
@@ -37,11 +34,7 @@ const createVehiculoController = async (
 | 2. Listar vehículos + Paginado
 |--------------------------------------------------------------------------
 */
-const getVehiculosPaginadoController = async (
-    req,
-    res,
-    next,
-) => {
+const getVehiculosPaginadoController = async (req, res, next) => {
     try {
         const result =
             await getVehiculosPaginadoService({
@@ -68,11 +61,7 @@ const getVehiculosPaginadoController = async (
 | 3. Obtener vehículo
 |--------------------------------------------------------------------------
 */
-const getVehiculoByIdController = async (
-    req,
-    res,
-    next,
-) => {
+const getVehiculoByIdController = async (req, res, next) => {
     try {
         const vehiculo =
             await getVehiculoByIdService(
@@ -94,11 +83,7 @@ const getVehiculoByIdController = async (
 | 4. Actualizar vehículo
 |--------------------------------------------------------------------------
 */
-const updateVehiculoController = async (
-    req,
-    res,
-    next,
-) => {
+const updateVehiculoController = async (req, res, next) => {
     try {
         const vehiculo =
             await updateVehiculoService(
@@ -175,6 +160,24 @@ const getLastCodigoVehiculoController = async (req, res, next) => {
         next(error);
     }
 };
+/*
+|--------------------------------------------------------------------------
+| 8. Obtener ultimo codigo de vehículo
+|--------------------------------------------------------------------------
+*/
+const getVehiculosSelectorController = async (req, res, next) => {
+    try {
+        const data = await getVehiculosSelectorService({ search: req.query.search, });
+
+        return res.status(200).json({
+            success: true,
+            message: 'Selector de vehículos obtenido correctamente.',
+            data: data,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
 
 module.exports = {
     createVehiculoController,
@@ -184,4 +187,5 @@ module.exports = {
     changeEstadoVehiculoController,
     deleteVehiculoController,
     getLastCodigoVehiculoController,
+    getVehiculosSelectorController,
 };

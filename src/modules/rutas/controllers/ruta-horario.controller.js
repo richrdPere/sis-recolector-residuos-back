@@ -81,14 +81,9 @@ const updateRutaHorarioController = async (req, res, next) => {
 const changeRutaHorarioEstadoController = async (req, res, next) => {
   try {
     const data = await changeRutaHorarioEstadoService({
-      id_ruta:
-        req.params.idRuta,
-
-      id_horario:
-        req.params.idHorario,
-
-      estado:
-        req.body.estado,
+      id_ruta: req.params.idRuta,
+      id_horario: req.params.idHorario,
+      estado: req.body.estado,
     });
 
     return res.status(200).json({

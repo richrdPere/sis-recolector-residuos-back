@@ -3,6 +3,7 @@ const AppError = require('../../../../utils/app-error');
 
 // Utils
 const { validateId } = require('../../utils/rutas-service.utils');
+const { validateOverlap } = require('../../utils/ruta-horario/ruta-horario.utils')
 
 // Modelos
 const {
