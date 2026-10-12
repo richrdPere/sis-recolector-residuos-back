@@ -33,12 +33,11 @@ const responderSolicitud = async (
       data,
     });
   } catch (error) {
-    const statusCode =
-      Number.isInteger(error.statusCode) &&
-        error.statusCode >= 400 &&
-        error.statusCode <= 599
-        ? error.statusCode
-        : 500;
+    const statusCode = Number.isInteger(error.statusCode) &&
+      error.statusCode >= 400 &&
+      error.statusCode <= 599
+      ? error.statusCode
+      : 500;
 
     if (statusCode >= 500) {
       console.error(`[${contexto}]`, error);

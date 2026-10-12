@@ -7,7 +7,7 @@ const getMantenimientosPaginatedService = require("./get-mantenimientos-paginate
 const getMantenimientosProximosService = require("./get-mantenimientos-proximos.service");
 const iniciarMantenimientoService = require("./iniciar-mantenimiento.service");
 const updateMantenimientoService = require("./update-mantenimiento.service");
-
+const getVehiculosExpedientesPaginadoService = require("./get-vehiculos-expedientes-paginado.service");
 
 module.exports = {
     cancelarMantenimientoService,
@@ -19,4 +19,5 @@ module.exports = {
     getMantenimientosProximosService,
     iniciarMantenimientoService,
     updateMantenimientoService,
+    getVehiculosExpedientesPaginadoService,
 }

@@ -4,7 +4,6 @@ const sequelize = require('../../../config/database');
 
 const Vehiculo = sequelize.define('Vehiculo', {
 
-
   id_vehiculo: {
     type: DataTypes.BIGINT,
     primaryKey: true,

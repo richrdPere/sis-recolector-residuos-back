@@ -12,6 +12,7 @@ const {
   cancelarMantenimientoController,
   getMantenimientosByVehiculoController,
   getMantenimientosProximosController,
+  getVehiculosExpedientesPaginadoController,
 } = require('../controllers/mantenimientos.controller');
 
 // MIDDLEWARES
@@ -47,6 +48,11 @@ const ROLES_GESTION = [
 router.get('/paginado',
   autorizarRoles(...ROLES_CONSULTA),
   getMantenimientosPaginatedController,
+);
+
+router.get('/expedientes',
+  autorizarRoles(...ROLES_CONSULTA),
+  getVehiculosExpedientesPaginadoController,
 );
 
 router.get('/proximos',

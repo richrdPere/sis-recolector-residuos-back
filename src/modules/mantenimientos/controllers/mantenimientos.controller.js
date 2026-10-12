@@ -8,6 +8,7 @@ const {
   cancelarMantenimientoService,
   getMantenimientosByVehiculoService,
   getMantenimientosProximosService,
+  getVehiculosExpedientesPaginadoService,
 } = require('../services');
 
 // Utils 
@@ -166,6 +167,20 @@ const getMantenimientosProximosController = async (req, res) => {
 };
 
 // *********************************************************
+// 10. OBTENER VEHICULOS PAGINADO CON DATA DE MANTENIMIENTOS
+// *********************************************************
+const getVehiculosExpedientesPaginadoController = async (req, res) => {
+  return responderSolicitud(
+    res,
+    () =>
+      getVehiculosExpedientesPaginadoService(req.query),
+    'Expedientes de vehículos obtenidos correctamente.',
+    'getVehiculosExpedientesPaginadoController',
+  );
+};
+
+
+// *********************************************************
 // EXPORTS
 // *********************************************************
 module.exports = {
@@ -178,4 +193,5 @@ module.exports = {
   cancelarMantenimientoController,
   getMantenimientosByVehiculoController,
   getMantenimientosProximosController,
+  getVehiculosExpedientesPaginadoController,
 };

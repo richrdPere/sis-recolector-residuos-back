@@ -54,33 +54,32 @@ const getMantenimientosPaginatedService = async (
     error('El sentido del ordenamiento no es válido.');
   }
 
-  const { count, rows } =
-    await VehiculoMantenimiento.findAndCountAll({
-      where: construirFiltros(query),
+  const { count, rows } = await VehiculoMantenimiento.findAndCountAll({
+    where: construirFiltros(query),
 
-      include: [
-        {
-          model: Vehiculo,
-          as: 'vehiculo',
-          paranoid: false,
+    include: [
+      {
+        model: Vehiculo,
+        as: 'vehiculo',
+        paranoid: false,
 
-          attributes: [
-            'id_vehiculo',
-            'codigo',
-            'placa',
-            'estado_operativo',
-          ],
-        },
-      ],
+        attributes: [
+          'id_vehiculo',
+          'codigo',
+          'placa',
+          'estado_operativo',
+        ],
+      },
+    ],
 
-      limit,
-      offset,
+    limit,
+    offset,
 
-      order: [
-        [sortBy, sortOrder],
-        ['id_mantenimiento', 'DESC'],
-      ],
-    });
+    order: [
+      [sortBy, sortOrder],
+      ['id_mantenimiento', 'DESC'],
+    ],
+  });
 
   return {
     items: rows.map((item) => item.toJSON()),
