@@ -14,7 +14,16 @@ module.exports = async (io, id_notificacion, read = false) => {
   const recipients = await db.NotificacionUsuario.findAll({ where: { id_notificacion } });
 
   for (const row of recipients) {
-    await emitAuthorized(io, [R.usuario(row.id_usuario)], read ? E.NOTIFICATION_READ : E.NOTIFICATION_NEW,
-      { id_notificacion, id_notificacion_usuario: row.id_notificacion_usuario, refrescar: true });
+    await emitAuthorized(
+      io,
+      [R.usuario(row.id_usuario)],
+      read ? E.NOTIFICATION_READ : E.NOTIFICATION_NEW,
+
+      {
+        id_notificacion,
+        id_notificacion_usuario: row.id_notificacion_usuario,
+        refrescar: true
+      }
+    );
   }
 };

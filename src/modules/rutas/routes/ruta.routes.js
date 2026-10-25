@@ -20,6 +20,8 @@ const {
     changeRutaEstadoRutaController,
     changeRutaEstadoController,
     deleteRutaController,
+    getLastCodigoRutaController,
+    getZonasResumenRutasPaginadoController,
 } = require('../controllers/ruta.controller');
 
 // ROUTES
@@ -65,6 +67,22 @@ router.get('/view/:id',
     getRutaByIdController,
 );
 
+router.get('/codigo', autorizarRoles(
+    'SUPER_ADMIN',
+    'ADMIN',
+    'SUPERVISOR',
+    'OPERADOR',
+), getLastCodigoRutaController);
+
+router.get('/resumen-rutas/paginado',
+    autorizarRoles(
+        'SUPER_ADMIN',
+        'ADMIN',
+        'SUPERVISOR',
+        'OPERADOR',
+    ),
+    getZonasResumenRutasPaginadoController,
+);
 
 // - Administración
 router.post('/create',

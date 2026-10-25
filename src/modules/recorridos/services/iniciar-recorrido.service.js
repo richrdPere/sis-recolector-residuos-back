@@ -2,24 +2,10 @@ const db = require('../../../database/models');
 const AppError = require('../../../utils/app-error');
 
 // Constants
-const {
-  ESTADOS_RECORRIDO,
-  ESTADOS_PROGRAMACION,
-  ESTADOS_VEHICULO,
-  TIPOS_EVENTO_RECORRIDO,
-} = require('../utils/recorrido.constants');
+const { ESTADOS_RECORRIDO, ESTADOS_PROGRAMACION, ESTADOS_VEHICULO, TIPOS_EVENTO_RECORRIDO } = require('../utils/recorrido.constants');
 
 // Validations
-const {
-  validateId,
-  validateCoordinates,
-  validatePrecision,
-  validateMileage,
-  validateEventDate,
-  validateIdempotencyKey,
-  normalizeOrigin,
-  validateObservation,
-} = require('../validations/recorrido.validation');
+const { validateId, validateCoordinates, validatePrecision, validateMileage, validateEventDate, validateIdempotencyKey, normalizeOrigin, validateObservation } = require('../validations/recorrido.validation');
 
 // Uitls
 const {
@@ -111,21 +97,17 @@ const iniciarRecorridoService = async ({
     );
   }
 
-  const transaction =
-    await sequelize.transaction();
+  const transaction = await sequelize.transaction();
 
   try {
-    const programacion =
-      await getProgramacionOrFail(
-        programmingId,
-        transaction,
-        true,
-      );
+    const programacion = await getProgramacionOrFail(
+      programmingId,
+      transaction,
+      true,
+    );
 
     if (
-      programacion
-        .estado_programacion !==
-      ESTADOS_PROGRAMACION.ACEPTADA
+      programacion.estado_programacion !== ESTADOS_PROGRAMACION.ACEPTADA
     ) {
       throw new AppError(
         'La programación debe estar aceptada para iniciar el recorrido.',
@@ -156,13 +138,11 @@ const iniciarRecorridoService = async ({
     const existingRecorrido =
       await Recorrido.findOne({
         where: {
-          id_programacion:
-            programmingId,
+          id_programacion: programmingId,
         },
 
         transaction,
-        lock:
-          transaction.LOCK.UPDATE,
+        lock: transaction.LOCK.UPDATE,
       });
 
     if (existingRecorrido) {
@@ -173,12 +153,11 @@ const iniciarRecorridoService = async ({
       );
     }
 
-    const vehiculo =
-      await getVehiculoOrFail(
-        programacion.id_vehiculo,
-        transaction,
-        true,
-      );
+    const vehiculo = await getVehiculoOrFail(
+      programacion.id_vehiculo,
+      transaction,
+      true,
+    );
 
     if (
       [
@@ -198,75 +177,53 @@ const iniciarRecorridoService = async ({
       );
     }
 
-    const recorrido =
-      await Recorrido.create(
-        {
-          id_programacion:
-            programmingId,
+    const recorrido = await Recorrido.create(
+      {
+        id_programacion: programmingId,
 
-          id_usuario_inicio:
-            userId,
+        id_usuario_inicio: userId,
 
-          estado_recorrido:
-            ESTADOS_RECORRIDO
-              .EN_CURSO,
+        estado_recorrido: ESTADOS_RECORRIDO.EN_CURSO,
 
-          fecha_hora_inicio:
-            eventDate,
+        fecha_hora_inicio: eventDate,
 
-          latitud_inicio:
-            location.latitud,
+        latitud_inicio: location.latitud,
 
-          longitud_inicio:
-            location.longitud,
+        longitud_inicio: location.longitud,
 
-          precision_inicio:
-            accuracy,
+        precision_inicio: accuracy,
 
-          kilometraje_inicio:
-            initialMileage,
+        kilometraje_inicio: initialMileage,
 
-          observacion_inicio:
-            observation,
+        observacion_inicio: observation,
 
-          estado: true,
-        },
-        {
-          transaction,
-        },
-      );
+        estado: true,
+      },
+      {
+        transaction,
+      },
+    );
 
     await createRecorridoEvent({
-      id_recorrido:
-        recorrido.id_recorrido,
+      id_recorrido: recorrido.id_recorrido,
 
-      id_usuario:
-        userId,
+      id_usuario: userId,
 
-      tipo_evento:
-        TIPOS_EVENTO_RECORRIDO
-          .INICIO,
+      tipo_evento: TIPOS_EVENTO_RECORRIDO.INICIO,
 
-      fecha_evento:
-        eventDate,
+      fecha_evento: eventDate,
 
-      latitud:
-        location.latitud,
+      latitud: location.latitud,
 
-      longitud:
-        location.longitud,
+      longitud: location.longitud,
 
-      precision_gps:
-        accuracy,
+      precision_gps: accuracy,
 
-      observacion:
-        observation,
+      observacion: observation,
 
-      clave_idempotencia:
-        idempotencyKey,
+      clave_idempotencia: idempotencyKey,
 
-      origen:
-        eventOrigin,
+      origen: eventOrigin,
 
       ip,
       user_agent,
@@ -275,9 +232,7 @@ const iniciarRecorridoService = async ({
 
     await programacion.update(
       {
-        estado_programacion:
-          ESTADOS_PROGRAMACION
-            .EN_CURSO,
+        estado_programacion: ESTADOS_PROGRAMACION.EN_CURSO,
       },
       {
         transaction,
@@ -286,9 +241,7 @@ const iniciarRecorridoService = async ({
 
     await vehiculo.update(
       {
-        estado_operativo:
-          ESTADOS_VEHICULO
-            .EN_RUTA,
+        estado_operativo: ESTADOS_VEHICULO.EN_RUTA,
       },
       {
         transaction,

@@ -7,6 +7,8 @@ const getRutasActivasService = require("./get-rutas-activas.service");
 const getRutasByZonaService = require("./get-rutas-by-zona.service");
 const getRutasPaginatedService = require("./get-rutas-paginated.service");
 const updateRutaService = require("./update-ruta.service");
+const getLastCodigoRutaService = require("./get-last-codigo-ruta.service");
+const getZonasResumenRutasPaginadoService = require("./get-zonas-resumen-rutas-paginado.service");
 
 module.exports = {
     changeRutaEstadoRutaService,
@@ -18,4 +20,6 @@ module.exports = {
     getRutasByZonaService,
     getRutasPaginatedService,
     updateRutaService,
+    getLastCodigoRutaService,
+    getZonasResumenRutasPaginadoService,
 }

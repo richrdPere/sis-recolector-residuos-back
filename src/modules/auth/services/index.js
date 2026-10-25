@@ -5,6 +5,7 @@ const logoutService = require('./logout.service');
 const logoutAllService = require('./logout-all.service');
 const getAuthProfileService = require('./get-auth-profile.service');
 const changePasswordService = require('./change-password.service');
+const registerCiudadanoService = require("./register-ciudadano.service");
 
 module.exports = {
     createUsuarioService,
@@ -14,4 +15,5 @@ module.exports = {
     logoutAllService,
     getAuthProfileService,
     changePasswordService,
+    registerCiudadanoService,
 };

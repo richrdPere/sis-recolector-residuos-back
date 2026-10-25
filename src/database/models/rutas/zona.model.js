@@ -1,14 +1,7 @@
-const {
-  DataTypes,
-} = require('sequelize');
+const { DataTypes } = require('sequelize');
+const sequelize = require('../../../config/database');
 
-const sequelize = require(
-  '../../../config/database',
-);
-
-const validateCoordinate = (
-  coordinate,
-) => {
+const validateCoordinate = (coordinate) => {
   if (
     !Array.isArray(coordinate) ||
     coordinate.length < 2

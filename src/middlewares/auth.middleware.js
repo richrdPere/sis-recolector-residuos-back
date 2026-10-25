@@ -259,7 +259,7 @@ const autorizarRoles = (
 
       const rolesUsuario = normalizeRoles(req.usuario.roles);
 
-      console.log("ROLES DEL USER: ", rolesUsuario);
+      // console.log("ROLES DEL USER: ", rolesUsuario);
 
       if (!rolesUsuario.length) {
         throw new AppError(

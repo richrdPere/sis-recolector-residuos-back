@@ -15,13 +15,10 @@ const {
 // SERVICE: Activar ruta version
 // ===============================================
 const activarRutaVersionService = async (idVersion) => {
-  const id = validateId(
-    idVersion,
-    'identificador de la versión',
-  );
 
-  const transaction =
-    await sequelize.transaction();
+  const id = validateId(idVersion, 'identificador de la versión');
+
+  const transaction = await sequelize.transaction();
 
   try {
     const version =
@@ -71,11 +68,7 @@ const activarRutaVersionService = async (idVersion) => {
     const hasEnd = points.some((point) => point.tipo_punto === 'FINAL',
     );
 
-    if (
-      points.length < 2 ||
-      !hasStart ||
-      !hasEnd
-    ) {
+    if (points.length < 2 || !hasStart || !hasEnd) {
       throw new AppError(
         'La versión debe tener como mínimo un punto inicial y uno final.',
         409,
@@ -89,9 +82,7 @@ const activarRutaVersionService = async (idVersion) => {
       },
       {
         where: {
-          id_ruta:
-            version.id_ruta,
-
+          id_ruta: version.id_ruta,
           vigente: true,
         },
 

@@ -8,6 +8,8 @@ const {
   changeRutaEstadoRutaService,
   changeRutaEstadoService,
   deleteRutaService,
+  getLastCodigoRutaService,
+  getZonasResumenRutasPaginadoService,
 } = require('../services/ruta');
 
 /*
@@ -219,7 +221,42 @@ const deleteRutaController = async (req, res, next) => {
     next(error);
   }
 };
+/*
+|--------------------------------------------------------------------------
+| 10. Obtener ultimo codigo de ruta
+|--------------------------------------------------------------------------
+*/
+const getLastCodigoRutaController = async (req, res, next) => {
+  try {
+    const codigo = await getLastCodigoRutaService();
 
+    return res.status(200).json({
+      success: true,
+      message: 'Código de la ruta obtenido correctamente.',
+      data: { codigo },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+/*
+|--------------------------------------------------------------------------
+| 11. Obtener rutas por zona paginado
+|--------------------------------------------------------------------------
+*/
+const getZonasResumenRutasPaginadoController = async (req, res, next) => {
+  try {
+    const data = await getZonasResumenRutasPaginadoService(req.query);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Zonas con resumen de rutas obtenidas correctamente.',
+      data,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 module.exports = {
   createRutaController,
   getRutasPaginatedController,
@@ -230,4 +267,6 @@ module.exports = {
   changeRutaEstadoRutaController,
   changeRutaEstadoController,
   deleteRutaController,
+  getLastCodigoRutaController,
+  getZonasResumenRutasPaginadoController,
 };

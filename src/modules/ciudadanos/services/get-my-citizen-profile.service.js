@@ -15,84 +15,67 @@ const {
 // SERVICE: Obtener el perfil del ciudadano
 // ===============================================
 const getMyCitizenProfileService = async (idUsuario) => {
-  const userId =
-    validateId(
-      idUsuario,
-      'identificador del usuario',
-    );
 
-  const ciudadano =
-    await Ciudadano.findOne({
-      where: {
-        id_usuario:
-          userId,
-      },
+  const userId = validateId(idUsuario, 'identificador del usuario');
 
-      include: [
-        {
-          association:
-            'usuario',
+  const ciudadano = await Ciudadano.findOne({
+    where: {
+      id_usuario: userId,
+    },
 
-          attributes: [
-            'id_usuario',
-            'username',
-            'email_acceso',
-          ],
-
-          include: [
-            {
-              association:
-                'persona',
-            },
-          ],
-        },
-        {
-          association:
-            'domicilios',
-
-          where: {
-            estado_domicilio:
-              'ACTIVO',
-          },
-
-          required: false,
-
-          include: [
-            {
-              association:
-                'zona',
-            },
-            {
-              association:
-                'ruta',
-
-              required: false,
-            },
-          ],
-        },
-        {
-          association:
-            'preferencias_notificacion',
-
-          required: false,
-        },
-      ],
-
-      order: [
-        [
-          {
-            model:
-              db.CiudadanoDomicilio,
-
-            as:
-              'domicilios',
-          },
-
-          'es_principal',
-          'DESC',
+    include: [
+      {
+        association: 'usuario',
+        attributes: [
+          'id_usuario',
+          'username',
+          'email_acceso',
         ],
+
+        include: [
+          {
+            association:
+              'persona',
+          },
+        ],
+      },
+      {
+        association: 'domicilios',
+        where: {
+          estado_domicilio: 'ACTIVO',
+        },
+
+        required: false,
+
+        include: [
+          {
+            association: 'zona',
+          },
+          {
+            association: 'ruta',
+
+            required: false,
+          },
+        ],
+      },
+      {
+        association: 'preferencias_notificacion',
+        required: false,
+      },
+    ],
+
+    order: [
+      [
+        {
+          model: db.CiudadanoDomicilio,
+          as: 'domicilios',
+        },
+
+        'es_principal',
+        'DESC',
       ],
-    });
+    ],
+  });
 
   if (!ciudadano) {
     throw new AppError(

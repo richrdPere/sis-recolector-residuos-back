@@ -242,15 +242,12 @@ const RecorridoPosicion = sequelize.define('RecorridoPosicion', {
 
     indexes: [
       {
-        unique:
-          true,
-
+        unique:          true,
         fields: [
           'clave_idempotencia',
         ],
 
-        name:
-          'uk_recorrido_posicion_idempotencia',
+        name:          'uk_recorrido_posicion_idempotencia',
       },
       {
         fields: [
@@ -258,8 +255,7 @@ const RecorridoPosicion = sequelize.define('RecorridoPosicion', {
           'fecha_dispositivo',
         ],
 
-        name:
-          'idx_posicion_recorrido_fecha',
+        name:          'idx_posicion_recorrido_fecha',
       },
       {
         fields: [
@@ -267,8 +263,7 @@ const RecorridoPosicion = sequelize.define('RecorridoPosicion', {
           'fecha_recepcion',
         ],
 
-        name:
-          'idx_posicion_recorrido_recepcion',
+        name:          'idx_posicion_recorrido_recepcion',
       },
       {
         fields: [
@@ -276,16 +271,14 @@ const RecorridoPosicion = sequelize.define('RecorridoPosicion', {
           'fecha_dispositivo',
         ],
 
-        name:
-          'idx_posicion_usuario_fecha',
+        name:          'idx_posicion_usuario_fecha',
       },
       {
         fields: [
           'es_valida',
         ],
 
-        name:
-          'idx_posicion_valida',
+        name:          'idx_posicion_valida',
       },
     ],
 

@@ -21,11 +21,9 @@ const getProgramacionesPaginatedService = async ({
   id_ruta,
   id_vehiculo,
 }) => {
-  const currentPage =
-    Number(page);
+  const currentPage = Number(page);
 
-  const currentLimit =
-    Number(limit);
+  const currentLimit = Number(limit);
 
   if (
     !Number.isInteger(
@@ -47,12 +45,8 @@ const getProgramacionesPaginatedService = async ({
 
   const where = {};
 
-  if (
-    fecha_desde ||
-    fecha_hasta
-  ) {
-    where.fecha_programada =
-      {};
+  if (fecha_desde || fecha_hasta) {
+    where.fecha_programada = {};
 
     if (fecha_desde) {
       where.fecha_programada[
@@ -68,54 +62,45 @@ const getProgramacionesPaginatedService = async ({
   }
 
   if (estado_programacion) {
-    where.estado_programacion =
-      estado_programacion;
+    where.estado_programacion = estado_programacion;
   }
 
   if (id_ruta) {
-    where.id_ruta =
-      validateId(
-        id_ruta,
-        'identificador de la ruta',
-      );
+    where.id_ruta = validateId(
+      id_ruta,
+      'identificador de la ruta',
+    );
   }
 
   if (id_vehiculo) {
-    where.id_vehiculo =
-      validateId(
-        id_vehiculo,
-        'identificador del vehículo',
-      );
+    where.id_vehiculo = validateId(
+      id_vehiculo,
+      'identificador del vehículo',
+    );
   }
 
-  const searchValue =
-    String(search || '')
-      .trim();
+  const searchValue = String(search || '').trim();
 
   if (searchValue) {
     where[Op.or] = [
       {
         '$ruta.nombre$': {
-          [Op.like]:
-            `%${searchValue}%`,
+          [Op.like]: `%${searchValue}%`,
         },
       },
       {
         '$ruta.codigo$': {
-          [Op.like]:
-            `%${searchValue}%`,
+          [Op.like]: `%${searchValue}%`,
         },
       },
       {
         '$vehiculo.placa$': {
-          [Op.like]:
-            `%${searchValue}%`,
+          [Op.like]: `%${searchValue}%`,
         },
       },
       {
         '$vehiculo.codigo$': {
-          [Op.like]:
-            `%${searchValue}%`,
+          [Op.like]: `%${searchValue}%`,
         },
       },
     ];
@@ -131,9 +116,7 @@ const getProgramacionesPaginatedService = async ({
 
         include: [
           {
-            association:
-              'ruta',
-
+            association: 'ruta',
             attributes: [
               'id_ruta',
               'codigo',
@@ -141,18 +124,14 @@ const getProgramacionesPaginatedService = async ({
             ],
           },
           {
-            association:
-              'version_ruta',
-
+            association: 'version_ruta',
             attributes: [
               'id_ruta_version',
               'numero_version',
             ],
           },
           {
-            association:
-              'vehiculo',
-
+            association: 'vehiculo',
             attributes: [
               'id_vehiculo',
               'codigo',
@@ -162,9 +141,9 @@ const getProgramacionesPaginatedService = async ({
             ],
           },
           {
-            association:
-              'personal_asignado',
-
+            association: 'personal_asignado',
+            // Evita que el personal multiplique las filas paginadas.
+            separate: true,
             attributes: [
               'id_programacion_personal',
               'funcion',
@@ -184,9 +163,7 @@ const getProgramacionesPaginatedService = async ({
 
                 include: [
                   {
-                    association:
-                      'usuario',
-
+                    association: 'usuario',
                     attributes: [
                       'id_usuario',
                       'username',
@@ -194,9 +171,7 @@ const getProgramacionesPaginatedService = async ({
 
                     include: [
                       {
-                        association:
-                          'persona',
-
+                        association: 'persona',
                         attributes: [
                           'nombres',
                           'apellidos',
@@ -215,10 +190,7 @@ const getProgramacionesPaginatedService = async ({
 
         limit: currentLimit,
 
-        offset:
-          (
-            currentPage - 1
-          ) * currentLimit,
+        offset: (currentPage - 1) * currentLimit,
 
         order: [
           [
@@ -232,10 +204,7 @@ const getProgramacionesPaginatedService = async ({
         ],
       });
 
-  const totalPages =
-    Math.ceil(
-      count / currentLimit,
-    );
+  const totalPages = Math.ceil(count / currentLimit);
 
   return {
     items: rows,

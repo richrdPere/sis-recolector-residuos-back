@@ -236,30 +236,20 @@ const createProgramacionService = async ({
     }
 
     await registerHistory({
-      id_programacion:
-        programacion
-          .id_programacion,
+      id_programacion: programacion.id_programacion,
 
-      id_usuario:
-        creatorId,
+      id_usuario: creatorId,
 
-      tipo_evento:
-        'CREACION',
+      tipo_evento: 'CREACION',
 
-      estado_nuevo:
-        'ASIGNADA',
+      estado_nuevo: 'ASIGNADA',
 
       datos_nuevos: {
-        id_ruta:
-          programacion.id_ruta,
+        id_ruta: programacion.id_ruta,
 
-        id_ruta_version:
-          programacion
-            .id_ruta_version,
+        id_ruta_version: programacion.id_ruta_version,
 
-        id_vehiculo:
-          programacion
-            .id_vehiculo,
+        id_vehiculo: programacion.id_vehiculo,
 
         fecha_programada,
         hora_inicio_programada,
@@ -267,8 +257,7 @@ const createProgramacionService = async ({
         equipo: team,
       },
 
-      observacion:
-        'Programación creada con vehículo y equipo asignado.',
+      observacion: 'Programación creada con vehículo y equipo asignado.',
 
       ip,
       user_agent,

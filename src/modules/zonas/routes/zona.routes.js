@@ -18,6 +18,7 @@ const {
     updateZonaController,
     changeZonaEstadoController,
     deleteZonaController,
+    getLastCodigoZonaController,
 } = require('../controllers/zona.controller');
 
 // ROUTES
@@ -52,6 +53,14 @@ router.get('/view/:id',
     ),
     getZonaByIdController,
 );
+
+router.get('/codigo', autorizarRoles(
+    'SUPER_ADMIN',
+    'ADMIN',
+    'SUPERVISOR',
+    'OPERADOR',
+), getLastCodigoZonaController);
+
 
 // - Administración
 router.post('/create',

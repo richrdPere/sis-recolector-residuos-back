@@ -18,19 +18,15 @@ const {
 */
 const registerDeviceController = async (req, res, next) => {
   try {
-    const idUsuario =
-      getAuthenticatedUserId(
-        req,
-      );
+    const idUsuario = getAuthenticatedUserId(req);
 
-    const data =
-      await registerDeviceService(
-        req.body,
-        {
-          id_usuario:
-            idUsuario,
-        },
-      );
+    const data = await registerDeviceService(
+      req.body,
+      {
+        id_usuario:
+          idUsuario,
+      },
+    );
 
     return res
       .status(
@@ -60,15 +56,11 @@ const registerDeviceController = async (req, res, next) => {
 */
 const getMyDevicesController = async (req, res, next) => {
   try {
-    const idUsuario =
-      getAuthenticatedUserId(
-        req,
-      );
+    const idUsuario = getAuthenticatedUserId(req);
 
-    const data =
-      await getMyDevicesService(
-        idUsuario,
-      );
+    const data = await getMyDevicesService(
+      idUsuario,
+    );
 
     return res
       .status(200)

@@ -41,12 +41,7 @@ const getPersonalAvailabilityParams = (
 */
 const getConductoresDisponiblesController = async (req, res, next) => {
   try {
-    const data =
-      await getConductoresDisponiblesService(
-        getPersonalAvailabilityParams(
-          req,
-        ),
-      );
+    const data = await getConductoresDisponiblesService(getPersonalAvailabilityParams(req));
 
     return res
       .status(200)
@@ -67,12 +62,7 @@ const getConductoresDisponiblesController = async (req, res, next) => {
 */
 const getRecolectoresDisponiblesController = async (req, res, next) => {
   try {
-    const data =
-      await getRecolectoresDisponiblesService(
-        getPersonalAvailabilityParams(
-          req,
-        ),
-      );
+    const data = await getRecolectoresDisponiblesService(getPersonalAvailabilityParams(req));
 
     return res
       .status(200)

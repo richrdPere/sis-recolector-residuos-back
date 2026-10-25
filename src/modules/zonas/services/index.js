@@ -5,7 +5,7 @@ const getZonaByIdService = require("./get-zona-by-id.service");
 const getZonasActivasService = require("./get-zonas-activas.service");
 const getZonasPaginatedService = require("./get-zonas-paginated.service");
 const updateZonaService = require("./update-zona.service");
-
+const getLastCodigoZonaService = require("./get-last-codigo-zona.service");
 
 module.exports = {
     changeZonaEstadoService,
@@ -15,4 +15,5 @@ module.exports = {
     getZonasActivasService,
     getZonasPaginatedService,
     updateZonaService,
+    getLastCodigoZonaService,
 }

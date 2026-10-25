@@ -6,6 +6,7 @@ const {
   logoutAllService,
   getAuthProfileService,
   changePasswordService,
+  registerCiudadanoService,
 } = require('../services');
 
 /*
@@ -64,29 +65,18 @@ const createUsuarioController = async (req, res, next) => {
       await createUsuarioService({
         nombres: req.body.nombres,
         apellidos: req.body.apellidos,
-
-        tipo_documento:
-          req.body.tipo_documento,
-
-        numero_documento:
-          req.body.numero_documento,
-
-        fecha_nacimiento:
-          req.body.fecha_nacimiento,
-
+        tipo_documento: req.body.tipo_documento,
+        numero_documento: req.body.numero_documento,
+        fecha_nacimiento: req.body.fecha_nacimiento,
         celular: req.body.celular,
         direccion: req.body.direccion,
         foto_url: req.body.foto_url,
         genero: req.body.genero,
-
         email: req.body.email,
         username: req.body.username,
         password: req.body.password,
-
         id_rol: req.body.id_rol,
-
-        roles_ids:
-          req.body.roles_ids || [],
+        roles_ids: req.body.roles_ids || [],
       });
 
     return res.status(201).json({
@@ -265,7 +255,57 @@ const changePasswordController = async (
     next(error);
   }
 };
+/*
+|--------------------------------------------------------------------------
+| 8. Registro público de ciudadano
+|--------------------------------------------------------------------------
+*/
+const registerCiudadanoController = async (req, res, next) => {
+  try {
+    const body = req.body;
 
+    // if (
+    //   !body ||
+    //   typeof body !== 'object' ||
+    //   Array.isArray(body)
+    // ) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: 'Debe enviar un objeto JSON válido.',
+    //     code: 'INVALID_REGISTER_BODY',
+    //   });
+    // }
+
+    // /*
+    // |--------------------------------------------------------------------------
+    // | Selección explícita de campos
+    // |--------------------------------------------------------------------------
+    // |
+    // | No usar ...req.body.
+    // | No aceptar roles, estados ni identificadores de otros usuarios.
+    // |
+    // */
+
+    const data = await registerCiudadanoService({
+      nombres: body.nombres,
+      apellidos: body.apellidos,
+      tipo_documento: body.tipo_documento,
+      numero_documento: body.numero_documento,
+      celular: body.celular,
+      email: body.email,
+      username: body.username,
+      password: body.password,
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: 'Cuenta ciudadana registrada correctamente. Ya puedes iniciar sesión.',
+      data,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 module.exports = {
   createUsuarioController,
   loginController,
@@ -274,4 +314,5 @@ module.exports = {
   logoutAllController,
   getAuthProfileController,
   changePasswordController,
+  registerCiudadanoController,
 };

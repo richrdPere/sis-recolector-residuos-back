@@ -79,28 +79,16 @@ const getZonasPaginatedService = async ({
       parseBoolean(estado);
   }
 
-  const {
-    count,
-    rows,
-  } =
-    await Zona.findAndCountAll({
-      where,
+  const { count, rows } = await Zona.findAndCountAll({
+    where,
+    limit: currentLimit,
+    offset: (currentPage - 1) * currentLimit,
+    order: [
+      ['nombre', 'ASC'],
+    ],
+  });
 
-      limit: currentLimit,
-
-      offset:
-        (currentPage - 1) *
-        currentLimit,
-
-      order: [
-        ['nombre', 'ASC'],
-      ],
-    });
-
-  const totalPages =
-    Math.ceil(
-      count / currentLimit,
-    );
+  const totalPages = Math.ceil(count / currentLimit);
 
   return {
     items: rows,

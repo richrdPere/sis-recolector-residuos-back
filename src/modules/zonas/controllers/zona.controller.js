@@ -6,6 +6,7 @@ const {
   updateZonaService,
   changeZonaEstadoService,
   deleteZonaService,
+  getLastCodigoZonaService,
 } = require('../services');
 
 /*
@@ -168,6 +169,24 @@ const deleteZonaController = async (req, res, next) => {
     next(error);
   }
 };
+/*
+|--------------------------------------------------------------------------
+| 8. Obtener ultimo codigo de zona
+|--------------------------------------------------------------------------
+*/
+const getLastCodigoZonaController = async (req, res, next) => {
+  try {
+    const codigo = await getLastCodigoZonaService();
+
+    return res.status(200).json({
+      success: true,
+      message: 'Código de la ruta obtenido correctamente.',
+      data: { codigo },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 module.exports = {
   createZonaController,
@@ -177,4 +196,5 @@ module.exports = {
   updateZonaController,
   changeZonaEstadoController,
   deleteZonaController,
+  getLastCodigoZonaController,
 };

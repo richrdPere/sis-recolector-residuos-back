@@ -62,6 +62,8 @@ const assertTrackingTransmitter = async ({
       .findOne({
         where: {
           id_usuario,
+          estado: true,
+          estado_laboral: 'ACTIVO',
         },
 
         transaction,
@@ -169,12 +171,10 @@ const updateLastLocation = async ({
   if (
     currentLastLocation &&
     new Date(
-      posicion
-        .fecha_dispositivo,
+      posicion.fecha_dispositivo
     ).getTime() <=
     new Date(
-      currentLastLocation
-        .fecha_dispositivo,
+      currentLastLocation.fecha_dispositivo,
     ).getTime()
   ) {
     return {
@@ -187,52 +187,34 @@ const updateLastLocation = async ({
   }
 
   const data = {
-    id_recorrido:
-      posicion.id_recorrido,
+    id_recorrido: posicion.id_recorrido,
 
-    id_posicion:
-      posicion.id_posicion,
+    id_posicion: posicion.id_posicion,
 
-    id_usuario:
-      posicion.id_usuario,
+    id_usuario: posicion.id_usuario,
 
-    latitud:
-      posicion.latitud,
+    latitud: posicion.latitud,
 
-    longitud:
-      posicion.longitud,
+    longitud: posicion.longitud,
 
-    precision_gps:
-      posicion.precision_gps,
+    precision_gps: posicion.precision_gps,
 
-    altitud:
-      posicion.altitud,
+    altitud: posicion.altitud,
 
-    velocidad_mps:
-      posicion.velocidad_mps,
+    velocidad_mps: posicion.velocidad_mps,
 
-    rumbo:
-      posicion.rumbo,
+    rumbo: posicion.rumbo,
 
-    nivel_bateria:
-      posicion.nivel_bateria,
+    nivel_bateria: posicion.nivel_bateria,
 
-    es_ubicacion_simulada:
-      posicion
-        .es_ubicacion_simulada,
+    es_ubicacion_simulada: posicion.es_ubicacion_simulada,
 
-    fecha_dispositivo:
-      posicion
-        .fecha_dispositivo,
+    fecha_dispositivo: posicion.fecha_dispositivo,
 
-    fecha_recepcion:
-      posicion
-        .fecha_recepcion,
+    fecha_recepcion: posicion.fecha_recepcion,
   };
 
-  if (
-    currentLastLocation
-  ) {
+  if (currentLastLocation) {
     await currentLastLocation
       .update(
         data,
@@ -242,27 +224,21 @@ const updateLastLocation = async ({
       );
 
     return {
-      updated:
-        true,
-
-      lastLocation:
-        currentLastLocation,
+      updated: true,
+      lastLocation: currentLastLocation,
     };
   }
 
-  const lastLocation =
-    await RecorridoUltimaUbicacion
-      .create(
-        data,
-        {
-          transaction,
-        },
-      );
+  const lastLocation = await RecorridoUltimaUbicacion
+    .create(
+      data,
+      {
+        transaction,
+      },
+    );
 
   return {
-    updated:
-      true,
-
+    updated: true,
     lastLocation,
   };
 };

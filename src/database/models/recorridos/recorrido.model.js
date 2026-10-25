@@ -3,8 +3,7 @@ const sequelize = require('../../../config/database');
 
 const Recorrido = sequelize.define('Recorrido', {
   id_recorrido: {
-    type:
-      DataTypes.BIGINT,
+    type: DataTypes.BIGINT,
 
     primaryKey: true,
     autoIncrement: true,
@@ -20,22 +19,15 @@ const Recorrido = sequelize.define('Recorrido', {
   */
 
   id_programacion: {
-    type:
-      DataTypes.BIGINT,
-
+    type: DataTypes.BIGINT,
     allowNull: false,
     unique: true,
-
     references: {
       model: 'programacion_rutas',
       key: 'id_programacion',
     },
-
-    onUpdate:
-      'CASCADE',
-
-    onDelete:
-      'RESTRICT',
+    onUpdate: 'CASCADE',
+    onDelete: 'RESTRICT',
   },
 
   /*
@@ -45,24 +37,14 @@ const Recorrido = sequelize.define('Recorrido', {
   */
 
   id_usuario_inicio: {
-    type:
-      DataTypes.BIGINT,
-
+    type: DataTypes.BIGINT,
     allowNull: false,
-
     references: {
-      model:
-        'usuarios',
-
-      key:
-        'id_usuario',
+      model: 'usuarios',
+      key: 'id_usuario',
     },
-
-    onUpdate:
-      'CASCADE',
-
-    onDelete:
-      'RESTRICT',
+    onUpdate: 'CASCADE',
+    onDelete: 'RESTRICT',
   },
 
   /*
@@ -72,24 +54,14 @@ const Recorrido = sequelize.define('Recorrido', {
   */
 
   id_usuario_finalizacion: {
-    type:
-      DataTypes.BIGINT,
-
+    type: DataTypes.BIGINT,
     allowNull: true,
-
     references: {
-      model:
-        'usuarios',
-
-      key:
-        'id_usuario',
+      model: 'usuarios',
+      key: 'id_usuario',
     },
-
-    onUpdate:
-      'CASCADE',
-
-    onDelete:
-      'RESTRICT',
+    onUpdate: 'CASCADE',
+    onDelete: 'RESTRICT',
   },
 
   /*
@@ -99,17 +71,15 @@ const Recorrido = sequelize.define('Recorrido', {
   */
 
   estado_recorrido: {
-    type:
-      DataTypes.ENUM(
-        'EN_CURSO',
-        'PAUSADO',
-        'FINALIZADO',
-        'CANCELADO',
-      ),
+    type: DataTypes.ENUM(
+      'EN_CURSO',
+      'PAUSADO',
+      'FINALIZADO',
+      'CANCELADO',
+    ),
 
     allowNull: false,
-    defaultValue:
-      'EN_CURSO',
+    defaultValue: 'EN_CURSO',
   },
 
   /*
@@ -119,18 +89,13 @@ const Recorrido = sequelize.define('Recorrido', {
   */
 
   fecha_hora_inicio: {
-    type:
-      DataTypes.DATE,
-
+    type: DataTypes.DATE,
     allowNull: false,
-    defaultValue:
-      DataTypes.NOW,
+    defaultValue: DataTypes.NOW,
   },
 
   fecha_hora_finalizacion: {
-    type:
-      DataTypes.DATE,
-
+    type: DataTypes.DATE,
     allowNull: true,
   },
 
@@ -141,12 +106,7 @@ const Recorrido = sequelize.define('Recorrido', {
   */
 
   latitud_inicio: {
-    type:
-      DataTypes.DECIMAL(
-        10,
-        7,
-      ),
-
+    type: DataTypes.DECIMAL(10, 7),
     allowNull: true,
 
     validate: {
@@ -156,14 +116,8 @@ const Recorrido = sequelize.define('Recorrido', {
   },
 
   longitud_inicio: {
-    type:
-      DataTypes.DECIMAL(
-        10,
-        7,
-      ),
-
+    type: DataTypes.DECIMAL(10, 7),
     allowNull: true,
-
     validate: {
       min: -180,
       max: 180,
@@ -171,20 +125,12 @@ const Recorrido = sequelize.define('Recorrido', {
   },
 
   precision_inicio: {
-    type:
-      DataTypes.DECIMAL(
-        8,
-        2,
-      ),
-
+    type: DataTypes.DECIMAL(8, 2),
     allowNull: true,
-
     validate: {
       min: 0,
     },
-
-    comment:
-      'Precisión GPS inicial expresada en metros.',
+    comment: 'Precisión GPS inicial expresada en metros.',
   },
 
   /*
@@ -194,14 +140,8 @@ const Recorrido = sequelize.define('Recorrido', {
   */
 
   latitud_finalizacion: {
-    type:
-      DataTypes.DECIMAL(
-        10,
-        7,
-      ),
-
+    type: DataTypes.DECIMAL(10, 7),
     allowNull: true,
-
     validate: {
       min: -90,
       max: 90,
@@ -209,14 +149,8 @@ const Recorrido = sequelize.define('Recorrido', {
   },
 
   longitud_finalizacion: {
-    type:
-      DataTypes.DECIMAL(
-        10,
-        7,
-      ),
-
+    type: DataTypes.DECIMAL(10, 7),
     allowNull: true,
-
     validate: {
       min: -180,
       max: 180,
@@ -224,20 +158,12 @@ const Recorrido = sequelize.define('Recorrido', {
   },
 
   precision_finalizacion: {
-    type:
-      DataTypes.DECIMAL(
-        8,
-        2,
-      ),
-
+    type: DataTypes.DECIMAL(8, 2),
     allowNull: true,
-
     validate: {
       min: 0,
     },
-
-    comment:
-      'Precisión GPS final expresada en metros.',
+    comment: 'Precisión GPS final expresada en metros.',
   },
 
   /*
@@ -248,26 +174,16 @@ const Recorrido = sequelize.define('Recorrido', {
 
   kilometraje_inicio: {
     type:
-      DataTypes.DECIMAL(
-        12,
-        2,
-      ),
-
+      DataTypes.DECIMAL(12, 2),
     allowNull: true,
-
     validate: {
       min: 0,
     },
   },
 
   kilometraje_final: {
-    type: DataTypes.DECIMAL(
-      12,
-      2,
-    ),
-
+    type: DataTypes.DECIMAL(12, 2),
     allowNull: true,
-
     validate: {
       min: 0,
     },
@@ -280,10 +196,7 @@ const Recorrido = sequelize.define('Recorrido', {
   */
 
   distancia_recorrida_metros: {
-    type: DataTypes.DECIMAL(
-      14,
-      2,
-    ),
+    type: DataTypes.DECIMAL(14, 2),
     allowNull: true,
     validate: {
       min: 0,

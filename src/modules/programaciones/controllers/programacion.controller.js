@@ -23,14 +23,13 @@ const createProgramacionController = async (req, res, next) => {
   try {
     const metadata = getRequestMetadata(req);
 
-    const data =
-      await createProgramacionService({
-        ...req.body,
-        id_usuario_creacion: metadata.id_usuario,
-        ip: metadata.ip,
-        user_agent: metadata.user_agent,
-        origen: metadata.origen,
-      });
+    const data = await createProgramacionService({
+      ...req.body,
+      id_usuario_creacion: metadata.id_usuario,
+      ip: metadata.ip,
+      user_agent: metadata.user_agent,
+      origen: metadata.origen,
+    });
 
     return res
       .status(201)

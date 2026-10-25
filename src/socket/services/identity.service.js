@@ -4,6 +4,7 @@ const { normalizeRoles } = require('../../middlewares/auth.middleware');
 
 // session_id corresponde a RefreshToken.jti según refresh-session.service.js.
 // Si el emisor JWT usa otro claim, debe declararse explícitamente en .env.
+
 async function refreshIdentity(socket) {
   const claims = socket.data.jwtClaims || socket.data.usuario;
   if (!claims || !Number.isSafeInteger(claims.exp) || claims.exp * 1000 <= Date.now()) {

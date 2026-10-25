@@ -31,35 +31,21 @@ const NotificacionEnvio = sequelize.define('NotificacionEnvio', {
   },
 
   proveedor: {
-    type:
-      DataTypes.ENUM(
-        'FCM',
-      ),
-
-    allowNull:
-      false,
-
-    defaultValue:
-      'FCM',
+    type: DataTypes.ENUM('FCM'),
+    allowNull: false,
+    defaultValue: 'FCM',
   },
 
   numero_intento: {
     type:
       DataTypes.INTEGER
         .UNSIGNED,
-
-    allowNull:
-      false,
-
-    defaultValue:
-      1,
-
+    allowNull: false,
+    defaultValue: 1,
     validate: {
       min: {
         args: [1],
-
-        msg:
-          'El número de intento debe ser mayor que cero.',
+        msg: 'El número de intento debe ser mayor que cero.',
       },
     },
   },
@@ -74,12 +60,8 @@ const NotificacionEnvio = sequelize.define('NotificacionEnvio', {
         'TOKEN_INVALIDO',
         'CANCELADO',
       ),
-
-    allowNull:
-      false,
-
-    defaultValue:
-      'PENDIENTE',
+    allowNull: false,
+    defaultValue: 'PENDIENTE',
   },
 
   /*
@@ -99,31 +81,18 @@ const NotificacionEnvio = sequelize.define('NotificacionEnvio', {
   },
 
   codigo_error: {
-    type:
-      DataTypes.STRING(
-        150,
-      ),
-
-    allowNull:
-      true,
+    type: DataTypes.STRING(150),
+    allowNull: true,
   },
 
   mensaje_error: {
-    type:
-      DataTypes.STRING(
-        1000,
-      ),
-
-    allowNull:
-      true,
+    type: DataTypes.STRING(1000),
+    allowNull: true,
   },
 
   respuesta_proveedor: {
-    type:
-      DataTypes.JSON,
-
-    allowNull:
-      true,
+    type: DataTypes.JSON,
+    allowNull: true,
   },
 
   /*
@@ -133,95 +102,64 @@ const NotificacionEnvio = sequelize.define('NotificacionEnvio', {
   */
 
   fecha_intento: {
-    type:
-      DataTypes.DATE,
-
-    allowNull:
-      false,
-
-    defaultValue:
-      DataTypes.NOW,
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: DataTypes.NOW,
   },
 
   fecha_envio: {
-    type:
-      DataTypes.DATE,
-
-    allowNull:
-      true,
+    type: DataTypes.DATE,
+    allowNull: true,
   },
 
   duracion_ms: {
-    type:
-      DataTypes.INTEGER
-        .UNSIGNED,
-
-    allowNull:
-      true,
+    type: DataTypes.INTEGER.UNSIGNED,
+    allowNull: true,
   },
 },
   {
-    tableName:
-      'notificacion_envios',
+    tableName: 'notificacion_envios',
 
     /*
     | Cada intento es inmutable.
     */
 
-    timestamps:
-      true,
-
-    createdAt:
-      'created_at',
-
-    updatedAt:
-      false,
-
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: false,
     indexes: [
       {
-        unique:
-          true,
-
+        unique: true,
         fields: [
           'id_notificacion_usuario',
           'id_dispositivo',
           'numero_intento',
         ],
-
-        name:
-          'uk_envio_destino_intento',
+        name: 'uk_envio_destino_intento',
       },
       {
         fields: [
           'estado_envio',
         ],
-
-        name:
-          'idx_envio_estado',
+        name: 'idx_envio_estado',
       },
       {
         fields: [
           'id_notificacion_usuario',
         ],
-
-        name:
-          'idx_envio_notificacion_usuario',
+        name: 'idx_envio_notificacion_usuario',
       },
       {
         fields: [
           'id_dispositivo',
         ],
-
-        name:
-          'idx_envio_dispositivo',
+        name: 'idx_envio_dispositivo',
       },
       {
         fields: [
           'fecha_intento',
         ],
-
-        name:
-          'idx_envio_fecha',
+        name: 'idx_envio_fecha',
       },
     ],
 

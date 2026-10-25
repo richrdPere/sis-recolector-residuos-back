@@ -15,22 +15,17 @@ const { getAuthenticatedUserId } = require('../utils/ciudadano-controller.utils'
 */
 const createCitizenProfileController = async (req, res, next) => {
   try {
-    const idUsuario =
-      getAuthenticatedUserId(
-        req,
-      );
+    const idUsuario = getAuthenticatedUserId(req);
 
-    const data =
-      await createCitizenProfileService({
-        ...req.body,
+    const data = await createCitizenProfileService({
+      ...req.body,
 
-        /*
-         * El identificador autenticado prevalece
-         * sobre cualquier valor del body.
-         */
-        id_usuario:
-          idUsuario,
-      });
+      /*
+       * El identificador autenticado prevalece
+       * sobre cualquier valor del body.
+       */
+      id_usuario: idUsuario,
+    });
 
     return res
       .status(201)

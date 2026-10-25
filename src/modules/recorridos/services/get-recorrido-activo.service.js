@@ -13,32 +13,39 @@ const {
 
 // =======================================================
 // Service: Obtener recorrido activo
+// Devuelve el detalle o null cuando no existe uno activo.
 // =======================================================
 const getRecorridoActivoService = async ({
   id_usuario,
 }) => {
-  const userId =
-    validateId(
-      id_usuario,
-      'identificador del usuario',
-    );
+  const userId = validateId(
+    id_usuario,
+    'identificador del usuario',
+  );
 
-  const recorrido =
-    await getActiveRecorridoForUser(
-      userId,
-    );
+  const recorrido = await getActiveRecorridoForUser(
+    userId,
+  );
 
+  // No tener recorrido activo es una situación válida.
   if (!recorrido) {
+    return null;
+  }
+
+  const detalle = await getRecorridoDetail(
+    recorrido.id_recorrido,
+  );
+
+  // No confundir un detalle ausente con una consulta sin recorrido.
+  if (!detalle) {
     throw new AppError(
-      'El usuario no tiene un recorrido activo.',
+      'No se pudo obtener el detalle del recorrido activo.',
       404,
-      'ACTIVE_ROUTE_NOT_FOUND',
+      'ACTIVE_ROUTE_DETAIL_NOT_FOUND',
     );
   }
 
-  return getRecorridoDetail(
-    recorrido.id_recorrido,
-  );
+  return detalle;
 };
 
 module.exports = getRecorridoActivoService;

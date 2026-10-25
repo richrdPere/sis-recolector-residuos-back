@@ -111,61 +111,32 @@ const createCitizenProfileService = async ({
       );
     }
 
-    const now =
-      new Date();
+    const now =      new Date();
 
-    const ciudadano =
-      await Ciudadano.create(
-        {
-          id_usuario:
-            userId,
-
-          acepta_tratamiento_datos:
-            true,
-
-          fecha_consentimiento:
-            now,
-
-          version_consentimiento:
-            consentVersion,
-
-          origen_registro:
-            normalizedOrigin,
-
-          estado_ciudadano:
-            'ACTIVO',
-
-          fecha_activacion:
-            now,
-
-          observacion:
-            observacion
-              ?.trim() ||
-            null,
-        },
-        {
-          transaction,
-        },
-      );
+    const ciudadano = await Ciudadano.create(
+      {
+        id_usuario: userId,
+        acepta_tratamiento_datos: true,
+        fecha_consentimiento: now,
+        version_consentimiento: consentVersion,
+        origen_registro: normalizedOrigin,
+        estado_ciudadano: 'ACTIVO',
+        fecha_activacion: now,
+        observacion: observacion?.trim() || null,
+      },
+      {
+        transaction,
+      },
+    );
 
     await CiudadanoPreferenciaNotificacion
       .create(
         {
-          id_ciudadano:
-            ciudadano
-              .id_ciudadano,
-
-          notificaciones_habilitadas:
-            true,
-
-          canal_push:
-            true,
-
-          canal_interno:
-            true,
-
-          estado_preferencia:
-            'ACTIVA',
+          id_ciudadano: ciudadano.id_ciudadano,
+          notificaciones_habilitadas: true,
+          canal_push: true,
+          canal_interno: true,
+          estado_preferencia: 'ACTIVA',
         },
         {
           transaction,

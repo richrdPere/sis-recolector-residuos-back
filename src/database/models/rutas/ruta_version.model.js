@@ -2,34 +2,20 @@ const { DataTypes } = require('sequelize');
 
 const sequelize = require('../../../config/database');
 
-const validateLineString = (
-  geometry,
-) => {
-  if (
-    !geometry ||
-    typeof geometry !== 'object'
-  ) {
+const validateLineString = (geometry) => {
+  if (!geometry || typeof geometry !== 'object') {
     throw new Error(
       'La geometría debe ser un objeto GeoJSON.',
     );
   }
 
-  if (
-    geometry.type !==
-    'LineString'
-  ) {
+  if (geometry.type !== 'LineString') {
     throw new Error(
       'La geometría de la ruta debe ser LineString.',
     );
   }
 
-  if (
-    !Array.isArray(
-      geometry.coordinates,
-    ) ||
-    geometry.coordinates.length <
-    2
-  ) {
+  if (!Array.isArray(geometry.coordinates,) || geometry.coordinates.length < 2) {
     throw new Error(
       'La ruta debe contener al menos dos coordenadas.',
     );
@@ -48,31 +34,16 @@ const validateLineString = (
         );
       }
 
-      const longitude =
-        Number(coordinate[0]);
+      const longitude = Number(coordinate[0]);
+      const latitude = Number(coordinate[1]);
 
-      const latitude =
-        Number(coordinate[1]);
-
-      if (
-        !Number.isFinite(
-          longitude,
-        ) ||
-        longitude < -180 ||
-        longitude > 180
-      ) {
+      if (!Number.isFinite(longitude,) || longitude < -180 || longitude > 180) {
         throw new Error(
           'La longitud debe estar entre -180 y 180.',
         );
       }
 
-      if (
-        !Number.isFinite(
-          latitude,
-        ) ||
-        latitude < -90 ||
-        latitude > 90
-      ) {
+      if (!Number.isFinite(latitude,) || latitude < -90 || latitude > 90) {
         throw new Error(
           'La latitud debe estar entre -90 y 90.',
         );
