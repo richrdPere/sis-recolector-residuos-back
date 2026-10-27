@@ -1,0 +1,351 @@
+{
+  "/tracking/ubicaciones": {
+    "post": {
+      "tags": [
+        "Tracking GPS"
+      ],
+      "summary": "Register location",
+      "description": "Register location. Roles declarados en la ruta: CONDUCTOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "tracking_registerLocation",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/tracking/routes/tracking.routes.js",
+        "controller": "modules/tracking/controllers/tracking.controller.js",
+        "handler": "registerLocationController",
+        "service": "modules/tracking/services/register-location.service.js"
+      },
+      "x-route-roles": [
+        "CONDUCTOR"
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/TrackingRegisterLocationRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Register location.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrackingRegisterLocationResponse"
+              }
+            }
+          }
+        },
+        "201": {
+          "description": "Register location.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrackingRegisterLocationResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/tracking/ubicaciones/lote": {
+    "post": {
+      "tags": [
+        "Tracking GPS"
+      ],
+      "summary": "Register location batch",
+      "description": "Register location batch. Roles declarados en la ruta: CONDUCTOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "tracking_registerLocationBatch",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/tracking/routes/tracking.routes.js",
+        "controller": "modules/tracking/controllers/tracking.controller.js",
+        "handler": "registerLocationBatchController",
+        "service": "modules/tracking/services/register-location-batch.service.js"
+      },
+      "x-route-roles": [
+        "CONDUCTOR"
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/TrackingRegisterLocationBatchRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Register location batch.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrackingRegisterLocationBatchResponse"
+              }
+            }
+          }
+        },
+        "201": {
+          "description": "Register location batch.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrackingRegisterLocationBatchResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/tracking/vehiculos-activos": {
+    "get": {
+      "tags": [
+        "Tracking GPS"
+      ],
+      "summary": "Get active vehicle locations",
+      "description": "Get active vehicle locations. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "tracking_getActiveVehicleLocations",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/tracking/routes/tracking.routes.js",
+        "controller": "modules/tracking/controllers/tracking.controller.js",
+        "handler": "getActiveVehicleLocationsController",
+        "service": "modules/tracking/services/get-active-vehicle-locations.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "responses": {
+        "200": {
+          "description": "Get active vehicle locations.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrackingGetActiveVehicleLocationsResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/tracking/recorridos/{idRecorrido}/ultima-ubicacion": {
+    "get": {
+      "tags": [
+        "Tracking GPS"
+      ],
+      "summary": "Última ubicación obtenida correctamente",
+      "description": "Última ubicación obtenida correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "tracking_getLastLocation",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/tracking/routes/tracking.routes.js",
+        "controller": "modules/tracking/controllers/tracking.controller.js",
+        "handler": "getLastLocationController",
+        "service": "modules/tracking/services/get-last-location.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "idRecorrido",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Última ubicación obtenida correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrackingGetLastLocationResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/tracking/recorridos/{idRecorrido}/posiciones": {
+    "get": {
+      "tags": [
+        "Tracking GPS"
+      ],
+      "summary": "Get route positions",
+      "description": "Get route positions. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "tracking_getRoutePositions",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/tracking/routes/tracking.routes.js",
+        "controller": "modules/tracking/controllers/tracking.controller.js",
+        "handler": "getRoutePositionsController",
+        "service": "modules/tracking/services/get-route-positions.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "idRecorrido",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        },
+        {
+          "name": "fecha_desde",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        {
+          "name": "fecha_hasta",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "solo_validas",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Get route positions.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrackingGetRoutePositionsResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  }
+}

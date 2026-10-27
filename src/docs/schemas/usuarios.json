@@ -1,0 +1,632 @@
+{
+  "UsuariosPersonaCreate": {
+    "type": "object",
+    "properties": {
+      "nombres": {
+        "type": "string",
+        "maxLength": 100
+      },
+      "apellidos": {
+        "type": "string",
+        "maxLength": 100
+      },
+      "email_contacto": {
+        "type": "string",
+        "format": "email",
+        "nullable": true
+      },
+      "tipo_documento": {
+        "type": "string",
+        "enum": [
+          "DNI",
+          "RUC",
+          "CE",
+          "PASAPORTE"
+        ],
+        "default": "DNI"
+      },
+      "numero_documento": {
+        "type": "string",
+        "maxLength": 20
+      },
+      "fecha_nacimiento": {
+        "type": "string",
+        "format": "date",
+        "nullable": true
+      },
+      "celular": {
+        "type": "string",
+        "nullable": true
+      },
+      "direccion": {
+        "type": "string",
+        "nullable": true
+      },
+      "foto_url": {
+        "type": "string",
+        "nullable": true
+      },
+      "genero": {
+        "type": "string",
+        "nullable": true,
+        "enum": [
+          "M",
+          "F",
+          "OTRO",
+          null
+        ]
+      }
+    },
+    "additionalProperties": false,
+    "required": [
+      "nombres",
+      "apellidos",
+      "numero_documento"
+    ]
+  },
+  "UsuariosPersonaUpdate": {
+    "type": "object",
+    "properties": {
+      "nombres": {
+        "type": "string"
+      },
+      "apellidos": {
+        "type": "string"
+      },
+      "email_contacto": {
+        "type": "string",
+        "format": "email",
+        "nullable": true
+      },
+      "tipo_documento": {
+        "type": "string",
+        "enum": [
+          "DNI",
+          "RUC",
+          "CE",
+          "PASAPORTE"
+        ],
+        "default": "DNI"
+      },
+      "numero_documento": {
+        "type": "string"
+      },
+      "fecha_nacimiento": {
+        "type": "string",
+        "format": "date",
+        "nullable": true
+      },
+      "celular": {
+        "type": "string",
+        "nullable": true
+      },
+      "direccion": {
+        "type": "string",
+        "nullable": true
+      },
+      "foto_url": {
+        "type": "string",
+        "nullable": true
+      },
+      "genero": {
+        "type": "string",
+        "nullable": true,
+        "enum": [
+          "M",
+          "F",
+          "OTRO",
+          null
+        ]
+      }
+    },
+    "additionalProperties": false
+  },
+  "UsuariosGetUsuariosPaginatedResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {}
+          },
+          "pagination": {},
+          "filters": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "description": "Claves observadas en un retorno explícito del servicio. Los objetos asociados y campos calculados sin tipo confirmado se mantienen abiertos.",
+        "additionalProperties": true
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/usuarios/controllers/usuario.controller.js",
+    "x-data-contract": "partial-source"
+  },
+  "UsuariosGetUsuarioSelectorResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "description": "Resultado del servicio. Contrato interno pendiente de contrastar con los modelos y una respuesta real."
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/usuarios/controllers/usuario.controller.js",
+    "x-data-contract": "open-model-dependent"
+  },
+  "UsuariosGetUsuarioByIdResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "description": "Resultado devuelto por el servicio; su serialización depende de modelos Sequelize no incluidos. No se impone una forma no confirmada."
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/usuarios/controllers/usuario.controller.js",
+    "x-data-contract": "open-model-dependent"
+  },
+  "UsuariosGetUsuarioRolesResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "id_usuario": {},
+          "username": {},
+          "estado_usuario": {},
+          "roles": {},
+          "total": {
+            "type": "integer"
+          },
+          "filters": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "description": "Claves observadas en un retorno explícito del servicio. Los objetos asociados y campos calculados sin tipo confirmado se mantienen abiertos.",
+        "additionalProperties": true
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/usuarios/controllers/usuario.controller.js",
+    "x-data-contract": "partial-source"
+  },
+  "UsuariosCreateUsuarioRequest": {
+    "type": "object",
+    "properties": {
+      "username": {
+        "type": "string"
+      },
+      "email_acceso": {
+        "type": "string",
+        "format": "email"
+      },
+      "password": {
+        "type": "string",
+        "format": "password",
+        "writeOnly": true,
+        "minLength": 8,
+        "description": "Máximo 72 bytes UTF-8, validado en el backend."
+      },
+      "persona": {
+        "$ref": "#/components/schemas/UsuariosPersonaCreate"
+      },
+      "roles_ids": {
+        "type": "array",
+        "minItems": 1,
+        "items": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "string",
+              "pattern": "^[1-9][0-9]*$"
+            }
+          ]
+        }
+      },
+      "estado": {
+        "type": "boolean"
+      }
+    },
+    "additionalProperties": false,
+    "required": [
+      "username",
+      "email_acceso",
+      "password",
+      "persona",
+      "roles_ids"
+    ],
+    "x-source": "modules/usuarios/services/create-usuario.service.js",
+    "description": "Campos identificados en el controlador y servicio. Las validaciones de negocio y restricciones de modelos no incluidas deben verificarse contra la API en ejecución."
+  },
+  "UsuariosCreateUsuarioResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "description": "Resultado devuelto por el servicio; su serialización depende de modelos Sequelize no incluidos. No se impone una forma no confirmada."
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/usuarios/controllers/usuario.controller.js",
+    "x-data-contract": "open-model-dependent"
+  },
+  "UsuariosUpdateUsuarioRequest": {
+    "type": "object",
+    "properties": {
+      "username": {
+        "type": "string"
+      },
+      "email_acceso": {
+        "type": "string",
+        "format": "email"
+      },
+      "persona": {
+        "$ref": "#/components/schemas/UsuariosPersonaUpdate"
+      }
+    },
+    "additionalProperties": false,
+    "minProperties": 1,
+    "x-source": "modules/usuarios/services/update-usuario.service.js",
+    "description": "Campos identificados en el controlador y servicio. Las validaciones de negocio y restricciones de modelos no incluidas deben verificarse contra la API en ejecución."
+  },
+  "UsuariosUpdateUsuarioResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "description": "Resultado devuelto por el servicio; su serialización depende de modelos Sequelize no incluidos. No se impone una forma no confirmada."
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/usuarios/controllers/usuario.controller.js",
+    "x-data-contract": "open-model-dependent"
+  },
+  "UsuariosChangeEstadoUsuarioRequest": {
+    "type": "object",
+    "properties": {
+      "estado": {
+        "type": "boolean"
+      }
+    },
+    "additionalProperties": false,
+    "required": [
+      "estado"
+    ],
+    "x-source": "modules/usuarios/services/change-estado-usuario.service.js",
+    "description": "Campos identificados en el controlador y servicio. Las validaciones de negocio y restricciones de modelos no incluidas deben verificarse contra la API en ejecución."
+  },
+  "UsuariosChangeEstadoUsuarioResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "id_usuario": {},
+          "estado": {},
+          "updated_at": {},
+          "changed": {}
+        },
+        "description": "Claves observadas en un retorno explícito del servicio. Los objetos asociados y campos calculados sin tipo confirmado se mantienen abiertos.",
+        "additionalProperties": true
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/usuarios/controllers/usuario.controller.js",
+    "x-data-contract": "partial-source"
+  },
+  "UsuariosResetPasswordUsuarioRequest": {
+    "type": "object",
+    "properties": {
+      "nueva_password": {
+        "type": "string",
+        "format": "password",
+        "writeOnly": true,
+        "minLength": 8,
+        "description": "Máximo 72 bytes UTF-8."
+      }
+    },
+    "additionalProperties": false,
+    "required": [
+      "nueva_password"
+    ],
+    "x-source": "modules/usuarios/services/reset-password.service.js",
+    "description": "Campos identificados en el controlador y servicio. Las validaciones de negocio y restricciones de modelos no incluidas deben verificarse contra la API en ejecución."
+  },
+  "UsuariosResetPasswordUsuarioResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "id_usuario": {},
+          "password_actualizada": {
+            "type": "boolean"
+          },
+          "sesiones_revocadas": {}
+        },
+        "description": "Claves observadas en un retorno explícito del servicio. Los objetos asociados y campos calculados sin tipo confirmado se mantienen abiertos.",
+        "additionalProperties": true
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/usuarios/controllers/usuario.controller.js",
+    "x-data-contract": "partial-source"
+  },
+  "UsuariosDeleteUsuarioResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "id_usuario": {},
+          "deleted": {
+            "type": "boolean"
+          },
+          "sesiones_revocadas": {}
+        },
+        "description": "Claves observadas en un retorno explícito del servicio. Los objetos asociados y campos calculados sin tipo confirmado se mantienen abiertos.",
+        "additionalProperties": true
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/usuarios/controllers/usuario.controller.js",
+    "x-data-contract": "partial-source"
+  },
+  "UsuariosGetRolesResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "description": "Resultado devuelto por el servicio; su serialización depende de modelos Sequelize no incluidos. No se impone una forma no confirmada."
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/usuarios/controllers/usuario.controller.js",
+    "x-data-contract": "open-model-dependent"
+  },
+  "UsuariosGetUsuariosSinPersonalResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id_usuario": {},
+            "id_persona": {},
+            "username": {},
+            "email_acceso": {},
+            "nombre_completo": {},
+            "tipo_documento": {},
+            "numero_documento": {},
+            "foto_url": {},
+            "label": {},
+            "roles": {}
+          },
+          "description": "Claves observadas en un retorno explícito del servicio. Los objetos asociados y campos calculados sin tipo confirmado se mantienen abiertos.",
+          "additionalProperties": true
+        },
+        "description": "El servicio devuelve una colección; las propiedades asociadas se mantienen abiertas."
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/usuarios/controllers/usuario.controller.js",
+    "x-data-contract": "partial-source"
+  },
+  "UsuariosAddUsuarioRolRequest": {
+    "type": "object",
+    "properties": {
+      "id_rol": {
+        "oneOf": [
+          {
+            "type": "integer",
+            "minimum": 1
+          },
+          {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$"
+          }
+        ]
+      }
+    },
+    "required": [
+      "id_rol"
+    ],
+    "x-source": "modules/usuarios/services/add-usuario-rol.service.js",
+    "description": "Campos identificados en el controlador y servicio. Las validaciones de negocio y restricciones de modelos no incluidas deben verificarse contra la API en ejecución."
+  },
+  "UsuariosAddUsuarioRolResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "description": "Resultado devuelto por el servicio; su serialización depende de modelos Sequelize no incluidos. No se impone una forma no confirmada."
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/usuarios/controllers/usuario.controller.js",
+    "x-data-contract": "open-model-dependent"
+  },
+  "UsuariosRemoveUsuarioRolResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "description": "Resultado devuelto por el servicio; su serialización depende de modelos Sequelize no incluidos. No se impone una forma no confirmada."
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/usuarios/controllers/usuario.controller.js",
+    "x-data-contract": "open-model-dependent"
+  }
+}

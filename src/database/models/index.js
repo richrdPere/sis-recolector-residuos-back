@@ -46,6 +46,8 @@ db.RecoleccionEvidencia = require("./recoleccion/recoleccion-evidencia.model");
 db.RecoleccionPunto = require("./recoleccion/recoleccion-punto.model");
 
 // - Incidentes
+db.Incidencia = require("./incidencias/incidencia.model");
+db.IncidenciaArchivo = require("./incidencias/incidencia-archivo.model");
 
 // - Notificaciones
 db.NotificacionEnvio = require("./notificaciones/notificacion_envio.model");
@@ -64,7 +66,6 @@ db.CodigoQrAcceso = require('./codigo-qr/codigo_qr_acceso.model');
 
 // - Reporte y Auditoria
 db.ReporteExportacion = require("./auditoria/reporte-exportacion.model");
-
 
 
 

@@ -1,0 +1,564 @@
+{
+  "/vehiculos/paginado": {
+    "get": {
+      "tags": [
+        "Vehículos"
+      ],
+      "summary": "Vehículos obtenidos correctamente",
+      "description": "Vehículos obtenidos correctamente. Roles declarados en la ruta: ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "vehiculos_getVehiculosPaginado",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/vehiculos/routes/vehiculo.routes.js",
+        "controller": "modules/vehiculos/controllers/vehiculo.controller.js",
+        "handler": "getVehiculosPaginadoController",
+        "service": null
+      },
+      "x-route-roles": [
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "estado",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "name": "estado_operativo",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "DISPONIBLE",
+              "ASIGNADO",
+              "EN_RUTA",
+              "EN_MANTENIMIENTO",
+              "FUERA_DE_SERVICIO"
+            ]
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "search",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "tipo_vehiculo",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "CAMION_COMPACTADOR",
+              "CAMION_BARANDA",
+              "CAMION_VOLQUETE",
+              "MOTOFURGON",
+              "OTRO"
+            ]
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Vehículos obtenidos correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VehiculosGetVehiculosPaginadoResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/vehiculos/view/{id}": {
+    "get": {
+      "tags": [
+        "Vehículos"
+      ],
+      "summary": "Vehículo obtenido correctamente",
+      "description": "Vehículo obtenido correctamente. Roles declarados en la ruta: ADMIN, SUPERVISOR, OPERADOR, CONDUCTOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "vehiculos_getVehiculoById",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/vehiculos/routes/vehiculo.routes.js",
+        "controller": "modules/vehiculos/controllers/vehiculo.controller.js",
+        "handler": "getVehiculoByIdController",
+        "service": "modules/vehiculos/services/get-vehiculo-by-id.service.js"
+      },
+      "x-route-roles": [
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR",
+        "CONDUCTOR"
+      ],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Vehículo obtenido correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VehiculosGetVehiculoByIdResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/vehiculos/create": {
+    "post": {
+      "tags": [
+        "Vehículos"
+      ],
+      "summary": "Vehículo registrado correctamente",
+      "description": "Vehículo registrado correctamente. Roles declarados en la ruta: ADMIN. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "vehiculos_createVehiculo",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/vehiculos/routes/vehiculo.routes.js",
+        "controller": "modules/vehiculos/controllers/vehiculo.controller.js",
+        "handler": "createVehiculoController",
+        "service": "modules/vehiculos/services/create-vehiculo.service.js"
+      },
+      "x-route-roles": [
+        "ADMIN"
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/VehiculosCreateVehiculoRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Vehículo registrado correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VehiculosCreateVehiculoResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/vehiculos/update/{id}": {
+    "put": {
+      "tags": [
+        "Vehículos"
+      ],
+      "summary": "Vehículo actualizado correctamente",
+      "description": "Vehículo actualizado correctamente. Roles declarados en la ruta: ADMIN. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "vehiculos_updateVehiculo",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/vehiculos/routes/vehiculo.routes.js",
+        "controller": "modules/vehiculos/controllers/vehiculo.controller.js",
+        "handler": "updateVehiculoController",
+        "service": "modules/vehiculos/services/update-vehiculo.service.js"
+      },
+      "x-route-roles": [
+        "ADMIN"
+      ],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "requestBody": {
+        "required": false,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/VehiculosUpdateVehiculoRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Vehículo actualizado correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VehiculosUpdateVehiculoResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/vehiculos/estado/{id}": {
+    "patch": {
+      "tags": [
+        "Vehículos"
+      ],
+      "summary": "Estado del vehículo actualizado correctamente",
+      "description": "Estado del vehículo actualizado correctamente. Roles declarados en la ruta: ADMIN. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "vehiculos_changeEstadoVehiculo",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/vehiculos/routes/vehiculo.routes.js",
+        "controller": "modules/vehiculos/controllers/vehiculo.controller.js",
+        "handler": "changeEstadoVehiculoController",
+        "service": "modules/vehiculos/services/change-estado-vehiculo.service.js"
+      },
+      "x-route-roles": [
+        "ADMIN"
+      ],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/VehiculosChangeEstadoVehiculoRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Estado del vehículo actualizado correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VehiculosChangeEstadoVehiculoResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/vehiculos/delete/{id}": {
+    "delete": {
+      "tags": [
+        "Vehículos"
+      ],
+      "summary": "Vehículo eliminado correctamente",
+      "description": "Vehículo eliminado correctamente. Roles declarados en la ruta: ADMIN. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "vehiculos_deleteVehiculo",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/vehiculos/routes/vehiculo.routes.js",
+        "controller": "modules/vehiculos/controllers/vehiculo.controller.js",
+        "handler": "deleteVehiculoController",
+        "service": "modules/vehiculos/services/delete-vehiculo.service.js"
+      },
+      "x-route-roles": [
+        "ADMIN"
+      ],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Vehículo eliminado correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VehiculosDeleteVehiculoResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/vehiculos/codigo": {
+    "get": {
+      "tags": [
+        "Vehículos"
+      ],
+      "summary": "Código de vehículo obtenido correctamente",
+      "description": "Código de vehículo obtenido correctamente. Roles declarados en la ruta: ADMIN. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "vehiculos_getLastCodigoVehiculo",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/vehiculos/routes/vehiculo.routes.js",
+        "controller": "modules/vehiculos/controllers/vehiculo.controller.js",
+        "handler": "getLastCodigoVehiculoController",
+        "service": "modules/vehiculos/services/get-last-codigo-vehiculo.service.js"
+      },
+      "x-route-roles": [
+        "ADMIN"
+      ],
+      "responses": {
+        "200": {
+          "description": "Código de vehículo obtenido correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VehiculosGetLastCodigoVehiculoResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/vehiculos/selector": {
+    "get": {
+      "tags": [
+        "Vehículos"
+      ],
+      "summary": "Selector de vehículos obtenido correctamente",
+      "description": "Selector de vehículos obtenido correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "vehiculos_getVehiculosSelector",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/vehiculos/routes/vehiculo.routes.js",
+        "controller": "modules/vehiculos/controllers/vehiculo.controller.js",
+        "handler": "getVehiculosSelectorController",
+        "service": "modules/vehiculos/services/get-vehiculos-selector.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "search",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Selector de vehículos obtenido correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VehiculosGetVehiculosSelectorResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  }
+}

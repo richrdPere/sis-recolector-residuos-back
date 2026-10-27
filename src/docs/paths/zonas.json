@@ -1,0 +1,526 @@
+{
+  "/zonas/paginado": {
+    "get": {
+      "tags": [
+        "Zonas"
+      ],
+      "summary": "Zonas obtenidas correctamente",
+      "description": "Zonas obtenidas correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "zonas_getZonasPaginated",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/zonas/routes/zona.routes.js",
+        "controller": "modules/zonas/controllers/zona.controller.js",
+        "handler": "getZonasPaginatedController",
+        "service": "modules/zonas/services/get-zonas-paginated.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "estado",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "search",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Zonas obtenidas correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ZonasGetZonasPaginatedResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/zonas/activas": {
+    "get": {
+      "tags": [
+        "Zonas"
+      ],
+      "summary": "Zonas activas obtenidas correctamente",
+      "description": "Zonas activas obtenidas correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "zonas_getZonasActivas",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/zonas/routes/zona.routes.js",
+        "controller": "modules/zonas/controllers/zona.controller.js",
+        "handler": "getZonasActivasController",
+        "service": "modules/zonas/services/get-zonas-activas.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "responses": {
+        "200": {
+          "description": "Zonas activas obtenidas correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ZonasGetZonasActivasResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/zonas/view/{id}": {
+    "get": {
+      "tags": [
+        "Zonas"
+      ],
+      "summary": "Zona obtenida correctamente",
+      "description": "Zona obtenida correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "zonas_getZonaById",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/zonas/routes/zona.routes.js",
+        "controller": "modules/zonas/controllers/zona.controller.js",
+        "handler": "getZonaByIdController",
+        "service": "modules/zonas/services/get-zona-by-id.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Zona obtenida correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ZonasGetZonaByIdResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/zonas/codigo": {
+    "get": {
+      "tags": [
+        "Zonas"
+      ],
+      "summary": "Código de la ruta obtenido correctamente",
+      "description": "Código de la ruta obtenido correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "zonas_getLastCodigoZona",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/zonas/routes/zona.routes.js",
+        "controller": "modules/zonas/controllers/zona.controller.js",
+        "handler": "getLastCodigoZonaController",
+        "service": "modules/zonas/services/get-last-codigo-zona.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "responses": {
+        "200": {
+          "description": "Código de la ruta obtenido correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ZonasGetLastCodigoZonaResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/zonas/create": {
+    "post": {
+      "tags": [
+        "Zonas"
+      ],
+      "summary": "Zona registrada correctamente",
+      "description": "Zona registrada correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "zonas_createZona",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/zonas/routes/zona.routes.js",
+        "controller": "modules/zonas/controllers/zona.controller.js",
+        "handler": "createZonaController",
+        "service": "modules/zonas/services/create-zona.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN"
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ZonasCreateZonaRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Zona registrada correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ZonasCreateZonaResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/zonas/update/{id}": {
+    "put": {
+      "tags": [
+        "Zonas"
+      ],
+      "summary": "Zona actualizada correctamente",
+      "description": "Zona actualizada correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "zonas_updateZona",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/zonas/routes/zona.routes.js",
+        "controller": "modules/zonas/controllers/zona.controller.js",
+        "handler": "updateZonaController",
+        "service": "modules/zonas/services/update-zona.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN"
+      ],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "requestBody": {
+        "required": false,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ZonasUpdateZonaRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Zona actualizada correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ZonasUpdateZonaResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/zonas/estado/{id}": {
+    "patch": {
+      "tags": [
+        "Zonas"
+      ],
+      "summary": "Change zona estado",
+      "description": "Change zona estado. Roles declarados en la ruta: SUPER_ADMIN, ADMIN. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "zonas_changeZonaEstado",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/zonas/routes/zona.routes.js",
+        "controller": "modules/zonas/controllers/zona.controller.js",
+        "handler": "changeZonaEstadoController",
+        "service": "modules/zonas/services/change-zona-estado.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN"
+      ],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ZonasChangeZonaEstadoRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Change zona estado.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ZonasChangeZonaEstadoResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/zonas/delete/{id}": {
+    "delete": {
+      "tags": [
+        "Zonas"
+      ],
+      "summary": "Zona eliminada correctamente",
+      "description": "Zona eliminada correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "zonas_deleteZona",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/zonas/routes/zona.routes.js",
+        "controller": "modules/zonas/controllers/zona.controller.js",
+        "handler": "deleteZonaController",
+        "service": "modules/zonas/services/delete-zona.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN"
+      ],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Zona eliminada correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ZonasDeleteZonaResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  }
+}

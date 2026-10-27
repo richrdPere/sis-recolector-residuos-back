@@ -1,0 +1,691 @@
+{
+  "/recolecciones/register": {
+    "post": {
+      "tags": [
+        "Recolecciones"
+      ],
+      "summary": "Register collection",
+      "description": "Register collection. Roles declarados en la ruta: CONDUCTOR, RECOLECTOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "recolecciones_registerCollection",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/recolecciones/routes/recoleccion.routes.js",
+        "controller": "modules/recolecciones/controllers/recoleccion.controller.js",
+        "handler": "registerCollectionController",
+        "service": "modules/recolecciones/services/register-collection.service.js"
+      },
+      "x-route-roles": [
+        "CONDUCTOR",
+        "RECOLECTOR"
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/RecoleccionesRegisterCollectionRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Register collection.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecoleccionesRegisterCollectionResponse"
+              }
+            }
+          }
+        },
+        "201": {
+          "description": "Register collection.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecoleccionesRegisterCollectionResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/recolecciones/register-lote": {
+    "post": {
+      "tags": [
+        "Recolecciones"
+      ],
+      "summary": "Register collection batch",
+      "description": "Register collection batch. Roles declarados en la ruta: CONDUCTOR, RECOLECTOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "recolecciones_registerCollectionBatch",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/recolecciones/routes/recoleccion.routes.js",
+        "controller": "modules/recolecciones/controllers/recoleccion.controller.js",
+        "handler": "registerCollectionBatchController",
+        "service": "modules/recolecciones/services/register-collection-batch.service.js"
+      },
+      "x-route-roles": [
+        "CONDUCTOR",
+        "RECOLECTOR"
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/RecoleccionesRegisterCollectionBatchRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Register collection batch.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecoleccionesRegisterCollectionBatchResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/recolecciones/recorridos/{idRecorrido}/puntos": {
+    "get": {
+      "tags": [
+        "Recolecciones"
+      ],
+      "summary": "Get route collection points",
+      "description": "Get route collection points. Roles declarados en la ruta: CONDUCTOR, RECOLECTOR, SUPERVISOR, SUPER_ADMIN, ADMIN, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "recolecciones_getRouteCollectionPoints",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/recolecciones/routes/recoleccion.routes.js",
+        "controller": "modules/recolecciones/controllers/recoleccion.controller.js",
+        "handler": "getRouteCollectionPointsController",
+        "service": "modules/recolecciones/services/get-route-collection-points.service.js"
+      },
+      "x-route-roles": [
+        "CONDUCTOR",
+        "RECOLECTOR",
+        "SUPERVISOR",
+        "SUPER_ADMIN",
+        "ADMIN",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "idRecorrido",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Get route collection points.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecoleccionesGetRouteCollectionPointsResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/recolecciones/recorridos/{idRecorrido}/progreso": {
+    "get": {
+      "tags": [
+        "Recolecciones"
+      ],
+      "summary": "Progreso del recorrido obtenido correctamente",
+      "description": "Progreso del recorrido obtenido correctamente. Roles declarados en la ruta: CONDUCTOR, RECOLECTOR, SUPERVISOR, SUPER_ADMIN, ADMIN, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "recolecciones_getRouteProgress",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/recolecciones/routes/recoleccion.routes.js",
+        "controller": "modules/recolecciones/controllers/recoleccion.controller.js",
+        "handler": "getRouteProgressController",
+        "service": "modules/recolecciones/services/get-route-progress.service.js"
+      },
+      "x-route-roles": [
+        "CONDUCTOR",
+        "RECOLECTOR",
+        "SUPERVISOR",
+        "SUPER_ADMIN",
+        "ADMIN",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "idRecorrido",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Progreso del recorrido obtenido correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecoleccionesGetRouteProgressResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/recolecciones/evidencias/{idRecoleccion}": {
+    "post": {
+      "tags": [
+        "Recolecciones"
+      ],
+      "summary": "Evidencia registrada correctamente",
+      "description": "Evidencia registrada correctamente. Roles declarados en la ruta: CONDUCTOR, RECOLECTOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "recolecciones_registerEvidence",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/recolecciones/routes/recoleccion.routes.js",
+        "controller": "modules/recolecciones/controllers/recoleccion.controller.js",
+        "handler": "registerEvidenceController",
+        "service": "modules/recolecciones/services/register-evidence.service.js"
+      },
+      "x-route-roles": [
+        "CONDUCTOR",
+        "RECOLECTOR"
+      ],
+      "parameters": [
+        {
+          "name": "idRecoleccion",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "multipart/form-data": {
+            "schema": {
+              "$ref": "#/components/schemas/RecoleccionesRegisterEvidenceRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Evidencia registrada correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecoleccionesRegisterEvidenceResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/recolecciones/evidencias/{idEvidencia}/anular": {
+    "patch": {
+      "tags": [
+        "Recolecciones"
+      ],
+      "summary": "Evidencia anulada correctamente",
+      "description": "Evidencia anulada correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "recolecciones_annulEvidence",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/recolecciones/routes/recoleccion.routes.js",
+        "controller": "modules/recolecciones/controllers/recoleccion.controller.js",
+        "handler": "annulEvidenceController",
+        "service": "modules/recolecciones/services/annul-evidence.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR"
+      ],
+      "parameters": [
+        {
+          "name": "idEvidencia",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/RecoleccionesAnnulEvidenceRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Evidencia anulada correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecoleccionesAnnulEvidenceResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/recolecciones/{idRecoleccion}/evidencias": {
+    "get": {
+      "tags": [
+        "Recolecciones"
+      ],
+      "summary": "Get collection evidences",
+      "description": "Get collection evidences. Roles declarados en la ruta: CONDUCTOR, RECOLECTOR, SUPERVISOR, SUPER_ADMIN, ADMIN, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "recolecciones_getCollectionEvidences",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/recolecciones/routes/recoleccion.routes.js",
+        "controller": "modules/recolecciones/controllers/recoleccion.controller.js",
+        "handler": "getCollectionEvidencesController",
+        "service": "modules/recolecciones/services/get-collection-evidences.service.js"
+      },
+      "x-route-roles": [
+        "CONDUCTOR",
+        "RECOLECTOR",
+        "SUPERVISOR",
+        "SUPER_ADMIN",
+        "ADMIN",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "idRecoleccion",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Get collection evidences.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecoleccionesGetCollectionEvidencesResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/recolecciones/{idRecoleccion}/anular": {
+    "patch": {
+      "tags": [
+        "Recolecciones"
+      ],
+      "summary": "Recolección anulada correctamente",
+      "description": "Recolección anulada correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "recolecciones_annulCollection",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/recolecciones/routes/recoleccion.routes.js",
+        "controller": "modules/recolecciones/controllers/recoleccion.controller.js",
+        "handler": "annulCollectionController",
+        "service": "modules/recolecciones/services/annul-collection.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR"
+      ],
+      "parameters": [
+        {
+          "name": "idRecoleccion",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/RecoleccionesAnnulCollectionRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Recolección anulada correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecoleccionesAnnulCollectionResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/recolecciones/view/{idRecoleccion}": {
+    "get": {
+      "tags": [
+        "Recolecciones"
+      ],
+      "summary": "Recolección obtenida correctamente",
+      "description": "Recolección obtenida correctamente. Roles declarados en la ruta: CONDUCTOR, RECOLECTOR, SUPERVISOR, SUPER_ADMIN, ADMIN, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "recolecciones_getCollectionById",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/recolecciones/routes/recoleccion.routes.js",
+        "controller": "modules/recolecciones/controllers/recoleccion.controller.js",
+        "handler": "getCollectionByIdController",
+        "service": "modules/recolecciones/services/get-collection-by-id.service.js"
+      },
+      "x-route-roles": [
+        "CONDUCTOR",
+        "RECOLECTOR",
+        "SUPERVISOR",
+        "SUPER_ADMIN",
+        "ADMIN",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "idRecoleccion",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Recolección obtenida correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecoleccionesGetCollectionByIdResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/recolecciones/capacidad/{idRecorrido}": {
+    "get": {
+      "tags": [
+        "Recolecciones"
+      ],
+      "summary": "Capacidad del vehículo obtenida correctamente",
+      "description": "Capacidad del vehículo obtenida correctamente. Roles declarados en la ruta: CONDUCTOR, RECOLECTOR, SUPERVISOR, SUPER_ADMIN, ADMIN, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "recolecciones_getRecorridoCapacidad",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/recolecciones/routes/recoleccion.routes.js",
+        "controller": "modules/recolecciones/controllers/recoleccion.controller.js",
+        "handler": "getRecorridoCapacidadController",
+        "service": "modules/recolecciones/services/get-collection-capacidad.service.js"
+      },
+      "x-route-roles": [
+        "CONDUCTOR",
+        "RECOLECTOR",
+        "SUPERVISOR",
+        "SUPER_ADMIN",
+        "ADMIN",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "idRecorrido",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Capacidad del vehículo obtenida correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecoleccionesGetRecorridoCapacidadResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  }
+}

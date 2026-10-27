@@ -1,0 +1,964 @@
+{
+  "/personal/{idPersonal}/conductor": {
+    "post": {
+      "tags": [
+        "Personal operativo"
+      ],
+      "summary": "Perfil de conductor registrado correctamente",
+      "description": "Perfil de conductor registrado correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "personal_createConductor",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/personal/routes/conductor.routes.js",
+        "controller": "modules/personal/controllers/conductor.controller.js",
+        "handler": "createConductorController",
+        "service": "modules/personal/services/conductor/create-conductor.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN"
+      ],
+      "parameters": [
+        {
+          "name": "idPersonal",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/PersonalCreateConductorRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Perfil de conductor registrado correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonalCreateConductorResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    },
+    "get": {
+      "tags": [
+        "Personal operativo"
+      ],
+      "summary": "Perfil de conductor obtenido correctamente",
+      "description": "Perfil de conductor obtenido correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "personal_getConductorById",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/personal/routes/conductor.routes.js",
+        "controller": "modules/personal/controllers/conductor.controller.js",
+        "handler": "getConductorByIdController",
+        "service": "modules/personal/services/conductor/get-conductor-by-id.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "idPersonal",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Perfil de conductor obtenido correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonalGetConductorByIdResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    },
+    "put": {
+      "tags": [
+        "Personal operativo"
+      ],
+      "summary": "Perfil de conductor actualizado correctamente",
+      "description": "Perfil de conductor actualizado correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "personal_updateConductor",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/personal/routes/conductor.routes.js",
+        "controller": "modules/personal/controllers/conductor.controller.js",
+        "handler": "updateConductorController",
+        "service": "modules/personal/services/conductor/update-conductor.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN"
+      ],
+      "parameters": [
+        {
+          "name": "idPersonal",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "requestBody": {
+        "required": false,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/PersonalUpdateConductorRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Perfil de conductor actualizado correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonalUpdateConductorResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/personal/{idPersonal}/conductor/estado": {
+    "patch": {
+      "tags": [
+        "Personal operativo"
+      ],
+      "summary": "Change conductor estado",
+      "description": "Change conductor estado. Roles declarados en la ruta: SUPER_ADMIN, ADMIN. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "personal_changeConductorEstado",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/personal/routes/conductor.routes.js",
+        "controller": "modules/personal/controllers/conductor.controller.js",
+        "handler": "changeConductorEstadoController",
+        "service": "modules/personal/services/conductor/change-conductor-estado.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN"
+      ],
+      "parameters": [
+        {
+          "name": "idPersonal",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/PersonalChangeConductorEstadoRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Change conductor estado.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonalChangeConductorEstadoResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/personal/conductores/disponibles": {
+    "get": {
+      "tags": [
+        "Personal operativo"
+      ],
+      "summary": "Conductores disponibles obtenidos correctamente",
+      "description": "Conductores disponibles obtenidos correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "personal_getConductoresDisponibles",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/personal/routes/disponibilidad.routes.js",
+        "controller": "modules/personal/controllers/disponibilidad.controller.js",
+        "handler": "getConductoresDisponiblesController",
+        "service": "modules/personal/services/disponibilidad/disponibilidad.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "responses": {
+        "200": {
+          "description": "Conductores disponibles obtenidos correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonalGetConductoresDisponiblesResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/personal/recolectores/disponibles": {
+    "get": {
+      "tags": [
+        "Personal operativo"
+      ],
+      "summary": "Recolectores disponibles obtenidos correctamente",
+      "description": "Recolectores disponibles obtenidos correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "personal_getRecolectoresDisponibles",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/personal/routes/disponibilidad.routes.js",
+        "controller": "modules/personal/controllers/disponibilidad.controller.js",
+        "handler": "getRecolectoresDisponiblesController",
+        "service": "modules/personal/services/disponibilidad/disponibilidad.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "responses": {
+        "200": {
+          "description": "Recolectores disponibles obtenidos correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonalGetRecolectoresDisponiblesResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/personal/rol/{rol}": {
+    "get": {
+      "tags": [
+        "Personal operativo"
+      ],
+      "summary": "Personal disponible obtenido correctamente",
+      "description": "Personal disponible obtenido correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "personal_getPersonalByRol",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/personal/routes/disponibilidad.routes.js",
+        "controller": "modules/personal/controllers/disponibilidad.controller.js",
+        "handler": "getPersonalByRolController",
+        "service": "modules/personal/services/disponibilidad/disponibilidad.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "rol",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Personal disponible obtenido correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonalGetPersonalByRolResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/personal/paginado": {
+    "get": {
+      "tags": [
+        "Personal operativo"
+      ],
+      "summary": "Personal operativo obtenido correctamente",
+      "description": "Personal operativo obtenido correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "personal_getPersonalPaginated",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/personal/routes/personal.routes.js",
+        "controller": "modules/personal/controllers/personal.controller.js",
+        "handler": "getPersonalPaginatedController",
+        "service": "modules/personal/services/personal/get-personal-paginated.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "estado",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "name": "estado_laboral",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "ACTIVO",
+              "VACACIONES",
+              "DESCANSO_MEDICO",
+              "SUSPENDIDO",
+              "CESADO"
+            ]
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "rol",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "search",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "tipo_contrato",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "NOMBRADO",
+              "CONTRATADO",
+              "CAS",
+              "LOCADOR",
+              "TERCERO",
+              "OTRO"
+            ]
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Personal operativo obtenido correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonalGetPersonalPaginatedResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/personal/view/{id}": {
+    "get": {
+      "tags": [
+        "Personal operativo"
+      ],
+      "summary": "Personal operativo obtenido correctamente",
+      "description": "Personal operativo obtenido correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "personal_getPersonalById",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/personal/routes/personal.routes.js",
+        "controller": "modules/personal/controllers/personal.controller.js",
+        "handler": "getPersonalByIdController",
+        "service": "modules/personal/services/personal/get-personal-by-id.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Personal operativo obtenido correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonalGetPersonalByIdResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/personal/create": {
+    "post": {
+      "tags": [
+        "Personal operativo"
+      ],
+      "summary": "Personal operativo registrado correctamente",
+      "description": "Personal operativo registrado correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "personal_createPersonal",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/personal/routes/personal.routes.js",
+        "controller": "modules/personal/controllers/personal.controller.js",
+        "handler": "createPersonalController",
+        "service": "modules/personal/services/personal/create-personal.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN"
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/PersonalCreatePersonalRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Personal operativo registrado correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonalCreatePersonalResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/personal/update/{id}": {
+    "put": {
+      "tags": [
+        "Personal operativo"
+      ],
+      "summary": "Personal operativo actualizado correctamente",
+      "description": "Personal operativo actualizado correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "personal_updatePersonal",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/personal/routes/personal.routes.js",
+        "controller": "modules/personal/controllers/personal.controller.js",
+        "handler": "updatePersonalController",
+        "service": "modules/personal/services/personal/update-personal.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN"
+      ],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "requestBody": {
+        "required": false,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/PersonalUpdatePersonalRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Personal operativo actualizado correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonalUpdatePersonalResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/personal/estado/{id}": {
+    "patch": {
+      "tags": [
+        "Personal operativo"
+      ],
+      "summary": "Change personal estado",
+      "description": "Change personal estado. Roles declarados en la ruta: SUPER_ADMIN, ADMIN. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "personal_changePersonalEstado",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/personal/routes/personal.routes.js",
+        "controller": "modules/personal/controllers/personal.controller.js",
+        "handler": "changePersonalEstadoController",
+        "service": "modules/personal/services/personal/change-personal.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN"
+      ],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/PersonalChangePersonalEstadoRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Change personal estado.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonalChangePersonalEstadoResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/personal/delete/{id}": {
+    "delete": {
+      "tags": [
+        "Personal operativo"
+      ],
+      "summary": "Personal operativo eliminado correctamente",
+      "description": "Personal operativo eliminado correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "personal_deletePersonal",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/personal/routes/personal.routes.js",
+        "controller": "modules/personal/controllers/personal.controller.js",
+        "handler": "deletePersonalController",
+        "service": "modules/personal/services/personal/delete-personal.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN"
+      ],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Personal operativo eliminado correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonalDeletePersonalResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/personal/codigo": {
+    "get": {
+      "tags": [
+        "Personal operativo"
+      ],
+      "summary": "Código de personal obtenido correctamente",
+      "description": "Código de personal obtenido correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "personal_getLastCodigoPersonal",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/personal/routes/personal.routes.js",
+        "controller": "modules/personal/controllers/personal.controller.js",
+        "handler": "getLastCodigoPersonalController",
+        "service": "modules/personal/services/personal/get-last-codigo-personal.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "responses": {
+        "200": {
+          "description": "Código de personal obtenido correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonalGetLastCodigoPersonalResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "500": {
+          "description": "Error del servicio. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  }
+}

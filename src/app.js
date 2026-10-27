@@ -2,6 +2,10 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 
+// Swagger - Documentación de la API.
+const swaggerUi = require('swagger-ui-express');
+const openapiDocument = require('./docs/openapi.js');
+
 const path = require("path");
 const fs = require("fs");
 
@@ -21,22 +25,44 @@ const db = require("./database/models");
 const app = express();
 
 // ==========================================================
+// DOCUMENTACIÓN REST/API
+// ==========================================================
+
+// Especificación OpenAPI en JSON.
+app.get('/openapi.json', (_req, res) => {
+  res.json(openapiDocument);
+});
+
+// Interfaz Swagger UI.
+app.use(
+  '/api-docs',
+  swaggerUi.serve,
+  swaggerUi.setup(openapiDocument, {
+    customSiteTitle: 'Catálogo REST/API - Recolección de Residuos',
+
+    swaggerOptions: {
+      docExpansion: 'list',
+      displayRequestDuration: true,
+      validatorUrl: null,
+    },
+  }),
+);
+
+// ==========================================================
 // CONFIGURACIÓN GENERAL
 // ==========================================================
 
 app.use(cors());
 
-app.use(
-  express.json({
-    limit: "10mb",
-  })
+app.use(express.json({
+  limit: "10mb",
+})
 );
 
-app.use(
-  express.urlencoded({
-    extended: true,
-    limit: "10mb",
-  })
+app.use(express.urlencoded({
+  extended: true,
+  limit: "10mb",
+})
 );
 
 // ==========================================================
@@ -56,8 +82,7 @@ app.use(
  * UPLOADS_DIR=/var/www/aryoria/uploads
  */
 
-const uploadsRoot =
-  process.env.UPLOADS_DIR ||
+const uploadsRoot = process.env.UPLOADS_DIR ||
   path.join(
     __dirname,
     "../../../uploads"

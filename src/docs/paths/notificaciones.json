@@ -1,0 +1,415 @@
+{
+  "/notificaciones/enviar": {
+    "post": {
+      "tags": [
+        "Notificaciones"
+      ],
+      "summary": "Create notification",
+      "description": "Create notification. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "notificaciones_createNotification",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/notificaciones/routes/notificacion.routes.js",
+        "controller": "modules/notificaciones/controllers/notificacion.controller.js",
+        "handler": "createNotificationController",
+        "service": "modules/notificaciones/services/notificaciones-internas/create-notification.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR"
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/NotificacionesCreateNotificationRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Create notification.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotificacionesCreateNotificationResponse"
+              }
+            }
+          }
+        },
+        "201": {
+          "description": "Create notification.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotificacionesCreateNotificationResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/notificaciones/mis-notificaciones": {
+    "get": {
+      "tags": [
+        "Notificaciones"
+      ],
+      "summary": "Get my notifications",
+      "description": "Get my notifications. Requiere sesión autenticada; el servicio puede aplicar comprobaciones adicionales. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "notificaciones_getMyNotifications",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/notificaciones/routes/notificacion.routes.js",
+        "controller": "modules/notificaciones/controllers/notificacion.controller.js",
+        "handler": "getMyNotificationsController",
+        "service": "modules/notificaciones/services/notificaciones-internas/get-my-notifications.service.js"
+      },
+      "x-route-roles": [],
+      "parameters": [
+        {
+          "name": "archivada",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "name": "leida",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "prioridad",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "BAJA",
+              "NORMAL",
+              "ALTA",
+              "URGENTE"
+            ]
+          }
+        },
+        {
+          "name": "search",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "tipo_notificacion",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Get my notifications.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotificacionesGetMyNotificationsResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/notificaciones/no-leidas/total": {
+    "get": {
+      "tags": [
+        "Notificaciones"
+      ],
+      "summary": "Cantidad de notificaciones no leídas obtenida correctamente",
+      "description": "Cantidad de notificaciones no leídas obtenida correctamente. Requiere sesión autenticada; el servicio puede aplicar comprobaciones adicionales. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "notificaciones_getUnreadCount",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/notificaciones/routes/notificacion.routes.js",
+        "controller": "modules/notificaciones/controllers/notificacion.controller.js",
+        "handler": "getUnreadCountController",
+        "service": "modules/notificaciones/services/notificaciones-internas/get-unread-count.service.js"
+      },
+      "x-route-roles": [],
+      "responses": {
+        "200": {
+          "description": "Cantidad de notificaciones no leídas obtenida correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotificacionesGetUnreadCountResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/notificaciones/leer-todas": {
+    "patch": {
+      "tags": [
+        "Notificaciones"
+      ],
+      "summary": "Mark all notifications read",
+      "description": "Mark all notifications read. Requiere sesión autenticada; el servicio puede aplicar comprobaciones adicionales. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "notificaciones_markAllNotificationsRead",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/notificaciones/routes/notificacion.routes.js",
+        "controller": "modules/notificaciones/controllers/notificacion.controller.js",
+        "handler": "markAllNotificationsReadController",
+        "service": "modules/notificaciones/services/notificaciones-internas/mark-all-notifications-read.service.js"
+      },
+      "x-route-roles": [],
+      "responses": {
+        "200": {
+          "description": "Mark all notifications read.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotificacionesMarkAllNotificationsReadResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/notificaciones/{idNotificacionUsuario}": {
+    "get": {
+      "tags": [
+        "Notificaciones"
+      ],
+      "summary": "Notificación obtenida correctamente",
+      "description": "Notificación obtenida correctamente. Requiere sesión autenticada; el servicio puede aplicar comprobaciones adicionales. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "notificaciones_getMyNotificationById",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/notificaciones/routes/notificacion.routes.js",
+        "controller": "modules/notificaciones/controllers/notificacion.controller.js",
+        "handler": "getMyNotificationByIdController",
+        "service": "modules/notificaciones/services/notificaciones-internas/get-my-notification-by-id.service.js"
+      },
+      "x-route-roles": [],
+      "parameters": [
+        {
+          "name": "idNotificacionUsuario",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Notificación obtenida correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotificacionesGetMyNotificationByIdResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/notificaciones/{idNotificacionUsuario}/leer": {
+    "patch": {
+      "tags": [
+        "Notificaciones"
+      ],
+      "summary": "Notificación marcada como leída",
+      "description": "Notificación marcada como leída. Requiere sesión autenticada; el servicio puede aplicar comprobaciones adicionales. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "notificaciones_markNotificationRead",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/notificaciones/routes/notificacion.routes.js",
+        "controller": "modules/notificaciones/controllers/notificacion.controller.js",
+        "handler": "markNotificationReadController",
+        "service": "modules/notificaciones/services/notificaciones-internas/mark-notification-read.service.js"
+      },
+      "x-route-roles": [],
+      "parameters": [
+        {
+          "name": "idNotificacionUsuario",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Notificación marcada como leída.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotificacionesMarkNotificationReadResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/notificaciones/{idNotificacionUsuario}/archivar": {
+    "patch": {
+      "tags": [
+        "Notificaciones"
+      ],
+      "summary": "Notificación archivada correctamente",
+      "description": "Notificación archivada correctamente. Requiere sesión autenticada; el servicio puede aplicar comprobaciones adicionales. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "notificaciones_archiveNotification",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/notificaciones/routes/notificacion.routes.js",
+        "controller": "modules/notificaciones/controllers/notificacion.controller.js",
+        "handler": "archiveNotificationController",
+        "service": "modules/notificaciones/services/notificaciones-internas/archive-notification.service.js"
+      },
+      "x-route-roles": [],
+      "parameters": [
+        {
+          "name": "idNotificacionUsuario",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Notificación archivada correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotificacionesArchiveNotificationResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  }
+}

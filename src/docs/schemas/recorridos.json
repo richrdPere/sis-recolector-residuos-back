@@ -1,0 +1,432 @@
+{
+  "RecorridosGetRecorridoEventosResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {}
+          },
+          "page": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          },
+          "total_pages": {
+            "type": "integer"
+          },
+          "has_next_page": {
+            "type": "boolean"
+          },
+          "has_previous_page": {
+            "type": "boolean"
+          }
+        },
+        "description": "Claves observadas en un retorno explícito del servicio. Los objetos asociados y campos calculados sin tipo confirmado se mantienen abiertos.",
+        "additionalProperties": true
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/recorridos/controllers/recorrido-evento.controller.js",
+    "x-data-contract": "partial-source"
+  },
+  "RecorridosIniciarRecorridoRequest": {
+    "type": "object",
+    "properties": {
+      "fecha_evento": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "latitud": {
+        "type": "number",
+        "minimum": -90,
+        "maximum": 90
+      },
+      "longitud": {
+        "type": "number",
+        "minimum": -180,
+        "maximum": 180
+      },
+      "precision_gps": {
+        "type": "number",
+        "nullable": true
+      },
+      "kilometraje": {
+        "type": "number"
+      },
+      "observacion": {
+        "type": "string",
+        "nullable": true
+      },
+      "clave_idempotencia": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "latitud",
+      "longitud"
+    ],
+    "x-source": "modules/recorridos/services/iniciar-recorrido.service.js",
+    "description": "Campos identificados en el controlador y servicio. Las validaciones de negocio y restricciones de modelos no incluidas deben verificarse contra la API en ejecución."
+  },
+  "RecorridosIniciarRecorridoResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "description": "Resultado devuelto por el servicio; su serialización depende de modelos Sequelize no incluidos. No se impone una forma no confirmada."
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/recorridos/controllers/recorrido.controller.js",
+    "x-data-contract": "open-model-dependent"
+  },
+  "RecorridosPausarRecorridoRequest": {
+    "type": "object",
+    "properties": {
+      "fecha_evento": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "latitud": {
+        "type": "number",
+        "minimum": -90,
+        "maximum": 90
+      },
+      "longitud": {
+        "type": "number",
+        "minimum": -180,
+        "maximum": 180
+      },
+      "precision_gps": {
+        "type": "number",
+        "nullable": true
+      },
+      "observacion": {
+        "type": "string",
+        "nullable": true
+      },
+      "clave_idempotencia": {
+        "type": "string"
+      }
+    },
+    "x-source": "modules/recorridos/services/pausar-recorrido.service.js",
+    "description": "Campos identificados en el controlador y servicio. Las validaciones de negocio y restricciones de modelos no incluidas deben verificarse contra la API en ejecución."
+  },
+  "RecorridosPausarRecorridoResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "description": "Resultado devuelto por el servicio; su serialización depende de modelos Sequelize no incluidos. No se impone una forma no confirmada."
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/recorridos/controllers/recorrido.controller.js",
+    "x-data-contract": "open-model-dependent"
+  },
+  "RecorridosReanudarRecorridoRequest": {
+    "type": "object",
+    "properties": {
+      "fecha_evento": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "latitud": {
+        "type": "number",
+        "minimum": -90,
+        "maximum": 90
+      },
+      "longitud": {
+        "type": "number",
+        "minimum": -180,
+        "maximum": 180
+      },
+      "precision_gps": {
+        "type": "number",
+        "nullable": true
+      },
+      "observacion": {
+        "type": "string",
+        "nullable": true
+      },
+      "clave_idempotencia": {
+        "type": "string"
+      }
+    },
+    "x-source": "modules/recorridos/services/reanudar-recorrido.service.js",
+    "description": "Campos identificados en el controlador y servicio. Las validaciones de negocio y restricciones de modelos no incluidas deben verificarse contra la API en ejecución."
+  },
+  "RecorridosReanudarRecorridoResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "description": "Resultado devuelto por el servicio; su serialización depende de modelos Sequelize no incluidos. No se impone una forma no confirmada."
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/recorridos/controllers/recorrido.controller.js",
+    "x-data-contract": "open-model-dependent"
+  },
+  "RecorridosFinalizarRecorridoRequest": {
+    "type": "object",
+    "properties": {
+      "fecha_evento": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "latitud": {
+        "type": "number",
+        "minimum": -90,
+        "maximum": 90
+      },
+      "longitud": {
+        "type": "number",
+        "minimum": -180,
+        "maximum": 180
+      },
+      "precision_gps": {
+        "type": "number",
+        "nullable": true
+      },
+      "kilometraje": {
+        "type": "number"
+      },
+      "observacion": {
+        "type": "string",
+        "nullable": true
+      },
+      "clave_idempotencia": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "latitud",
+      "longitud"
+    ],
+    "x-source": "modules/recorridos/services/finalizar-recorrido.service.js",
+    "description": "Campos identificados en el controlador y servicio. Las validaciones de negocio y restricciones de modelos no incluidas deben verificarse contra la API en ejecución."
+  },
+  "RecorridosFinalizarRecorridoResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "description": "Resultado devuelto por el servicio; su serialización depende de modelos Sequelize no incluidos. No se impone una forma no confirmada."
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/recorridos/controllers/recorrido.controller.js",
+    "x-data-contract": "open-model-dependent"
+  },
+  "RecorridosGetMisRecorridosResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {}
+          },
+          "pagination": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "description": "Claves observadas en un retorno explícito del servicio. Los objetos asociados y campos calculados sin tipo confirmado se mantienen abiertos.",
+        "additionalProperties": true
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/recorridos/controllers/recorrido.controller.js",
+    "x-data-contract": "partial-source"
+  },
+  "RecorridosCancelarRecorridoRequest": {
+    "type": "object",
+    "properties": {
+      "motivo": {
+        "type": "string"
+      },
+      "fecha_evento": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "latitud": {
+        "type": "number",
+        "minimum": -90,
+        "maximum": 90
+      },
+      "longitud": {
+        "type": "number",
+        "minimum": -180,
+        "maximum": 180
+      },
+      "observacion": {
+        "type": "string",
+        "nullable": true
+      },
+      "clave_idempotencia": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "motivo"
+    ],
+    "x-source": "modules/recorridos/services/cancelar-recorrido.service.js",
+    "description": "Campos identificados en el controlador y servicio. Las validaciones de negocio y restricciones de modelos no incluidas deben verificarse contra la API en ejecución."
+  },
+  "RecorridosCancelarRecorridoResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "description": "Resultado devuelto por el servicio; su serialización depende de modelos Sequelize no incluidos. No se impone una forma no confirmada."
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/recorridos/controllers/recorrido.controller.js",
+    "x-data-contract": "open-model-dependent"
+  },
+  "RecorridosGetRecorridoActivoResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "description": "Resultado devuelto por el servicio; su serialización depende de modelos Sequelize no incluidos. No se impone una forma no confirmada."
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/recorridos/controllers/recorrido.controller.js",
+    "x-data-contract": "open-model-dependent"
+  },
+  "RecorridosGetRecorridoByIdResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "description": "Resultado devuelto por el servicio; su serialización depende de modelos Sequelize no incluidos. No se impone una forma no confirmada."
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/recorridos/controllers/recorrido.controller.js",
+    "x-data-contract": "open-model-dependent"
+  }
+}

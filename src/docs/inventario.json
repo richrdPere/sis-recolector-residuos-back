@@ -1,0 +1,1672 @@
+[
+  {
+    "module": "auth",
+    "method": "POST",
+    "path": "/auth/register",
+    "controller": "registerCiudadanoController",
+    "body_schema": "AuthRegisterCiudadanoRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "auth/routes/auth.routes.js",
+    "service_file": "auth/services/register-ciudadano.service.js"
+  },
+  {
+    "module": "auth",
+    "method": "POST",
+    "path": "/auth/login",
+    "controller": "loginController",
+    "body_schema": "AuthLoginRequest",
+    "data_contract": "partial-source",
+    "route_file": "auth/routes/auth.routes.js",
+    "service_file": "auth/services/login.service.js"
+  },
+  {
+    "module": "auth",
+    "method": "POST",
+    "path": "/auth/refresh",
+    "controller": "refreshSessionController",
+    "body_schema": "AuthRefreshSessionRequest",
+    "data_contract": "partial-source",
+    "route_file": "auth/routes/auth.routes.js",
+    "service_file": "auth/services/refresh-session.service.js"
+  },
+  {
+    "module": "auth",
+    "method": "GET",
+    "path": "/auth/me",
+    "controller": "getAuthProfileController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "auth/routes/auth.routes.js",
+    "service_file": "auth/services/get-auth-profile.service.js"
+  },
+  {
+    "module": "auth",
+    "method": "POST",
+    "path": "/auth/logout",
+    "controller": "logoutController",
+    "body_schema": "AuthLogoutRequest",
+    "data_contract": "partial-source",
+    "route_file": "auth/routes/auth.routes.js",
+    "service_file": "auth/services/logout.service.js"
+  },
+  {
+    "module": "auth",
+    "method": "POST",
+    "path": "/auth/logout-all",
+    "controller": "logoutAllController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "auth/routes/auth.routes.js",
+    "service_file": "auth/services/logout-all.service.js"
+  },
+  {
+    "module": "auth",
+    "method": "PATCH",
+    "path": "/auth/change-password",
+    "controller": "changePasswordController",
+    "body_schema": "AuthChangePasswordRequest",
+    "data_contract": "partial-source",
+    "route_file": "auth/routes/auth.routes.js",
+    "service_file": "auth/services/change-password.service.js"
+  },
+  {
+    "module": "auth",
+    "method": "POST",
+    "path": "/auth/users",
+    "controller": "createUsuarioController",
+    "body_schema": "AuthCreateUsuarioRequest",
+    "data_contract": "partial-source",
+    "route_file": "auth/routes/auth.routes.js",
+    "service_file": "auth/services/create-usuario.service.js"
+  },
+  {
+    "module": "ciudadanos",
+    "method": "POST",
+    "path": "/ciudadanos/perfil",
+    "controller": "createCitizenProfileController",
+    "body_schema": "CiudadanosCreateCitizenProfileRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "ciudadanos/routes/ciudadanos.routes.js",
+    "service_file": "ciudadanos/services/create-citizen-profile.service.js"
+  },
+  {
+    "module": "ciudadanos",
+    "method": "GET",
+    "path": "/ciudadanos/me",
+    "controller": "getMyCitizenProfileController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "ciudadanos/routes/ciudadanos.routes.js",
+    "service_file": "ciudadanos/services/get-my-citizen-profile.service.js"
+  },
+  {
+    "module": "ciudadanos",
+    "method": "PUT",
+    "path": "/ciudadanos/me",
+    "controller": "updateCitizenProfileController",
+    "body_schema": "CiudadanosUpdateCitizenProfileRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "ciudadanos/routes/ciudadanos.routes.js",
+    "service_file": "ciudadanos/services/update-citizen-profile.service.js"
+  },
+  {
+    "module": "ciudadanos",
+    "method": "GET",
+    "path": "/ciudadanos/preferencias-notificacion",
+    "controller": "getNotificationPreferencesController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "ciudadanos/routes/ciudadanos.routes.js",
+    "service_file": "ciudadanos/services/get-notification-preferences.service.js"
+  },
+  {
+    "module": "ciudadanos",
+    "method": "PUT",
+    "path": "/ciudadanos/preferencias-notificacion",
+    "controller": "updateNotificationPreferencesController",
+    "body_schema": "CiudadanosUpdateNotificationPreferencesRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "ciudadanos/routes/ciudadanos.routes.js",
+    "service_file": "ciudadanos/services/update-notification-preferences.service.js"
+  },
+  {
+    "module": "ciudadanos",
+    "method": "GET",
+    "path": "/ciudadanos/domicilios",
+    "controller": "getMyAddressesController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "ciudadanos/routes/ciudadanos.routes.js",
+    "service_file": "ciudadanos/services/get-my-addresses.service.js"
+  },
+  {
+    "module": "ciudadanos",
+    "method": "POST",
+    "path": "/ciudadanos/domicilios",
+    "controller": "createCitizenAddressController",
+    "body_schema": "CiudadanosCreateCitizenAddressRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "ciudadanos/routes/ciudadanos.routes.js",
+    "service_file": "ciudadanos/services/create-citizen-address.service.js"
+  },
+  {
+    "module": "ciudadanos",
+    "method": "PATCH",
+    "path": "/ciudadanos/domicilios/{idDomicilio}/principal",
+    "controller": "setPrimaryAddressController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "ciudadanos/routes/ciudadanos.routes.js",
+    "service_file": "ciudadanos/services/set-primary-address.service.js"
+  },
+  {
+    "module": "ciudadanos",
+    "method": "PUT",
+    "path": "/ciudadanos/domicilios/{idDomicilio}",
+    "controller": "updateCitizenAddressController",
+    "body_schema": "CiudadanosUpdateCitizenAddressRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "ciudadanos/routes/ciudadanos.routes.js",
+    "service_file": "ciudadanos/services/update-citizen-address.service.js"
+  },
+  {
+    "module": "ciudadanos",
+    "method": "DELETE",
+    "path": "/ciudadanos/domicilios/{idDomicilio}",
+    "controller": "deleteCitizenAddressController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "ciudadanos/routes/ciudadanos.routes.js",
+    "service_file": "ciudadanos/services/delete-citizen-address.service.js"
+  },
+  {
+    "module": "ciudadanos",
+    "method": "GET",
+    "path": "/ciudadanos/domicilios/{idDomicilio}/cronograma",
+    "controller": "getScheduleByAddressController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "ciudadanos/routes/ciudadanos.routes.js",
+    "service_file": "ciudadanos/services/get-schedule-by-address.service.js"
+  },
+  {
+    "module": "codigos-qr-publico",
+    "method": "GET",
+    "path": "/codigos-qr/publico/{tokenPublico}/informacion",
+    "controller": "getPublicQrInformationController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "codigos-qr/routes/codigo-qr-public.routes.js",
+    "service_file": "codigos-qr/services/get-public-qr-information.service.js"
+  },
+  {
+    "module": "codigos-qr-publico",
+    "method": "GET",
+    "path": "/codigos-qr/publico/{tokenPublico}/cronograma",
+    "controller": "getPublicQrScheduleController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "codigos-qr/routes/codigo-qr-public.routes.js",
+    "service_file": "codigos-qr/services/get-public-schedule.service.js"
+  },
+  {
+    "module": "codigos-qr-publico",
+    "method": "GET",
+    "path": "/codigos-qr/publico/{tokenPublico}/estado",
+    "controller": "getPublicQrRouteStatusController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "codigos-qr/routes/codigo-qr-public.routes.js",
+    "service_file": "codigos-qr/services/get-public-route-status.service.js"
+  },
+  {
+    "module": "codigos-qr-publico",
+    "method": "GET",
+    "path": "/codigos-qr/publico/{tokenPublico}/ubicacion",
+    "controller": "getPublicQrRouteLocationController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "codigos-qr/routes/codigo-qr-public.routes.js",
+    "service_file": "codigos-qr/services/get-public-route-location.service.js"
+  },
+  {
+    "module": "codigos-qr-publico",
+    "method": "GET",
+    "path": "/codigos-qr/publico/{tokenPublico}",
+    "controller": "resolvePublicQrController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "codigos-qr/routes/codigo-qr-public.routes.js",
+    "service_file": null
+  },
+  {
+    "module": "codigos-qr",
+    "method": "POST",
+    "path": "/codigos-qr/create",
+    "controller": "createQrCodeController",
+    "body_schema": "CodigosQrCreateQrCodeRequest",
+    "data_contract": "partial-source",
+    "route_file": "codigos-qr/routes/codigo-qr.routes.js",
+    "service_file": "codigos-qr/services/create-qr-code.service.js"
+  },
+  {
+    "module": "codigos-qr",
+    "method": "GET",
+    "path": "/codigos-qr/paginado",
+    "controller": "getQrCodesController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "codigos-qr/routes/codigo-qr.routes.js",
+    "service_file": "codigos-qr/services/get-qr-codes.service.js"
+  },
+  {
+    "module": "codigos-qr",
+    "method": "GET",
+    "path": "/codigos-qr/{idCodigoQr}/imagen",
+    "controller": "generateQrImageController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "codigos-qr/routes/codigo-qr.routes.js",
+    "service_file": "codigos-qr/services/generate-qr-image.service.js"
+  },
+  {
+    "module": "codigos-qr",
+    "method": "PATCH",
+    "path": "/codigos-qr/{idCodigoQr}/estado",
+    "controller": "changeQrCodeStatusController",
+    "body_schema": "CodigosQrChangeQrCodeStatusRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "codigos-qr/routes/codigo-qr.routes.js",
+    "service_file": "codigos-qr/services/change-qr-code-status.service.js"
+  },
+  {
+    "module": "codigos-qr",
+    "method": "PATCH",
+    "path": "/codigos-qr/{idCodigoQr}/regenerar",
+    "controller": "regenerateQrCodeController",
+    "body_schema": "CodigosQrRegenerateQrCodeRequest",
+    "data_contract": "partial-source",
+    "route_file": "codigos-qr/routes/codigo-qr.routes.js",
+    "service_file": "codigos-qr/services/regenerate-qr-code.service.js"
+  },
+  {
+    "module": "codigos-qr",
+    "method": "GET",
+    "path": "/codigos-qr/view/{idCodigoQr}",
+    "controller": "getQrCodeByIdController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "codigos-qr/routes/codigo-qr.routes.js",
+    "service_file": "codigos-qr/services/get-qr-code-by-id.service.js"
+  },
+  {
+    "module": "mantenimientos",
+    "method": "GET",
+    "path": "/mantenimientos/paginado",
+    "controller": "getMantenimientosPaginatedController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "mantenimientos/routes/mantenimientos.routes.js",
+    "service_file": "mantenimientos/services/get-mantenimientos-paginated.service.js"
+  },
+  {
+    "module": "mantenimientos",
+    "method": "GET",
+    "path": "/mantenimientos/expedientes",
+    "controller": "getVehiculosExpedientesPaginadoController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "mantenimientos/routes/mantenimientos.routes.js",
+    "service_file": "mantenimientos/services/get-vehiculos-expedientes-paginado.service.js"
+  },
+  {
+    "module": "mantenimientos",
+    "method": "GET",
+    "path": "/mantenimientos/proximos",
+    "controller": "getMantenimientosProximosController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "mantenimientos/routes/mantenimientos.routes.js",
+    "service_file": "mantenimientos/services/get-mantenimientos-proximos.service.js"
+  },
+  {
+    "module": "mantenimientos",
+    "method": "GET",
+    "path": "/mantenimientos/vehiculo/{idVehiculo}",
+    "controller": "getMantenimientosByVehiculoController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "mantenimientos/routes/mantenimientos.routes.js",
+    "service_file": "mantenimientos/services/get-mantenimientos-by-vehiculo.service.js"
+  },
+  {
+    "module": "mantenimientos",
+    "method": "GET",
+    "path": "/mantenimientos/view/{id}",
+    "controller": "getMantenimientoByIdController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "mantenimientos/routes/mantenimientos.routes.js",
+    "service_file": "mantenimientos/services/get-mantenimiento-by-id.service.js"
+  },
+  {
+    "module": "mantenimientos",
+    "method": "POST",
+    "path": "/mantenimientos/create",
+    "controller": "createMantenimientoController",
+    "body_schema": "MantenimientosCreateMantenimientoRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "mantenimientos/routes/mantenimientos.routes.js",
+    "service_file": "mantenimientos/services/create-mantenimiento.service.js"
+  },
+  {
+    "module": "mantenimientos",
+    "method": "PUT",
+    "path": "/mantenimientos/update/{id}",
+    "controller": "updateMantenimientoController",
+    "body_schema": "MantenimientosUpdateMantenimientoRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "mantenimientos/routes/mantenimientos.routes.js",
+    "service_file": "mantenimientos/services/update-mantenimiento.service.js"
+  },
+  {
+    "module": "mantenimientos",
+    "method": "PATCH",
+    "path": "/mantenimientos/{id}/iniciar",
+    "controller": "iniciarMantenimientoController",
+    "body_schema": "MantenimientosIniciarMantenimientoRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "mantenimientos/routes/mantenimientos.routes.js",
+    "service_file": "mantenimientos/services/iniciar-mantenimiento.service.js"
+  },
+  {
+    "module": "mantenimientos",
+    "method": "PATCH",
+    "path": "/mantenimientos/{id}/finalizar",
+    "controller": "finalizarMantenimientoController",
+    "body_schema": "MantenimientosFinalizarMantenimientoRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "mantenimientos/routes/mantenimientos.routes.js",
+    "service_file": "mantenimientos/services/finalizar-mantenimiento.service.js"
+  },
+  {
+    "module": "mantenimientos",
+    "method": "PATCH",
+    "path": "/mantenimientos/{id}/cancelar",
+    "controller": "cancelarMantenimientoController",
+    "body_schema": "MantenimientosCancelarMantenimientoRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "mantenimientos/routes/mantenimientos.routes.js",
+    "service_file": "mantenimientos/services/cancelar-mantenimiento.service.js"
+  },
+  {
+    "module": "dashboard",
+    "method": "GET",
+    "path": "/dashboard/resumen",
+    "controller": "getDashboardSummaryController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "monitoreo/routes/dashboard.routes.js",
+    "service_file": "monitoreo/services/dashboard/get-dashboard-summary.service.js"
+  },
+  {
+    "module": "dashboard",
+    "method": "GET",
+    "path": "/dashboard/programaciones",
+    "controller": "getProgrammingIndicatorsController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "monitoreo/routes/dashboard.routes.js",
+    "service_file": "monitoreo/services/dashboard/get-programming-indicators.service.js"
+  },
+  {
+    "module": "dashboard",
+    "method": "GET",
+    "path": "/dashboard/recolecciones",
+    "controller": "getCollectionIndicatorsController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "monitoreo/routes/dashboard.routes.js",
+    "service_file": "monitoreo/services/dashboard/get-collection-indicators.service.js"
+  },
+  {
+    "module": "dashboard",
+    "method": "GET",
+    "path": "/dashboard/vehiculos",
+    "controller": "getVehicleIndicatorsController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "monitoreo/routes/dashboard.routes.js",
+    "service_file": "monitoreo/services/dashboard/get-vehicle-indicators.service.js"
+  },
+  {
+    "module": "dashboard",
+    "method": "GET",
+    "path": "/dashboard/rendimiento-rutas",
+    "controller": "getRoutePerformanceController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "monitoreo/routes/dashboard.routes.js",
+    "service_file": "monitoreo/services/dashboard/get-route-performance.service.js"
+  },
+  {
+    "module": "dashboard",
+    "method": "GET",
+    "path": "/dashboard/tendencias",
+    "controller": "getDashboardTrendsController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "monitoreo/routes/dashboard.routes.js",
+    "service_file": "monitoreo/services/dashboard/get-dashboard-trends.service.js"
+  },
+  {
+    "module": "monitoreo",
+    "method": "GET",
+    "path": "/monitoreo/operacion",
+    "controller": "getOperationalMonitorController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "monitoreo/routes/monitoreo.routes.js",
+    "service_file": "monitoreo/services/monitoreo/get-operational-monitor.service.js"
+  },
+  {
+    "module": "monitoreo",
+    "method": "GET",
+    "path": "/monitoreo/mapa",
+    "controller": "getActiveRoutesMapController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "monitoreo/routes/monitoreo.routes.js",
+    "service_file": "monitoreo/services/monitoreo/get-active-routes-map.service.js"
+  },
+  {
+    "module": "monitoreo",
+    "method": "GET",
+    "path": "/monitoreo/alertas",
+    "controller": "getOperationalAlertsController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "monitoreo/routes/monitoreo.routes.js",
+    "service_file": "monitoreo/services/monitoreo/get-operational-alerts.service.js"
+  },
+  {
+    "module": "monitoreo",
+    "method": "GET",
+    "path": "/monitoreo/recorridos/{idRecorrido}",
+    "controller": "getRouteMonitorDetailController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "monitoreo/routes/monitoreo.routes.js",
+    "service_file": "monitoreo/services/monitoreo/get-route-monitor-detail.service.js"
+  },
+  {
+    "module": "dispositivos",
+    "method": "POST",
+    "path": "/notificaciones/dispositivos/register",
+    "controller": "registerDeviceController",
+    "body_schema": "DispositivosRegisterDeviceRequest",
+    "data_contract": "partial-source",
+    "route_file": "notificaciones/routes/dispositivo.routes.js",
+    "service_file": "notificaciones/services/dispositivos/register-device.service.js"
+  },
+  {
+    "module": "dispositivos",
+    "method": "GET",
+    "path": "/notificaciones/dispositivos/mis-dispositivos",
+    "controller": "getMyDevicesController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "notificaciones/routes/dispositivo.routes.js",
+    "service_file": "notificaciones/services/dispositivos/get-my-devices.service.js"
+  },
+  {
+    "module": "dispositivos",
+    "method": "PATCH",
+    "path": "/notificaciones/dispositivos/token/desactivar",
+    "controller": "deactivateDeviceByTokenController",
+    "body_schema": "DispositivosDeactivateDeviceByTokenRequest",
+    "data_contract": "partial-source",
+    "route_file": "notificaciones/routes/dispositivo.routes.js",
+    "service_file": "notificaciones/services/dispositivos/deactivate-device-by-token.service.js"
+  },
+  {
+    "module": "dispositivos",
+    "method": "PATCH",
+    "path": "/notificaciones/dispositivos/{idDispositivo}/desactivar",
+    "controller": "deactivateDeviceController",
+    "body_schema": "DispositivosDeactivateDeviceRequest",
+    "data_contract": "partial-source",
+    "route_file": "notificaciones/routes/dispositivo.routes.js",
+    "service_file": "notificaciones/services/dispositivos/deactivate-device.service.js"
+  },
+  {
+    "module": "notificaciones",
+    "method": "POST",
+    "path": "/notificaciones/enviar",
+    "controller": "createNotificationController",
+    "body_schema": "NotificacionesCreateNotificationRequest",
+    "data_contract": "partial-source",
+    "route_file": "notificaciones/routes/notificacion.routes.js",
+    "service_file": "notificaciones/services/notificaciones-internas/create-notification.service.js"
+  },
+  {
+    "module": "notificaciones",
+    "method": "GET",
+    "path": "/notificaciones/mis-notificaciones",
+    "controller": "getMyNotificationsController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "notificaciones/routes/notificacion.routes.js",
+    "service_file": "notificaciones/services/notificaciones-internas/get-my-notifications.service.js"
+  },
+  {
+    "module": "notificaciones",
+    "method": "GET",
+    "path": "/notificaciones/no-leidas/total",
+    "controller": "getUnreadCountController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "notificaciones/routes/notificacion.routes.js",
+    "service_file": "notificaciones/services/notificaciones-internas/get-unread-count.service.js"
+  },
+  {
+    "module": "notificaciones",
+    "method": "PATCH",
+    "path": "/notificaciones/leer-todas",
+    "controller": "markAllNotificationsReadController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "notificaciones/routes/notificacion.routes.js",
+    "service_file": "notificaciones/services/notificaciones-internas/mark-all-notifications-read.service.js"
+  },
+  {
+    "module": "notificaciones",
+    "method": "GET",
+    "path": "/notificaciones/{idNotificacionUsuario}",
+    "controller": "getMyNotificationByIdController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "notificaciones/routes/notificacion.routes.js",
+    "service_file": "notificaciones/services/notificaciones-internas/get-my-notification-by-id.service.js"
+  },
+  {
+    "module": "notificaciones",
+    "method": "PATCH",
+    "path": "/notificaciones/{idNotificacionUsuario}/leer",
+    "controller": "markNotificationReadController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "notificaciones/routes/notificacion.routes.js",
+    "service_file": "notificaciones/services/notificaciones-internas/mark-notification-read.service.js"
+  },
+  {
+    "module": "notificaciones",
+    "method": "PATCH",
+    "path": "/notificaciones/{idNotificacionUsuario}/archivar",
+    "controller": "archiveNotificationController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "notificaciones/routes/notificacion.routes.js",
+    "service_file": "notificaciones/services/notificaciones-internas/archive-notification.service.js"
+  },
+  {
+    "module": "personal",
+    "method": "POST",
+    "path": "/personal/{idPersonal}/conductor",
+    "controller": "createConductorController",
+    "body_schema": "PersonalCreateConductorRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "personal/routes/conductor.routes.js",
+    "service_file": "personal/services/conductor/create-conductor.service.js"
+  },
+  {
+    "module": "personal",
+    "method": "GET",
+    "path": "/personal/{idPersonal}/conductor",
+    "controller": "getConductorByIdController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "personal/routes/conductor.routes.js",
+    "service_file": "personal/services/conductor/get-conductor-by-id.service.js"
+  },
+  {
+    "module": "personal",
+    "method": "PUT",
+    "path": "/personal/{idPersonal}/conductor",
+    "controller": "updateConductorController",
+    "body_schema": "PersonalUpdateConductorRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "personal/routes/conductor.routes.js",
+    "service_file": "personal/services/conductor/update-conductor.service.js"
+  },
+  {
+    "module": "personal",
+    "method": "PATCH",
+    "path": "/personal/{idPersonal}/conductor/estado",
+    "controller": "changeConductorEstadoController",
+    "body_schema": "PersonalChangeConductorEstadoRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "personal/routes/conductor.routes.js",
+    "service_file": "personal/services/conductor/change-conductor-estado.service.js"
+  },
+  {
+    "module": "personal",
+    "method": "GET",
+    "path": "/personal/conductores/disponibles",
+    "controller": "getConductoresDisponiblesController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "personal/routes/disponibilidad.routes.js",
+    "service_file": "personal/services/disponibilidad/disponibilidad.service.js"
+  },
+  {
+    "module": "personal",
+    "method": "GET",
+    "path": "/personal/recolectores/disponibles",
+    "controller": "getRecolectoresDisponiblesController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "personal/routes/disponibilidad.routes.js",
+    "service_file": "personal/services/disponibilidad/disponibilidad.service.js"
+  },
+  {
+    "module": "personal",
+    "method": "GET",
+    "path": "/personal/rol/{rol}",
+    "controller": "getPersonalByRolController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "personal/routes/disponibilidad.routes.js",
+    "service_file": "personal/services/disponibilidad/disponibilidad.service.js"
+  },
+  {
+    "module": "personal",
+    "method": "GET",
+    "path": "/personal/paginado",
+    "controller": "getPersonalPaginatedController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "personal/routes/personal.routes.js",
+    "service_file": "personal/services/personal/get-personal-paginated.service.js"
+  },
+  {
+    "module": "personal",
+    "method": "GET",
+    "path": "/personal/view/{id}",
+    "controller": "getPersonalByIdController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "personal/routes/personal.routes.js",
+    "service_file": "personal/services/personal/get-personal-by-id.service.js"
+  },
+  {
+    "module": "personal",
+    "method": "POST",
+    "path": "/personal/create",
+    "controller": "createPersonalController",
+    "body_schema": "PersonalCreatePersonalRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "personal/routes/personal.routes.js",
+    "service_file": "personal/services/personal/create-personal.service.js"
+  },
+  {
+    "module": "personal",
+    "method": "PUT",
+    "path": "/personal/update/{id}",
+    "controller": "updatePersonalController",
+    "body_schema": "PersonalUpdatePersonalRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "personal/routes/personal.routes.js",
+    "service_file": "personal/services/personal/update-personal.service.js"
+  },
+  {
+    "module": "personal",
+    "method": "PATCH",
+    "path": "/personal/estado/{id}",
+    "controller": "changePersonalEstadoController",
+    "body_schema": "PersonalChangePersonalEstadoRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "personal/routes/personal.routes.js",
+    "service_file": "personal/services/personal/change-personal.service.js"
+  },
+  {
+    "module": "personal",
+    "method": "DELETE",
+    "path": "/personal/delete/{id}",
+    "controller": "deletePersonalController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "personal/routes/personal.routes.js",
+    "service_file": "personal/services/personal/delete-personal.service.js"
+  },
+  {
+    "module": "personal",
+    "method": "GET",
+    "path": "/personal/codigo",
+    "controller": "getLastCodigoPersonalController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "personal/routes/personal.routes.js",
+    "service_file": "personal/services/personal/get-last-codigo-personal.service.js"
+  },
+  {
+    "module": "programaciones",
+    "method": "GET",
+    "path": "/programaciones/disponibilidad/vehiculos",
+    "controller": "getVehiculosDisponiblesController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "programaciones/routes/disponibilidad.routes.js",
+    "service_file": "programaciones/services/disponibilidad/get-vehiculos-disponibles.service.js"
+  },
+  {
+    "module": "programaciones",
+    "method": "GET",
+    "path": "/programaciones/disponibilidad/conductores",
+    "controller": "getConductoresDisponiblesController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "programaciones/routes/disponibilidad.routes.js",
+    "service_file": "programaciones/services/disponibilidad/get-conductores-disponibles.service.js"
+  },
+  {
+    "module": "programaciones",
+    "method": "GET",
+    "path": "/programaciones/disponibilidad/recolectores",
+    "controller": "getRecolectoresDisponiblesController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "programaciones/routes/disponibilidad.routes.js",
+    "service_file": "programaciones/services/disponibilidad/get-recolectores-disponibles.service.js"
+  },
+  {
+    "module": "programaciones",
+    "method": "GET",
+    "path": "/programaciones/mis-asignaciones",
+    "controller": "getMisAsignacionesController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "programaciones/routes/programacion-personal.routes.js",
+    "service_file": "programaciones/services/programacion-personal/get-mis-asignaciones-personal.service.js"
+  },
+  {
+    "module": "programaciones",
+    "method": "PATCH",
+    "path": "/programaciones/asignaciones/{idProgramacionPersonal}/respuesta",
+    "controller": "respondAssignmentController",
+    "body_schema": "ProgramacionesRespondAssignmentRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "programaciones/routes/programacion-personal.routes.js",
+    "service_file": "programaciones/services/programacion-personal/respond-assignment.service.js"
+  },
+  {
+    "module": "programaciones",
+    "method": "GET",
+    "path": "/programaciones/{idProgramacion}/personal",
+    "controller": "getProgramacionPersonalController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "programaciones/routes/programacion-personal.routes.js",
+    "service_file": "programaciones/services/programacion-personal/get-programacion-personal.service.js"
+  },
+  {
+    "module": "programaciones",
+    "method": "POST",
+    "path": "/programaciones/{idProgramacion}/personal",
+    "controller": "addProgramacionPersonalController",
+    "body_schema": "ProgramacionesAddProgramacionPersonalRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "programaciones/routes/programacion-personal.routes.js",
+    "service_file": "programaciones/services/programacion-personal/add-programacion-personal.service.js"
+  },
+  {
+    "module": "programaciones",
+    "method": "PATCH",
+    "path": "/programaciones/{idProgramacion}/personal/{idProgramacionPersonal}/retirar",
+    "controller": "removeProgramacionPersonalController",
+    "body_schema": "ProgramacionesRemoveProgramacionPersonalRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "programaciones/routes/programacion-personal.routes.js",
+    "service_file": "programaciones/services/programacion-personal/remove-programacion-personal.service.js"
+  },
+  {
+    "module": "programaciones",
+    "method": "GET",
+    "path": "/programaciones/paginado",
+    "controller": "getProgramacionesPaginatedController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "programaciones/routes/programacion.routes.js",
+    "service_file": "programaciones/services/programacion/get-programaciones-paginated.service.js"
+  },
+  {
+    "module": "programaciones",
+    "method": "POST",
+    "path": "/programaciones/create",
+    "controller": "createProgramacionController",
+    "body_schema": "ProgramacionesCreateProgramacionRequest",
+    "data_contract": "partial-source",
+    "route_file": "programaciones/routes/programacion.routes.js",
+    "service_file": "programaciones/services/programacion/create-programacion.service.js"
+  },
+  {
+    "module": "programaciones",
+    "method": "PUT",
+    "path": "/programaciones/editar/{idProgramacion}",
+    "controller": "updateProgramacionController",
+    "body_schema": "ProgramacionesUpdateProgramacionRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "programaciones/routes/programacion.routes.js",
+    "service_file": "programaciones/services/programacion/update-programacion.service.js"
+  },
+  {
+    "module": "programaciones",
+    "method": "PATCH",
+    "path": "/programaciones/cancelar/{idProgramacion}",
+    "controller": "cancelProgramacionController",
+    "body_schema": "ProgramacionesCancelProgramacionRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "programaciones/routes/programacion.routes.js",
+    "service_file": "programaciones/services/programacion/cancel-programacion.service.js"
+  },
+  {
+    "module": "programaciones",
+    "method": "GET",
+    "path": "/programaciones/view/{idProgramacion}",
+    "controller": "getProgramacionByIdController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "programaciones/routes/programacion.routes.js",
+    "service_file": "programaciones/services/programacion/get-programacion-by-id.service.js"
+  },
+  {
+    "module": "recolecciones",
+    "method": "POST",
+    "path": "/recolecciones/register",
+    "controller": "registerCollectionController",
+    "body_schema": "RecoleccionesRegisterCollectionRequest",
+    "data_contract": "partial-source",
+    "route_file": "recolecciones/routes/recoleccion.routes.js",
+    "service_file": "recolecciones/services/register-collection.service.js"
+  },
+  {
+    "module": "recolecciones",
+    "method": "POST",
+    "path": "/recolecciones/register-lote",
+    "controller": "registerCollectionBatchController",
+    "body_schema": "RecoleccionesRegisterCollectionBatchRequest",
+    "data_contract": "partial-source",
+    "route_file": "recolecciones/routes/recoleccion.routes.js",
+    "service_file": "recolecciones/services/register-collection-batch.service.js"
+  },
+  {
+    "module": "recolecciones",
+    "method": "GET",
+    "path": "/recolecciones/recorridos/{idRecorrido}/puntos",
+    "controller": "getRouteCollectionPointsController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "recolecciones/routes/recoleccion.routes.js",
+    "service_file": "recolecciones/services/get-route-collection-points.service.js"
+  },
+  {
+    "module": "recolecciones",
+    "method": "GET",
+    "path": "/recolecciones/recorridos/{idRecorrido}/progreso",
+    "controller": "getRouteProgressController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "recolecciones/routes/recoleccion.routes.js",
+    "service_file": "recolecciones/services/get-route-progress.service.js"
+  },
+  {
+    "module": "recolecciones",
+    "method": "POST",
+    "path": "/recolecciones/evidencias/{idRecoleccion}",
+    "controller": "registerEvidenceController",
+    "body_schema": "RecoleccionesRegisterEvidenceRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "recolecciones/routes/recoleccion.routes.js",
+    "service_file": "recolecciones/services/register-evidence.service.js"
+  },
+  {
+    "module": "recolecciones",
+    "method": "PATCH",
+    "path": "/recolecciones/evidencias/{idEvidencia}/anular",
+    "controller": "annulEvidenceController",
+    "body_schema": "RecoleccionesAnnulEvidenceRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "recolecciones/routes/recoleccion.routes.js",
+    "service_file": "recolecciones/services/annul-evidence.service.js"
+  },
+  {
+    "module": "recolecciones",
+    "method": "GET",
+    "path": "/recolecciones/{idRecoleccion}/evidencias",
+    "controller": "getCollectionEvidencesController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "recolecciones/routes/recoleccion.routes.js",
+    "service_file": "recolecciones/services/get-collection-evidences.service.js"
+  },
+  {
+    "module": "recolecciones",
+    "method": "PATCH",
+    "path": "/recolecciones/{idRecoleccion}/anular",
+    "controller": "annulCollectionController",
+    "body_schema": "RecoleccionesAnnulCollectionRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "recolecciones/routes/recoleccion.routes.js",
+    "service_file": "recolecciones/services/annul-collection.service.js"
+  },
+  {
+    "module": "recolecciones",
+    "method": "GET",
+    "path": "/recolecciones/view/{idRecoleccion}",
+    "controller": "getCollectionByIdController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "recolecciones/routes/recoleccion.routes.js",
+    "service_file": "recolecciones/services/get-collection-by-id.service.js"
+  },
+  {
+    "module": "recolecciones",
+    "method": "GET",
+    "path": "/recolecciones/capacidad/{idRecorrido}",
+    "controller": "getRecorridoCapacidadController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "recolecciones/routes/recoleccion.routes.js",
+    "service_file": "recolecciones/services/get-collection-capacidad.service.js"
+  },
+  {
+    "module": "recorridos",
+    "method": "GET",
+    "path": "/recorridos/{idRecorrido}/eventos",
+    "controller": "getRecorridoEventosController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "recorridos/routes/recorrido-evento.routes.js",
+    "service_file": "recorridos/services/get-recorrido-eventos.service.js"
+  },
+  {
+    "module": "recorridos",
+    "method": "POST",
+    "path": "/recorridos/iniciar/{idProgramacion}",
+    "controller": "iniciarRecorridoController",
+    "body_schema": "RecorridosIniciarRecorridoRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "recorridos/routes/recorrido.routes.js",
+    "service_file": "recorridos/services/iniciar-recorrido.service.js"
+  },
+  {
+    "module": "recorridos",
+    "method": "PATCH",
+    "path": "/recorridos/pausar/{idRecorrido}",
+    "controller": "pausarRecorridoController",
+    "body_schema": "RecorridosPausarRecorridoRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "recorridos/routes/recorrido.routes.js",
+    "service_file": "recorridos/services/pausar-recorrido.service.js"
+  },
+  {
+    "module": "recorridos",
+    "method": "PATCH",
+    "path": "/recorridos/reanudar/{idRecorrido}",
+    "controller": "reanudarRecorridoController",
+    "body_schema": "RecorridosReanudarRecorridoRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "recorridos/routes/recorrido.routes.js",
+    "service_file": "recorridos/services/reanudar-recorrido.service.js"
+  },
+  {
+    "module": "recorridos",
+    "method": "PATCH",
+    "path": "/recorridos/finalizar/{idRecorrido}",
+    "controller": "finalizarRecorridoController",
+    "body_schema": "RecorridosFinalizarRecorridoRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "recorridos/routes/recorrido.routes.js",
+    "service_file": "recorridos/services/finalizar-recorrido.service.js"
+  },
+  {
+    "module": "recorridos",
+    "method": "GET",
+    "path": "/recorridos/mis-recorridos",
+    "controller": "getMisRecorridosController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "recorridos/routes/recorrido.routes.js",
+    "service_file": "recorridos/services/get-mis-recorridos.service.js"
+  },
+  {
+    "module": "recorridos",
+    "method": "PATCH",
+    "path": "/recorridos/cancelar/{idRecorrido}",
+    "controller": "cancelarRecorridoController",
+    "body_schema": "RecorridosCancelarRecorridoRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "recorridos/routes/recorrido.routes.js",
+    "service_file": "recorridos/services/cancelar-recorrido.service.js"
+  },
+  {
+    "module": "recorridos",
+    "method": "GET",
+    "path": "/recorridos/activo",
+    "controller": "getRecorridoActivoController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "recorridos/routes/recorrido.routes.js",
+    "service_file": "recorridos/services/get-recorrido-activo.service.js"
+  },
+  {
+    "module": "recorridos",
+    "method": "GET",
+    "path": "/recorridos/view/{idRecorrido}",
+    "controller": "getRecorridoByIdController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "recorridos/routes/recorrido.routes.js",
+    "service_file": "recorridos/services/get-recorrido-by-id.service.js"
+  },
+  {
+    "module": "rutas",
+    "method": "POST",
+    "path": "/rutas/{idRuta}/horarios",
+    "controller": "createRutaHorarioController",
+    "body_schema": "RutasCreateRutaHorarioRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "rutas/routes/ruta-horario.routes.js",
+    "service_file": "rutas/services/ruta-horario/create-ruta-horario.service.js"
+  },
+  {
+    "module": "rutas",
+    "method": "GET",
+    "path": "/rutas/{idRuta}/horarios",
+    "controller": "getRutaHorariosController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "rutas/routes/ruta-horario.routes.js",
+    "service_file": "rutas/services/ruta-horario/get-ruta-horarios.service.js"
+  },
+  {
+    "module": "rutas",
+    "method": "PUT",
+    "path": "/rutas/{idRuta}/horarios/{idHorario}",
+    "controller": "updateRutaHorarioController",
+    "body_schema": "RutasUpdateRutaHorarioRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "rutas/routes/ruta-horario.routes.js",
+    "service_file": "rutas/services/ruta-horario/update-ruta-horario.service.js"
+  },
+  {
+    "module": "rutas",
+    "method": "PATCH",
+    "path": "/rutas/{idRuta}/horarios/{idHorario}/estado",
+    "controller": "changeRutaHorarioEstadoController",
+    "body_schema": "RutasChangeRutaHorarioEstadoRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "rutas/routes/ruta-horario.routes.js",
+    "service_file": "rutas/services/ruta-horario/change-ruta-horario-estado.service.js"
+  },
+  {
+    "module": "rutas",
+    "method": "DELETE",
+    "path": "/rutas/{idRuta}/horarios/{idHorario}",
+    "controller": "deleteRutaHorarioController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "rutas/routes/ruta-horario.routes.js",
+    "service_file": "rutas/services/ruta-horario/delete-ruta-horario.service.js"
+  },
+  {
+    "module": "rutas",
+    "method": "POST",
+    "path": "/rutas/versiones/{idVersion}/puntos",
+    "controller": "createRutaPuntoController",
+    "body_schema": "RutasCreateRutaPuntoRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "rutas/routes/ruta-punto.routes.js",
+    "service_file": "rutas/services/ruta-punto/create-ruta-punto.service.js"
+  },
+  {
+    "module": "rutas",
+    "method": "PUT",
+    "path": "/rutas/versiones/{idVersion}/puntos/orden",
+    "controller": "reorderRutaPuntosController",
+    "body_schema": "RutasReorderRutaPuntosRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "rutas/routes/ruta-punto.routes.js",
+    "service_file": "rutas/services/ruta-punto/reorder-ruta-puntos-service.js"
+  },
+  {
+    "module": "rutas",
+    "method": "PUT",
+    "path": "/rutas/versiones/{idVersion}/puntos/{idPunto}",
+    "controller": "updateRutaPuntoController",
+    "body_schema": "RutasUpdateRutaPuntoRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "rutas/routes/ruta-punto.routes.js",
+    "service_file": "rutas/services/ruta-punto/update-ruta-punto.service.js"
+  },
+  {
+    "module": "rutas",
+    "method": "DELETE",
+    "path": "/rutas/versiones/{idVersion}/puntos/{idPunto}",
+    "controller": "deleteRutaPuntoController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "rutas/routes/ruta-punto.routes.js",
+    "service_file": "rutas/services/ruta-punto/delete-ruta-punto.service.js"
+  },
+  {
+    "module": "rutas",
+    "method": "POST",
+    "path": "/rutas/{idRuta}/versiones",
+    "controller": "createRutaVersionController",
+    "body_schema": "RutasCreateRutaVersionRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "rutas/routes/ruta-version.routes.js",
+    "service_file": "rutas/services/ruta-version/create-ruta-version.service.js"
+  },
+  {
+    "module": "rutas",
+    "method": "GET",
+    "path": "/rutas/{idRuta}/versiones",
+    "controller": "getRutaVersionesController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "rutas/routes/ruta-version.routes.js",
+    "service_file": "rutas/services/ruta-version/get-ruta-versiones.service.js"
+  },
+  {
+    "module": "rutas",
+    "method": "GET",
+    "path": "/rutas/{idRuta}/version-vigente",
+    "controller": "getRutaVersionVigenteController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "rutas/routes/ruta-version.routes.js",
+    "service_file": "rutas/services/ruta-version/get-ruta-version-vigente.service.js"
+  },
+  {
+    "module": "rutas",
+    "method": "PUT",
+    "path": "/rutas/versiones/{idVersion}",
+    "controller": "updateRutaVersionController",
+    "body_schema": "RutasUpdateRutaVersionRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "rutas/routes/ruta-version.routes.js",
+    "service_file": "rutas/services/ruta-version/update-ruta-version.service.js"
+  },
+  {
+    "module": "rutas",
+    "method": "PATCH",
+    "path": "/rutas/versiones/{idVersion}/activar",
+    "controller": "activarRutaVersionController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "rutas/routes/ruta-version.routes.js",
+    "service_file": "rutas/services/ruta-version/activar-ruta-version.service.js"
+  },
+  {
+    "module": "rutas",
+    "method": "DELETE",
+    "path": "/rutas/versiones/{idVersion}",
+    "controller": "deleteRutaVersionController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "rutas/routes/ruta-version.routes.js",
+    "service_file": "rutas/services/ruta-version/delete-ruta-version.service.js"
+  },
+  {
+    "module": "rutas",
+    "method": "GET",
+    "path": "/rutas/paginado",
+    "controller": "getRutasPaginatedController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "rutas/routes/ruta.routes.js",
+    "service_file": "rutas/services/ruta/get-rutas-paginated.service.js"
+  },
+  {
+    "module": "rutas",
+    "method": "GET",
+    "path": "/rutas/activas",
+    "controller": "getRutasActivasController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "rutas/routes/ruta.routes.js",
+    "service_file": "rutas/services/ruta/get-rutas-activas.service.js"
+  },
+  {
+    "module": "rutas",
+    "method": "GET",
+    "path": "/rutas/zona/{idZona}",
+    "controller": "getRutasByZonaController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "rutas/routes/ruta.routes.js",
+    "service_file": "rutas/services/ruta/get-rutas-by-zona.service.js"
+  },
+  {
+    "module": "rutas",
+    "method": "GET",
+    "path": "/rutas/view/{id}",
+    "controller": "getRutaByIdController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "rutas/routes/ruta.routes.js",
+    "service_file": "rutas/services/ruta/get-ruta-by-id.service.js"
+  },
+  {
+    "module": "rutas",
+    "method": "GET",
+    "path": "/rutas/codigo",
+    "controller": "getLastCodigoRutaController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "rutas/routes/ruta.routes.js",
+    "service_file": "rutas/services/ruta/get-last-codigo-ruta.service.js"
+  },
+  {
+    "module": "rutas",
+    "method": "GET",
+    "path": "/rutas/resumen-rutas/paginado",
+    "controller": "getZonasResumenRutasPaginadoController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "rutas/routes/ruta.routes.js",
+    "service_file": "rutas/services/ruta/get-zonas-resumen-rutas-paginado.service.js"
+  },
+  {
+    "module": "rutas",
+    "method": "POST",
+    "path": "/rutas/create",
+    "controller": "createRutaController",
+    "body_schema": "RutasCreateRutaRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "rutas/routes/ruta.routes.js",
+    "service_file": "rutas/services/ruta/create-ruta.service.js"
+  },
+  {
+    "module": "rutas",
+    "method": "PUT",
+    "path": "/rutas/update/{id}",
+    "controller": "updateRutaController",
+    "body_schema": "RutasUpdateRutaRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "rutas/routes/ruta.routes.js",
+    "service_file": "rutas/services/ruta/update-ruta.service.js"
+  },
+  {
+    "module": "rutas",
+    "method": "PATCH",
+    "path": "/rutas/estado-ruta/{id}",
+    "controller": "changeRutaEstadoRutaController",
+    "body_schema": "RutasChangeRutaEstadoRutaRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "rutas/routes/ruta.routes.js",
+    "service_file": "rutas/services/ruta/change-ruta-estado-ruta.service.js"
+  },
+  {
+    "module": "rutas",
+    "method": "PATCH",
+    "path": "/rutas/estado/{id}",
+    "controller": "changeRutaEstadoController",
+    "body_schema": "RutasChangeRutaEstadoRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "rutas/routes/ruta.routes.js",
+    "service_file": "rutas/services/ruta/change-ruta-estado.service.js"
+  },
+  {
+    "module": "rutas",
+    "method": "DELETE",
+    "path": "/rutas/delete/{id}",
+    "controller": "deleteRutaController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "rutas/routes/ruta.routes.js",
+    "service_file": "rutas/services/ruta/delete-ruta.service.js"
+  },
+  {
+    "module": "tracking",
+    "method": "POST",
+    "path": "/tracking/ubicaciones",
+    "controller": "registerLocationController",
+    "body_schema": "TrackingRegisterLocationRequest",
+    "data_contract": "partial-source",
+    "route_file": "tracking/routes/tracking.routes.js",
+    "service_file": "tracking/services/register-location.service.js"
+  },
+  {
+    "module": "tracking",
+    "method": "POST",
+    "path": "/tracking/ubicaciones/lote",
+    "controller": "registerLocationBatchController",
+    "body_schema": "TrackingRegisterLocationBatchRequest",
+    "data_contract": "partial-source",
+    "route_file": "tracking/routes/tracking.routes.js",
+    "service_file": "tracking/services/register-location-batch.service.js"
+  },
+  {
+    "module": "tracking",
+    "method": "GET",
+    "path": "/tracking/vehiculos-activos",
+    "controller": "getActiveVehicleLocationsController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "tracking/routes/tracking.routes.js",
+    "service_file": "tracking/services/get-active-vehicle-locations.service.js"
+  },
+  {
+    "module": "tracking",
+    "method": "GET",
+    "path": "/tracking/recorridos/{idRecorrido}/ultima-ubicacion",
+    "controller": "getLastLocationController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "tracking/routes/tracking.routes.js",
+    "service_file": "tracking/services/get-last-location.service.js"
+  },
+  {
+    "module": "tracking",
+    "method": "GET",
+    "path": "/tracking/recorridos/{idRecorrido}/posiciones",
+    "controller": "getRoutePositionsController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "tracking/routes/tracking.routes.js",
+    "service_file": "tracking/services/get-route-positions.service.js"
+  },
+  {
+    "module": "usuarios",
+    "method": "GET",
+    "path": "/usuarios/paginado",
+    "controller": "getUsuariosPaginatedController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "usuarios/routes/usuario.routes.js",
+    "service_file": "usuarios/services/get-usuarios-paginated.service.js"
+  },
+  {
+    "module": "usuarios",
+    "method": "GET",
+    "path": "/usuarios/selector",
+    "controller": "getUsuarioSelectorController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "usuarios/routes/usuario.routes.js",
+    "service_file": null
+  },
+  {
+    "module": "usuarios",
+    "method": "GET",
+    "path": "/usuarios/view/{idUsuario}",
+    "controller": "getUsuarioByIdController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "usuarios/routes/usuario.routes.js",
+    "service_file": "usuarios/services/get-usuario-by-id.service.js"
+  },
+  {
+    "module": "usuarios",
+    "method": "GET",
+    "path": "/usuarios/{idUsuario}/roles",
+    "controller": "getUsuarioRolesController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "usuarios/routes/usuario.routes.js",
+    "service_file": "usuarios/services/get-usuario-roles.service.js"
+  },
+  {
+    "module": "usuarios",
+    "method": "POST",
+    "path": "/usuarios/create",
+    "controller": "createUsuarioController",
+    "body_schema": "UsuariosCreateUsuarioRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "usuarios/routes/usuario.routes.js",
+    "service_file": "usuarios/services/create-usuario.service.js"
+  },
+  {
+    "module": "usuarios",
+    "method": "PUT",
+    "path": "/usuarios/update/{id_usuario}",
+    "controller": "updateUsuarioController",
+    "body_schema": "UsuariosUpdateUsuarioRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "usuarios/routes/usuario.routes.js",
+    "service_file": "usuarios/services/update-usuario.service.js"
+  },
+  {
+    "module": "usuarios",
+    "method": "PATCH",
+    "path": "/usuarios/estado/{id_usuario}",
+    "controller": "changeEstadoUsuarioController",
+    "body_schema": "UsuariosChangeEstadoUsuarioRequest",
+    "data_contract": "partial-source",
+    "route_file": "usuarios/routes/usuario.routes.js",
+    "service_file": "usuarios/services/change-estado-usuario.service.js"
+  },
+  {
+    "module": "usuarios",
+    "method": "PATCH",
+    "path": "/usuarios/reset-password/{id_usuario}",
+    "controller": "resetPasswordUsuarioController",
+    "body_schema": "UsuariosResetPasswordUsuarioRequest",
+    "data_contract": "partial-source",
+    "route_file": "usuarios/routes/usuario.routes.js",
+    "service_file": "usuarios/services/reset-password.service.js"
+  },
+  {
+    "module": "usuarios",
+    "method": "DELETE",
+    "path": "/usuarios/delete/{id_usuario}",
+    "controller": "deleteUsuarioController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "usuarios/routes/usuario.routes.js",
+    "service_file": "usuarios/services/delete.usuario.service.js"
+  },
+  {
+    "module": "usuarios",
+    "method": "GET",
+    "path": "/usuarios/roles",
+    "controller": "getRolesController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "usuarios/routes/usuario.routes.js",
+    "service_file": "usuarios/services/get-roles.service.js"
+  },
+  {
+    "module": "usuarios",
+    "method": "GET",
+    "path": "/usuarios/sin-personal",
+    "controller": "getUsuariosSinPersonalController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "usuarios/routes/usuario.routes.js",
+    "service_file": "usuarios/services/get-usuarios-sin-personal.service.js"
+  },
+  {
+    "module": "usuarios",
+    "method": "POST",
+    "path": "/usuarios/{idUsuario}/roles",
+    "controller": "addUsuarioRolController",
+    "body_schema": "UsuariosAddUsuarioRolRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "usuarios/routes/usuario.routes.js",
+    "service_file": "usuarios/services/add-usuario-rol.service.js"
+  },
+  {
+    "module": "usuarios",
+    "method": "DELETE",
+    "path": "/usuarios/{idUsuario}/roles/{idRol}",
+    "controller": "removeUsuarioRolController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "usuarios/routes/usuario.routes.js",
+    "service_file": "usuarios/services/remove-usuario-rol.service.js"
+  },
+  {
+    "module": "vehiculos",
+    "method": "GET",
+    "path": "/vehiculos/paginado",
+    "controller": "getVehiculosPaginadoController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "vehiculos/routes/vehiculo.routes.js",
+    "service_file": null
+  },
+  {
+    "module": "vehiculos",
+    "method": "GET",
+    "path": "/vehiculos/view/{id}",
+    "controller": "getVehiculoByIdController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "vehiculos/routes/vehiculo.routes.js",
+    "service_file": "vehiculos/services/get-vehiculo-by-id.service.js"
+  },
+  {
+    "module": "vehiculos",
+    "method": "POST",
+    "path": "/vehiculos/create",
+    "controller": "createVehiculoController",
+    "body_schema": "VehiculosCreateVehiculoRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "vehiculos/routes/vehiculo.routes.js",
+    "service_file": "vehiculos/services/create-vehiculo.service.js"
+  },
+  {
+    "module": "vehiculos",
+    "method": "PUT",
+    "path": "/vehiculos/update/{id}",
+    "controller": "updateVehiculoController",
+    "body_schema": "VehiculosUpdateVehiculoRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "vehiculos/routes/vehiculo.routes.js",
+    "service_file": "vehiculos/services/update-vehiculo.service.js"
+  },
+  {
+    "module": "vehiculos",
+    "method": "PATCH",
+    "path": "/vehiculos/estado/{id}",
+    "controller": "changeEstadoVehiculoController",
+    "body_schema": "VehiculosChangeEstadoVehiculoRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "vehiculos/routes/vehiculo.routes.js",
+    "service_file": "vehiculos/services/change-estado-vehiculo.service.js"
+  },
+  {
+    "module": "vehiculos",
+    "method": "DELETE",
+    "path": "/vehiculos/delete/{id}",
+    "controller": "deleteVehiculoController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "vehiculos/routes/vehiculo.routes.js",
+    "service_file": "vehiculos/services/delete-vehiculo.service.js"
+  },
+  {
+    "module": "vehiculos",
+    "method": "GET",
+    "path": "/vehiculos/codigo",
+    "controller": "getLastCodigoVehiculoController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "vehiculos/routes/vehiculo.routes.js",
+    "service_file": "vehiculos/services/get-last-codigo-vehiculo.service.js"
+  },
+  {
+    "module": "vehiculos",
+    "method": "GET",
+    "path": "/vehiculos/selector",
+    "controller": "getVehiculosSelectorController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "vehiculos/routes/vehiculo.routes.js",
+    "service_file": "vehiculos/services/get-vehiculos-selector.service.js"
+  },
+  {
+    "module": "zonas",
+    "method": "GET",
+    "path": "/zonas/paginado",
+    "controller": "getZonasPaginatedController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "zonas/routes/zona.routes.js",
+    "service_file": "zonas/services/get-zonas-paginated.service.js"
+  },
+  {
+    "module": "zonas",
+    "method": "GET",
+    "path": "/zonas/activas",
+    "controller": "getZonasActivasController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "zonas/routes/zona.routes.js",
+    "service_file": "zonas/services/get-zonas-activas.service.js"
+  },
+  {
+    "module": "zonas",
+    "method": "GET",
+    "path": "/zonas/view/{id}",
+    "controller": "getZonaByIdController",
+    "body_schema": null,
+    "data_contract": "open-model-dependent",
+    "route_file": "zonas/routes/zona.routes.js",
+    "service_file": "zonas/services/get-zona-by-id.service.js"
+  },
+  {
+    "module": "zonas",
+    "method": "GET",
+    "path": "/zonas/codigo",
+    "controller": "getLastCodigoZonaController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "zonas/routes/zona.routes.js",
+    "service_file": "zonas/services/get-last-codigo-zona.service.js"
+  },
+  {
+    "module": "zonas",
+    "method": "POST",
+    "path": "/zonas/create",
+    "controller": "createZonaController",
+    "body_schema": "ZonasCreateZonaRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "zonas/routes/zona.routes.js",
+    "service_file": "zonas/services/create-zona.service.js"
+  },
+  {
+    "module": "zonas",
+    "method": "PUT",
+    "path": "/zonas/update/{id}",
+    "controller": "updateZonaController",
+    "body_schema": "ZonasUpdateZonaRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "zonas/routes/zona.routes.js",
+    "service_file": "zonas/services/update-zona.service.js"
+  },
+  {
+    "module": "zonas",
+    "method": "PATCH",
+    "path": "/zonas/estado/{id}",
+    "controller": "changeZonaEstadoController",
+    "body_schema": "ZonasChangeZonaEstadoRequest",
+    "data_contract": "open-model-dependent",
+    "route_file": "zonas/routes/zona.routes.js",
+    "service_file": "zonas/services/change-zona-estado.service.js"
+  },
+  {
+    "module": "zonas",
+    "method": "DELETE",
+    "path": "/zonas/delete/{id}",
+    "controller": "deleteZonaController",
+    "body_schema": null,
+    "data_contract": "partial-source",
+    "route_file": "zonas/routes/zona.routes.js",
+    "service_file": "zonas/services/delete-zona.service.js"
+  }
+]

@@ -1,0 +1,209 @@
+{
+  "DashboardGetDashboardSummaryResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "periodo": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "generado_en": {},
+          "programaciones": {},
+          "recorridos": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "recolecciones": {
+            "type": "array",
+            "items": {}
+          },
+          "vehiculos": {},
+          "incidencias": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "tendencias": {},
+          "rendimiento_rutas": {}
+        },
+        "description": "Claves observadas en un retorno explícito del servicio. Los objetos asociados y campos calculados sin tipo confirmado se mantienen abiertos.",
+        "additionalProperties": true
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/monitoreo/controllers/dashboard.controller.js",
+    "x-data-contract": "partial-source"
+  },
+  "DashboardGetProgrammingIndicatorsResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "periodo": {},
+          "indicadores": {}
+        },
+        "description": "Claves observadas en un retorno explícito del servicio. Los objetos asociados y campos calculados sin tipo confirmado se mantienen abiertos.",
+        "additionalProperties": true
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/monitoreo/controllers/dashboard.controller.js",
+    "x-data-contract": "partial-source"
+  },
+  "DashboardGetCollectionIndicatorsResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "periodo": {},
+          "indicadores": {}
+        },
+        "description": "Claves observadas en un retorno explícito del servicio. Los objetos asociados y campos calculados sin tipo confirmado se mantienen abiertos.",
+        "additionalProperties": true
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/monitoreo/controllers/dashboard.controller.js",
+    "x-data-contract": "partial-source"
+  },
+  "DashboardGetVehicleIndicatorsResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "periodo": {},
+          "indicadores": {}
+        },
+        "description": "Claves observadas en un retorno explícito del servicio. Los objetos asociados y campos calculados sin tipo confirmado se mantienen abiertos.",
+        "additionalProperties": true
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/monitoreo/controllers/dashboard.controller.js",
+    "x-data-contract": "partial-source"
+  },
+  "DashboardGetRoutePerformanceResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "periodo": {},
+          "items": {
+            "type": "array",
+            "items": {}
+          },
+          "pagination": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "description": "Claves observadas en un retorno explícito del servicio. Los objetos asociados y campos calculados sin tipo confirmado se mantienen abiertos.",
+        "additionalProperties": true
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/monitoreo/controllers/dashboard.controller.js",
+    "x-data-contract": "partial-source"
+  },
+  "DashboardGetDashboardTrendsResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "periodo": {},
+          "agrupacion": {},
+          "series": {}
+        },
+        "description": "Claves observadas en un retorno explícito del servicio. Los objetos asociados y campos calculados sin tipo confirmado se mantienen abiertos.",
+        "additionalProperties": true
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/monitoreo/controllers/dashboard.controller.js",
+    "x-data-contract": "partial-source"
+  }
+}

@@ -1,0 +1,207 @@
+{
+  "/notificaciones/dispositivos/register": {
+    "post": {
+      "tags": [
+        "Dispositivos"
+      ],
+      "summary": "Register device",
+      "description": "Register device. Requiere sesión autenticada; el servicio puede aplicar comprobaciones adicionales. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "dispositivos_registerDevice",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/notificaciones/routes/dispositivo.routes.js",
+        "controller": "modules/notificaciones/controllers/dispositivo.controller.js",
+        "handler": "registerDeviceController",
+        "service": "modules/notificaciones/services/dispositivos/register-device.service.js"
+      },
+      "x-route-roles": [],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/DispositivosRegisterDeviceRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Register device.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DispositivosRegisterDeviceResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/notificaciones/dispositivos/mis-dispositivos": {
+    "get": {
+      "tags": [
+        "Dispositivos"
+      ],
+      "summary": "Get my devices",
+      "description": "Get my devices. Requiere sesión autenticada; el servicio puede aplicar comprobaciones adicionales. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "dispositivos_getMyDevices",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/notificaciones/routes/dispositivo.routes.js",
+        "controller": "modules/notificaciones/controllers/dispositivo.controller.js",
+        "handler": "getMyDevicesController",
+        "service": "modules/notificaciones/services/dispositivos/get-my-devices.service.js"
+      },
+      "x-route-roles": [],
+      "responses": {
+        "200": {
+          "description": "Get my devices.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DispositivosGetMyDevicesResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/notificaciones/dispositivos/token/desactivar": {
+    "patch": {
+      "tags": [
+        "Dispositivos"
+      ],
+      "summary": "Deactivate device by token",
+      "description": "Deactivate device by token. Requiere sesión autenticada; el servicio puede aplicar comprobaciones adicionales. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "dispositivos_deactivateDeviceByToken",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/notificaciones/routes/dispositivo.routes.js",
+        "controller": "modules/notificaciones/controllers/dispositivo.controller.js",
+        "handler": "deactivateDeviceByTokenController",
+        "service": "modules/notificaciones/services/dispositivos/deactivate-device-by-token.service.js"
+      },
+      "x-route-roles": [],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/DispositivosDeactivateDeviceByTokenRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Deactivate device by token.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DispositivosDeactivateDeviceByTokenResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/notificaciones/dispositivos/{idDispositivo}/desactivar": {
+    "patch": {
+      "tags": [
+        "Dispositivos"
+      ],
+      "summary": "Deactivate device",
+      "description": "Deactivate device. Requiere sesión autenticada; el servicio puede aplicar comprobaciones adicionales. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "dispositivos_deactivateDevice",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/notificaciones/routes/dispositivo.routes.js",
+        "controller": "modules/notificaciones/controllers/dispositivo.controller.js",
+        "handler": "deactivateDeviceController",
+        "service": "modules/notificaciones/services/dispositivos/deactivate-device.service.js"
+      },
+      "x-route-roles": [],
+      "parameters": [
+        {
+          "name": "idDispositivo",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "requestBody": {
+        "required": false,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/DispositivosDeactivateDeviceRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Deactivate device.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DispositivosDeactivateDeviceResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  }
+}

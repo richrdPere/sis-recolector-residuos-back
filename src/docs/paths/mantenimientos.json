@@ -1,0 +1,985 @@
+{
+  "/mantenimientos/paginado": {
+    "get": {
+      "tags": [
+        "Mantenimientos"
+      ],
+      "summary": "Mantenimientos obtenidos correctamente",
+      "description": "Mantenimientos obtenidos correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "mantenimientos_getMantenimientosPaginated",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/mantenimientos/routes/mantenimientos.routes.js",
+        "controller": "modules/mantenimientos/controllers/mantenimientos.controller.js",
+        "handler": "getMantenimientosPaginatedController",
+        "service": "modules/mantenimientos/services/get-mantenimientos-paginated.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "estado_mantenimiento",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "PROGRAMADO",
+              "EN_PROCESO",
+              "FINALIZADO",
+              "CANCELADO"
+            ]
+          }
+        },
+        {
+          "name": "fecha_fin",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Fecha ISO 8601 con zona horaria explícita."
+          }
+        },
+        {
+          "name": "fecha_inicio",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Fecha ISO 8601 con zona horaria explícita."
+          }
+        },
+        {
+          "name": "id_vehiculo",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo; texto para conservar precisión BIGINT."
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "search",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "sort_by",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "sort_order",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "tipo_mantenimiento",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "PREVENTIVO",
+              "CORRECTIVO"
+            ]
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Mantenimientos obtenidos correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MantenimientosGetMantenimientosPaginatedResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RespuestaErrorLocal"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/mantenimientos/expedientes": {
+    "get": {
+      "tags": [
+        "Mantenimientos"
+      ],
+      "summary": "Expedientes de vehículos obtenidos correctamente",
+      "description": "Expedientes de vehículos obtenidos correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "mantenimientos_getVehiculosExpedientesPaginado",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/mantenimientos/routes/mantenimientos.routes.js",
+        "controller": "modules/mantenimientos/controllers/mantenimientos.controller.js",
+        "handler": "getVehiculosExpedientesPaginadoController",
+        "service": "modules/mantenimientos/services/get-vehiculos-expedientes-paginado.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "estado",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "name": "estado_operativo",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "search",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "solo_con_mantenimientos",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "name": "sort_by",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "sort_order",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "tipo_vehiculo",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Expedientes de vehículos obtenidos correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MantenimientosGetVehiculosExpedientesPaginadoResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RespuestaErrorLocal"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/mantenimientos/proximos": {
+    "get": {
+      "tags": [
+        "Mantenimientos"
+      ],
+      "summary": "Próximos mantenimientos obtenidos correctamente",
+      "description": "Próximos mantenimientos obtenidos correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "mantenimientos_getMantenimientosProximos",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/mantenimientos/routes/mantenimientos.routes.js",
+        "controller": "modules/mantenimientos/controllers/mantenimientos.controller.js",
+        "handler": "getMantenimientosProximosController",
+        "service": "modules/mantenimientos/services/get-mantenimientos-proximos.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "dias",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "id_vehiculo",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo; texto para conservar precisión BIGINT."
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "tipo_mantenimiento",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "PREVENTIVO",
+              "CORRECTIVO"
+            ]
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Próximos mantenimientos obtenidos correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MantenimientosGetMantenimientosProximosResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RespuestaErrorLocal"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/mantenimientos/vehiculo/{idVehiculo}": {
+    "get": {
+      "tags": [
+        "Mantenimientos"
+      ],
+      "summary": "Historial de mantenimientos del vehículo obtenido correctamente",
+      "description": "Historial de mantenimientos del vehículo obtenido correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "mantenimientos_getMantenimientosByVehiculo",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/mantenimientos/routes/mantenimientos.routes.js",
+        "controller": "modules/mantenimientos/controllers/mantenimientos.controller.js",
+        "handler": "getMantenimientosByVehiculoController",
+        "service": "modules/mantenimientos/services/get-mantenimientos-by-vehiculo.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "idVehiculo",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        },
+        {
+          "name": "estado_mantenimiento",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "PROGRAMADO",
+              "EN_PROCESO",
+              "FINALIZADO",
+              "CANCELADO"
+            ]
+          }
+        },
+        {
+          "name": "fecha_fin",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Fecha ISO 8601 con zona horaria explícita."
+          }
+        },
+        {
+          "name": "fecha_inicio",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Fecha ISO 8601 con zona horaria explícita."
+          }
+        },
+        {
+          "name": "id_vehiculo",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo; texto para conservar precisión BIGINT."
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "search",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "sort_by",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "sort_order",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "tipo_mantenimiento",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "PREVENTIVO",
+              "CORRECTIVO"
+            ]
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Historial de mantenimientos del vehículo obtenido correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MantenimientosGetMantenimientosByVehiculoResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RespuestaErrorLocal"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/mantenimientos/view/{id}": {
+    "get": {
+      "tags": [
+        "Mantenimientos"
+      ],
+      "summary": "Mantenimiento obtenido correctamente",
+      "description": "Mantenimiento obtenido correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "mantenimientos_getMantenimientoById",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/mantenimientos/routes/mantenimientos.routes.js",
+        "controller": "modules/mantenimientos/controllers/mantenimientos.controller.js",
+        "handler": "getMantenimientoByIdController",
+        "service": "modules/mantenimientos/services/get-mantenimiento-by-id.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Mantenimiento obtenido correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MantenimientosGetMantenimientoByIdResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RespuestaErrorLocal"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/mantenimientos/create": {
+    "post": {
+      "tags": [
+        "Mantenimientos"
+      ],
+      "summary": "Mantenimiento registrado correctamente",
+      "description": "Mantenimiento registrado correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "mantenimientos_createMantenimiento",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/mantenimientos/routes/mantenimientos.routes.js",
+        "controller": "modules/mantenimientos/controllers/mantenimientos.controller.js",
+        "handler": "createMantenimientoController",
+        "service": "modules/mantenimientos/services/create-mantenimiento.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR"
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/MantenimientosCreateMantenimientoRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Mantenimiento registrado correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MantenimientosCreateMantenimientoResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RespuestaErrorLocal"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/mantenimientos/update/{id}": {
+    "put": {
+      "tags": [
+        "Mantenimientos"
+      ],
+      "summary": "Mantenimiento actualizado correctamente",
+      "description": "Mantenimiento actualizado correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "mantenimientos_updateMantenimiento",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/mantenimientos/routes/mantenimientos.routes.js",
+        "controller": "modules/mantenimientos/controllers/mantenimientos.controller.js",
+        "handler": "updateMantenimientoController",
+        "service": "modules/mantenimientos/services/update-mantenimiento.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR"
+      ],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "requestBody": {
+        "required": false,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/MantenimientosUpdateMantenimientoRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Mantenimiento actualizado correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MantenimientosUpdateMantenimientoResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RespuestaErrorLocal"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/mantenimientos/{id}/iniciar": {
+    "patch": {
+      "tags": [
+        "Mantenimientos"
+      ],
+      "summary": "Intervención de mantenimiento iniciada correctamente",
+      "description": "Intervención de mantenimiento iniciada correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "mantenimientos_iniciarMantenimiento",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/mantenimientos/routes/mantenimientos.routes.js",
+        "controller": "modules/mantenimientos/controllers/mantenimientos.controller.js",
+        "handler": "iniciarMantenimientoController",
+        "service": "modules/mantenimientos/services/iniciar-mantenimiento.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR"
+      ],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "requestBody": {
+        "required": false,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/MantenimientosIniciarMantenimientoRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Intervención de mantenimiento iniciada correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MantenimientosIniciarMantenimientoResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RespuestaErrorLocal"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/mantenimientos/{id}/finalizar": {
+    "patch": {
+      "tags": [
+        "Mantenimientos"
+      ],
+      "summary": "Mantenimiento finalizado correctamente",
+      "description": "Mantenimiento finalizado correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "mantenimientos_finalizarMantenimiento",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/mantenimientos/routes/mantenimientos.routes.js",
+        "controller": "modules/mantenimientos/controllers/mantenimientos.controller.js",
+        "handler": "finalizarMantenimientoController",
+        "service": "modules/mantenimientos/services/finalizar-mantenimiento.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR"
+      ],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/MantenimientosFinalizarMantenimientoRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Mantenimiento finalizado correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MantenimientosFinalizarMantenimientoResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RespuestaErrorLocal"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/mantenimientos/{id}/cancelar": {
+    "patch": {
+      "tags": [
+        "Mantenimientos"
+      ],
+      "summary": "Mantenimiento cancelado correctamente",
+      "description": "Mantenimiento cancelado correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "mantenimientos_cancelarMantenimiento",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/mantenimientos/routes/mantenimientos.routes.js",
+        "controller": "modules/mantenimientos/controllers/mantenimientos.controller.js",
+        "handler": "cancelarMantenimientoController",
+        "service": "modules/mantenimientos/services/cancelar-mantenimiento.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR"
+      ],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/MantenimientosCancelarMantenimientoRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Mantenimiento cancelado correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MantenimientosCancelarMantenimientoResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RespuestaErrorLocal"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,431 @@
+{
+  "MantenimientosGetMantenimientosPaginatedResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {}
+          },
+          "pagination": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "description": "Claves observadas en un retorno explícito del servicio. Los objetos asociados y campos calculados sin tipo confirmado se mantienen abiertos.",
+        "additionalProperties": true
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/mantenimientos/controllers/mantenimientos.controller.js",
+    "x-data-contract": "partial-source"
+  },
+  "MantenimientosGetVehiculosExpedientesPaginadoResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "vehiculos": {},
+          "pagination": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "description": "Claves observadas en un retorno explícito del servicio. Los objetos asociados y campos calculados sin tipo confirmado se mantienen abiertos.",
+        "additionalProperties": true
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/mantenimientos/controllers/mantenimientos.controller.js",
+    "x-data-contract": "partial-source"
+  },
+  "MantenimientosGetMantenimientosProximosResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "description": "Resultado devuelto por el servicio; su serialización depende de modelos Sequelize no incluidos. No se impone una forma no confirmada."
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/mantenimientos/controllers/mantenimientos.controller.js",
+    "x-data-contract": "open-model-dependent"
+  },
+  "MantenimientosGetMantenimientosByVehiculoResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "description": "Resultado devuelto por el servicio; su serialización depende de modelos Sequelize no incluidos. No se impone una forma no confirmada."
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/mantenimientos/controllers/mantenimientos.controller.js",
+    "x-data-contract": "open-model-dependent"
+  },
+  "MantenimientosGetMantenimientoByIdResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "description": "Resultado devuelto por el servicio; su serialización depende de modelos Sequelize no incluidos. No se impone una forma no confirmada."
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/mantenimientos/controllers/mantenimientos.controller.js",
+    "x-data-contract": "open-model-dependent"
+  },
+  "MantenimientosCreateMantenimientoRequest": {
+    "type": "object",
+    "properties": {
+      "id_vehiculo": {
+        "oneOf": [
+          {
+            "type": "integer",
+            "minimum": 1
+          },
+          {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$"
+          }
+        ]
+      },
+      "tipo_mantenimiento": {
+        "type": "string",
+        "enum": [
+          "PREVENTIVO",
+          "CORRECTIVO"
+        ]
+      },
+      "fecha_inicio_programada": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "fecha_fin_programada": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "motivo": {
+        "type": "string"
+      },
+      "taller": {
+        "type": "string",
+        "nullable": true
+      },
+      "responsable_tecnico": {
+        "type": "string",
+        "nullable": true
+      },
+      "observacion": {
+        "type": "string",
+        "nullable": true
+      }
+    },
+    "additionalProperties": false,
+    "required": [
+      "id_vehiculo",
+      "tipo_mantenimiento",
+      "fecha_inicio_programada",
+      "fecha_fin_programada",
+      "motivo"
+    ],
+    "x-source": "modules/mantenimientos/services/create-mantenimiento.service.js",
+    "description": "Campos identificados en el controlador y servicio. Las validaciones de negocio y restricciones de modelos no incluidas deben verificarse contra la API en ejecución."
+  },
+  "MantenimientosCreateMantenimientoResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "description": "Resultado devuelto por el servicio; su serialización depende de modelos Sequelize no incluidos. No se impone una forma no confirmada."
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/mantenimientos/controllers/mantenimientos.controller.js",
+    "x-data-contract": "open-model-dependent"
+  },
+  "MantenimientosUpdateMantenimientoRequest": {
+    "type": "object",
+    "properties": {
+      "tipo_mantenimiento": {
+        "type": "string",
+        "enum": [
+          "PREVENTIVO",
+          "CORRECTIVO"
+        ]
+      },
+      "fecha_inicio_programada": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "fecha_fin_programada": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "motivo": {
+        "type": "string"
+      },
+      "diagnostico": {
+        "type": "string",
+        "nullable": true
+      },
+      "taller": {
+        "type": "string",
+        "nullable": true
+      },
+      "responsable_tecnico": {
+        "type": "string",
+        "nullable": true
+      },
+      "observacion": {
+        "type": "string",
+        "nullable": true
+      }
+    },
+    "additionalProperties": false,
+    "x-source": "modules/mantenimientos/services/update-mantenimiento.service.js",
+    "description": "Campos identificados en el controlador y servicio. Las validaciones de negocio y restricciones de modelos no incluidas deben verificarse contra la API en ejecución."
+  },
+  "MantenimientosUpdateMantenimientoResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "description": "Resultado devuelto por el servicio; su serialización depende de modelos Sequelize no incluidos. No se impone una forma no confirmada."
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/mantenimientos/controllers/mantenimientos.controller.js",
+    "x-data-contract": "open-model-dependent"
+  },
+  "MantenimientosIniciarMantenimientoRequest": {
+    "type": "object",
+    "properties": {
+      "kilometraje_ingreso": {
+        "type": "number"
+      },
+      "fecha_fin_programada": {
+        "type": "string",
+        "format": "date-time"
+      }
+    },
+    "additionalProperties": false,
+    "x-source": "modules/mantenimientos/services/iniciar-mantenimiento.service.js",
+    "description": "Campos identificados en el controlador y servicio. Las validaciones de negocio y restricciones de modelos no incluidas deben verificarse contra la API en ejecución."
+  },
+  "MantenimientosIniciarMantenimientoResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "description": "Resultado devuelto por el servicio; su serialización depende de modelos Sequelize no incluidos. No se impone una forma no confirmada."
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/mantenimientos/controllers/mantenimientos.controller.js",
+    "x-data-contract": "open-model-dependent"
+  },
+  "MantenimientosFinalizarMantenimientoRequest": {
+    "type": "object",
+    "properties": {
+      "kilometraje_salida": {
+        "type": "number"
+      },
+      "diagnostico": {
+        "type": "string",
+        "nullable": true
+      },
+      "trabajos_realizados": {
+        "type": "string"
+      },
+      "responsable_tecnico": {
+        "type": "string",
+        "nullable": true
+      },
+      "taller": {
+        "type": "string",
+        "nullable": true
+      },
+      "costo_total": {
+        "type": "number"
+      },
+      "vehiculo_operativo": {
+        "type": "boolean"
+      },
+      "observacion": {
+        "type": "string",
+        "nullable": true
+      }
+    },
+    "additionalProperties": false,
+    "required": [
+      "trabajos_realizados",
+      "vehiculo_operativo"
+    ],
+    "x-source": "modules/mantenimientos/services/finalizar-mantenimiento.service.js",
+    "description": "Campos identificados en el controlador y servicio. Las validaciones de negocio y restricciones de modelos no incluidas deben verificarse contra la API en ejecución."
+  },
+  "MantenimientosFinalizarMantenimientoResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "description": "Resultado devuelto por el servicio; su serialización depende de modelos Sequelize no incluidos. No se impone una forma no confirmada."
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/mantenimientos/controllers/mantenimientos.controller.js",
+    "x-data-contract": "open-model-dependent"
+  },
+  "MantenimientosCancelarMantenimientoRequest": {
+    "type": "object",
+    "properties": {
+      "motivo_cancelacion": {
+        "type": "string"
+      }
+    },
+    "additionalProperties": false,
+    "required": [
+      "motivo_cancelacion"
+    ],
+    "x-source": "modules/mantenimientos/services/cancelar-mantenimiento.service.js",
+    "description": "Campos identificados en el controlador y servicio. Las validaciones de negocio y restricciones de modelos no incluidas deben verificarse contra la API en ejecución."
+  },
+  "MantenimientosCancelarMantenimientoResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "description": "Resultado devuelto por el servicio; su serialización depende de modelos Sequelize no incluidos. No se impone una forma no confirmada."
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/mantenimientos/controllers/mantenimientos.controller.js",
+    "x-data-contract": "open-model-dependent"
+  }
+}

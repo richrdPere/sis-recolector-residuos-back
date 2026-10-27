@@ -1,0 +1,1237 @@
+{
+  "/programaciones/disponibilidad/vehiculos": {
+    "get": {
+      "tags": [
+        "Programaciones"
+      ],
+      "summary": "Vehículos disponibles obtenidos correctamente",
+      "description": "Vehículos disponibles obtenidos correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "programaciones_getVehiculosDisponibles",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/programaciones/routes/disponibilidad.routes.js",
+        "controller": "modules/programaciones/controllers/disponibilidad.controller.js",
+        "handler": "getVehiculosDisponiblesController",
+        "service": "modules/programaciones/services/disponibilidad/get-vehiculos-disponibles.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "exclude_programacion_id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo; texto para conservar precisión BIGINT."
+          }
+        },
+        {
+          "name": "fecha_programada",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        {
+          "name": "hora_fin_programada",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Hora en formato HH:mm:ss."
+          }
+        },
+        {
+          "name": "hora_inicio_programada",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Hora en formato HH:mm:ss."
+          }
+        },
+        {
+          "name": "x-client-origin",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Origen del cliente; consultar valores permitidos en el backend."
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Vehículos disponibles obtenidos correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProgramacionesGetVehiculosDisponiblesResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/programaciones/disponibilidad/conductores": {
+    "get": {
+      "tags": [
+        "Programaciones"
+      ],
+      "summary": "Conductores disponibles obtenidos correctamente",
+      "description": "Conductores disponibles obtenidos correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "programaciones_getConductoresDisponibles",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/programaciones/routes/disponibilidad.routes.js",
+        "controller": "modules/programaciones/controllers/disponibilidad.controller.js",
+        "handler": "getConductoresDisponiblesController",
+        "service": "modules/programaciones/services/disponibilidad/get-conductores-disponibles.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "exclude_programacion_id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo; texto para conservar precisión BIGINT."
+          }
+        },
+        {
+          "name": "fecha_programada",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        {
+          "name": "hora_fin_programada",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Hora en formato HH:mm:ss."
+          }
+        },
+        {
+          "name": "hora_inicio_programada",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Hora en formato HH:mm:ss."
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "search",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-client-origin",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Origen del cliente; consultar valores permitidos en el backend."
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Conductores disponibles obtenidos correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProgramacionesGetConductoresDisponiblesResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/programaciones/disponibilidad/recolectores": {
+    "get": {
+      "tags": [
+        "Programaciones"
+      ],
+      "summary": "Recolectores disponibles obtenidos correctamente",
+      "description": "Recolectores disponibles obtenidos correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "programaciones_getRecolectoresDisponibles",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/programaciones/routes/disponibilidad.routes.js",
+        "controller": "modules/programaciones/controllers/disponibilidad.controller.js",
+        "handler": "getRecolectoresDisponiblesController",
+        "service": "modules/programaciones/services/disponibilidad/get-recolectores-disponibles.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "exclude_programacion_id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo; texto para conservar precisión BIGINT."
+          }
+        },
+        {
+          "name": "fecha_programada",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        {
+          "name": "hora_fin_programada",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Hora en formato HH:mm:ss."
+          }
+        },
+        {
+          "name": "hora_inicio_programada",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Hora en formato HH:mm:ss."
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "search",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-client-origin",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Origen del cliente; consultar valores permitidos en el backend."
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Recolectores disponibles obtenidos correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProgramacionesGetRecolectoresDisponiblesResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/programaciones/mis-asignaciones": {
+    "get": {
+      "tags": [
+        "Programaciones"
+      ],
+      "summary": "Asignaciones obtenidas correctamente",
+      "description": "Asignaciones obtenidas correctamente. Roles declarados en la ruta: CONDUCTOR, RECOLECTOR, SUPERVISOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "programaciones_getMisAsignaciones",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/programaciones/routes/programacion-personal.routes.js",
+        "controller": "modules/programaciones/controllers/programacion-personal.controller.js",
+        "handler": "getMisAsignacionesController",
+        "service": "modules/programaciones/services/programacion-personal/get-mis-asignaciones-personal.service.js"
+      },
+      "x-route-roles": [
+        "CONDUCTOR",
+        "RECOLECTOR",
+        "SUPERVISOR"
+      ],
+      "parameters": [
+        {
+          "name": "estado_asignacion",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "estado_programacion",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "fecha_desde",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        {
+          "name": "fecha_hasta",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "x-client-origin",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Origen del cliente; consultar valores permitidos en el backend."
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Asignaciones obtenidas correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProgramacionesGetMisAsignacionesResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/programaciones/asignaciones/{idProgramacionPersonal}/respuesta": {
+    "patch": {
+      "tags": [
+        "Programaciones"
+      ],
+      "summary": "Respond assignment",
+      "description": "Respond assignment. Roles declarados en la ruta: CONDUCTOR, RECOLECTOR, SUPERVISOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "programaciones_respondAssignment",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/programaciones/routes/programacion-personal.routes.js",
+        "controller": "modules/programaciones/controllers/programacion-personal.controller.js",
+        "handler": "respondAssignmentController",
+        "service": "modules/programaciones/services/programacion-personal/respond-assignment.service.js"
+      },
+      "x-route-roles": [
+        "CONDUCTOR",
+        "RECOLECTOR",
+        "SUPERVISOR"
+      ],
+      "parameters": [
+        {
+          "name": "idProgramacionPersonal",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        },
+        {
+          "name": "x-client-origin",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Origen del cliente; consultar valores permitidos en el backend."
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ProgramacionesRespondAssignmentRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Respond assignment.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProgramacionesRespondAssignmentResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/programaciones/{idProgramacion}/personal": {
+    "get": {
+      "tags": [
+        "Programaciones"
+      ],
+      "summary": "Personal asignado obtenido correctamente",
+      "description": "Personal asignado obtenido correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "programaciones_getProgramacionPersonal",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/programaciones/routes/programacion-personal.routes.js",
+        "controller": "modules/programaciones/controllers/programacion-personal.controller.js",
+        "handler": "getProgramacionPersonalController",
+        "service": "modules/programaciones/services/programacion-personal/get-programacion-personal.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "idProgramacion",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        },
+        {
+          "name": "x-client-origin",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Origen del cliente; consultar valores permitidos en el backend."
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Personal asignado obtenido correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProgramacionesGetProgramacionPersonalResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    },
+    "post": {
+      "tags": [
+        "Programaciones"
+      ],
+      "summary": "Personal asignado correctamente",
+      "description": "Personal asignado correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "programaciones_addProgramacionPersonal",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/programaciones/routes/programacion-personal.routes.js",
+        "controller": "modules/programaciones/controllers/programacion-personal.controller.js",
+        "handler": "addProgramacionPersonalController",
+        "service": "modules/programaciones/services/programacion-personal/add-programacion-personal.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR"
+      ],
+      "parameters": [
+        {
+          "name": "idProgramacion",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        },
+        {
+          "name": "x-client-origin",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Origen del cliente; consultar valores permitidos en el backend."
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ProgramacionesAddProgramacionPersonalRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Personal asignado correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProgramacionesAddProgramacionPersonalResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/programaciones/{idProgramacion}/personal/{idProgramacionPersonal}/retirar": {
+    "patch": {
+      "tags": [
+        "Programaciones"
+      ],
+      "summary": "Personal retirado de la programación correctamente",
+      "description": "Personal retirado de la programación correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "programaciones_removeProgramacionPersonal",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/programaciones/routes/programacion-personal.routes.js",
+        "controller": "modules/programaciones/controllers/programacion-personal.controller.js",
+        "handler": "removeProgramacionPersonalController",
+        "service": "modules/programaciones/services/programacion-personal/remove-programacion-personal.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR"
+      ],
+      "parameters": [
+        {
+          "name": "idProgramacion",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        },
+        {
+          "name": "idProgramacionPersonal",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        },
+        {
+          "name": "x-client-origin",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Origen del cliente; consultar valores permitidos en el backend."
+        }
+      ],
+      "requestBody": {
+        "required": false,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ProgramacionesRemoveProgramacionPersonalRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Personal retirado de la programación correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProgramacionesRemoveProgramacionPersonalResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/programaciones/paginado": {
+    "get": {
+      "tags": [
+        "Programaciones"
+      ],
+      "summary": "Programaciones obtenidas correctamente",
+      "description": "Programaciones obtenidas correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "programaciones_getProgramacionesPaginated",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/programaciones/routes/programacion.routes.js",
+        "controller": "modules/programaciones/controllers/programacion.controller.js",
+        "handler": "getProgramacionesPaginatedController",
+        "service": "modules/programaciones/services/programacion/get-programaciones-paginated.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "estado",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "name": "estado_programacion",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "fecha_desde",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        {
+          "name": "fecha_hasta",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        {
+          "name": "id_ruta",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo; texto para conservar precisión BIGINT."
+          }
+        },
+        {
+          "name": "id_vehiculo",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo; texto para conservar precisión BIGINT."
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "search",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-client-origin",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Origen del cliente; consultar valores permitidos en el backend."
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Programaciones obtenidas correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProgramacionesGetProgramacionesPaginatedResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/programaciones/create": {
+    "post": {
+      "tags": [
+        "Programaciones"
+      ],
+      "summary": "Programación creada correctamente",
+      "description": "Programación creada correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "programaciones_createProgramacion",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/programaciones/routes/programacion.routes.js",
+        "controller": "modules/programaciones/controllers/programacion.controller.js",
+        "handler": "createProgramacionController",
+        "service": "modules/programaciones/services/programacion/create-programacion.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR"
+      ],
+      "parameters": [
+        {
+          "name": "x-client-origin",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Origen del cliente; consultar valores permitidos en el backend."
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ProgramacionesCreateProgramacionRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Programación creada correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProgramacionesCreateProgramacionResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/programaciones/editar/{idProgramacion}": {
+    "put": {
+      "tags": [
+        "Programaciones"
+      ],
+      "summary": "Programación actualizada correctamente",
+      "description": "Programación actualizada correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "programaciones_updateProgramacion",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/programaciones/routes/programacion.routes.js",
+        "controller": "modules/programaciones/controllers/programacion.controller.js",
+        "handler": "updateProgramacionController",
+        "service": "modules/programaciones/services/programacion/update-programacion.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR"
+      ],
+      "parameters": [
+        {
+          "name": "idProgramacion",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        },
+        {
+          "name": "x-client-origin",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Origen del cliente; consultar valores permitidos en el backend."
+        }
+      ],
+      "requestBody": {
+        "required": false,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ProgramacionesUpdateProgramacionRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Programación actualizada correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProgramacionesUpdateProgramacionResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/programaciones/cancelar/{idProgramacion}": {
+    "patch": {
+      "tags": [
+        "Programaciones"
+      ],
+      "summary": "Programación cancelada correctamente",
+      "description": "Programación cancelada correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "programaciones_cancelProgramacion",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/programaciones/routes/programacion.routes.js",
+        "controller": "modules/programaciones/controllers/programacion.controller.js",
+        "handler": "cancelProgramacionController",
+        "service": "modules/programaciones/services/programacion/cancel-programacion.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR"
+      ],
+      "parameters": [
+        {
+          "name": "idProgramacion",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        },
+        {
+          "name": "x-client-origin",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Origen del cliente; consultar valores permitidos en el backend."
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ProgramacionesCancelProgramacionRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Programación cancelada correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProgramacionesCancelProgramacionResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/programaciones/view/{idProgramacion}": {
+    "get": {
+      "tags": [
+        "Programaciones"
+      ],
+      "summary": "Programación obtenida correctamente",
+      "description": "Programación obtenida correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR, CONDUCTOR, RECOLECTOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "programaciones_getProgramacionById",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/programaciones/routes/programacion.routes.js",
+        "controller": "modules/programaciones/controllers/programacion.controller.js",
+        "handler": "getProgramacionByIdController",
+        "service": "modules/programaciones/services/programacion/get-programacion-by-id.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR",
+        "CONDUCTOR",
+        "RECOLECTOR"
+      ],
+      "parameters": [
+        {
+          "name": "idProgramacion",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        },
+        {
+          "name": "x-client-origin",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Origen del cliente; consultar valores permitidos en el backend."
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Programación obtenida correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProgramacionesGetProgramacionByIdResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  }
+}

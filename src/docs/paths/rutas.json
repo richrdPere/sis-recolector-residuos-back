@@ -1,0 +1,1835 @@
+{
+  "/rutas/{idRuta}/horarios": {
+    "post": {
+      "tags": [
+        "Rutas"
+      ],
+      "summary": "Horario de ruta registrado correctamente",
+      "description": "Horario de ruta registrado correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "rutas_createRutaHorario",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/rutas/routes/ruta-horario.routes.js",
+        "controller": "modules/rutas/controllers/ruta-horario.controller.js",
+        "handler": "createRutaHorarioController",
+        "service": "modules/rutas/services/ruta-horario/create-ruta-horario.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN"
+      ],
+      "parameters": [
+        {
+          "name": "idRuta",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/RutasCreateRutaHorarioRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Horario de ruta registrado correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RutasCreateRutaHorarioResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    },
+    "get": {
+      "tags": [
+        "Rutas"
+      ],
+      "summary": "Horarios de ruta obtenidos correctamente",
+      "description": "Horarios de ruta obtenidos correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "rutas_getRutaHorarios",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/rutas/routes/ruta-horario.routes.js",
+        "controller": "modules/rutas/controllers/ruta-horario.controller.js",
+        "handler": "getRutaHorariosController",
+        "service": "modules/rutas/services/ruta-horario/get-ruta-horarios.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "idRuta",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Horarios de ruta obtenidos correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RutasGetRutaHorariosResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/rutas/{idRuta}/horarios/{idHorario}": {
+    "put": {
+      "tags": [
+        "Rutas"
+      ],
+      "summary": "Horario de ruta actualizado correctamente",
+      "description": "Horario de ruta actualizado correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "rutas_updateRutaHorario",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/rutas/routes/ruta-horario.routes.js",
+        "controller": "modules/rutas/controllers/ruta-horario.controller.js",
+        "handler": "updateRutaHorarioController",
+        "service": "modules/rutas/services/ruta-horario/update-ruta-horario.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN"
+      ],
+      "parameters": [
+        {
+          "name": "idRuta",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        },
+        {
+          "name": "idHorario",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "requestBody": {
+        "required": false,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/RutasUpdateRutaHorarioRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Horario de ruta actualizado correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RutasUpdateRutaHorarioResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    },
+    "delete": {
+      "tags": [
+        "Rutas"
+      ],
+      "summary": "Horario de ruta eliminado correctamente",
+      "description": "Horario de ruta eliminado correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "rutas_deleteRutaHorario",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/rutas/routes/ruta-horario.routes.js",
+        "controller": "modules/rutas/controllers/ruta-horario.controller.js",
+        "handler": "deleteRutaHorarioController",
+        "service": "modules/rutas/services/ruta-horario/delete-ruta-horario.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN"
+      ],
+      "parameters": [
+        {
+          "name": "idRuta",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        },
+        {
+          "name": "idHorario",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Horario de ruta eliminado correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RutasDeleteRutaHorarioResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/rutas/{idRuta}/horarios/{idHorario}/estado": {
+    "patch": {
+      "tags": [
+        "Rutas"
+      ],
+      "summary": "Change ruta horario estado",
+      "description": "Change ruta horario estado. Roles declarados en la ruta: SUPER_ADMIN, ADMIN. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "rutas_changeRutaHorarioEstado",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/rutas/routes/ruta-horario.routes.js",
+        "controller": "modules/rutas/controllers/ruta-horario.controller.js",
+        "handler": "changeRutaHorarioEstadoController",
+        "service": "modules/rutas/services/ruta-horario/change-ruta-horario-estado.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN"
+      ],
+      "parameters": [
+        {
+          "name": "idRuta",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        },
+        {
+          "name": "idHorario",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/RutasChangeRutaHorarioEstadoRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Change ruta horario estado.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RutasChangeRutaHorarioEstadoResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/rutas/versiones/{idVersion}/puntos": {
+    "post": {
+      "tags": [
+        "Rutas"
+      ],
+      "summary": "Punto de ruta registrado correctamente",
+      "description": "Punto de ruta registrado correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "rutas_createRutaPunto",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/rutas/routes/ruta-punto.routes.js",
+        "controller": "modules/rutas/controllers/ruta-punto.controller.js",
+        "handler": "createRutaPuntoController",
+        "service": "modules/rutas/services/ruta-punto/create-ruta-punto.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN"
+      ],
+      "parameters": [
+        {
+          "name": "idVersion",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/RutasCreateRutaPuntoRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Punto de ruta registrado correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RutasCreateRutaPuntoResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/rutas/versiones/{idVersion}/puntos/orden": {
+    "put": {
+      "tags": [
+        "Rutas"
+      ],
+      "summary": "Puntos de ruta reordenados correctamente",
+      "description": "Puntos de ruta reordenados correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "rutas_reorderRutaPuntos",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/rutas/routes/ruta-punto.routes.js",
+        "controller": "modules/rutas/controllers/ruta-punto.controller.js",
+        "handler": "reorderRutaPuntosController",
+        "service": "modules/rutas/services/ruta-punto/reorder-ruta-puntos-service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN"
+      ],
+      "parameters": [
+        {
+          "name": "idVersion",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/RutasReorderRutaPuntosRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Puntos de ruta reordenados correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RutasReorderRutaPuntosResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/rutas/versiones/{idVersion}/puntos/{idPunto}": {
+    "put": {
+      "tags": [
+        "Rutas"
+      ],
+      "summary": "Punto de ruta actualizado correctamente",
+      "description": "Punto de ruta actualizado correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "rutas_updateRutaPunto",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/rutas/routes/ruta-punto.routes.js",
+        "controller": "modules/rutas/controllers/ruta-punto.controller.js",
+        "handler": "updateRutaPuntoController",
+        "service": "modules/rutas/services/ruta-punto/update-ruta-punto.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN"
+      ],
+      "parameters": [
+        {
+          "name": "idVersion",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        },
+        {
+          "name": "idPunto",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "requestBody": {
+        "required": false,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/RutasUpdateRutaPuntoRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Punto de ruta actualizado correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RutasUpdateRutaPuntoResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    },
+    "delete": {
+      "tags": [
+        "Rutas"
+      ],
+      "summary": "Punto de ruta eliminado correctamente",
+      "description": "Punto de ruta eliminado correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "rutas_deleteRutaPunto",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/rutas/routes/ruta-punto.routes.js",
+        "controller": "modules/rutas/controllers/ruta-punto.controller.js",
+        "handler": "deleteRutaPuntoController",
+        "service": "modules/rutas/services/ruta-punto/delete-ruta-punto.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN"
+      ],
+      "parameters": [
+        {
+          "name": "idVersion",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        },
+        {
+          "name": "idPunto",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Punto de ruta eliminado correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RutasDeleteRutaPuntoResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/rutas/{idRuta}/versiones": {
+    "post": {
+      "tags": [
+        "Rutas"
+      ],
+      "summary": "Versión de ruta registrada correctamente",
+      "description": "Versión de ruta registrada correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "rutas_createRutaVersion",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/rutas/routes/ruta-version.routes.js",
+        "controller": "modules/rutas/controllers/ruta-version.controller.js",
+        "handler": "createRutaVersionController",
+        "service": "modules/rutas/services/ruta-version/create-ruta-version.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN"
+      ],
+      "parameters": [
+        {
+          "name": "idRuta",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/RutasCreateRutaVersionRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Versión de ruta registrada correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RutasCreateRutaVersionResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    },
+    "get": {
+      "tags": [
+        "Rutas"
+      ],
+      "summary": "Versiones de la ruta obtenidas correctamente",
+      "description": "Versiones de la ruta obtenidas correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "rutas_getRutaVersiones",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/rutas/routes/ruta-version.routes.js",
+        "controller": "modules/rutas/controllers/ruta-version.controller.js",
+        "handler": "getRutaVersionesController",
+        "service": "modules/rutas/services/ruta-version/get-ruta-versiones.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "idRuta",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Versiones de la ruta obtenidas correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RutasGetRutaVersionesResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/rutas/{idRuta}/version-vigente": {
+    "get": {
+      "tags": [
+        "Rutas"
+      ],
+      "summary": "Versión vigente obtenida correctamente",
+      "description": "Versión vigente obtenida correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "rutas_getRutaVersionVigente",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/rutas/routes/ruta-version.routes.js",
+        "controller": "modules/rutas/controllers/ruta-version.controller.js",
+        "handler": "getRutaVersionVigenteController",
+        "service": "modules/rutas/services/ruta-version/get-ruta-version-vigente.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "idRuta",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Versión vigente obtenida correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RutasGetRutaVersionVigenteResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/rutas/versiones/{idVersion}": {
+    "put": {
+      "tags": [
+        "Rutas"
+      ],
+      "summary": "Versión de ruta actualizada correctamente",
+      "description": "Versión de ruta actualizada correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "rutas_updateRutaVersion",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/rutas/routes/ruta-version.routes.js",
+        "controller": "modules/rutas/controllers/ruta-version.controller.js",
+        "handler": "updateRutaVersionController",
+        "service": "modules/rutas/services/ruta-version/update-ruta-version.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN"
+      ],
+      "parameters": [
+        {
+          "name": "idVersion",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "requestBody": {
+        "required": false,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/RutasUpdateRutaVersionRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Versión de ruta actualizada correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RutasUpdateRutaVersionResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    },
+    "delete": {
+      "tags": [
+        "Rutas"
+      ],
+      "summary": "Versión de ruta eliminada correctamente",
+      "description": "Versión de ruta eliminada correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "rutas_deleteRutaVersion",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/rutas/routes/ruta-version.routes.js",
+        "controller": "modules/rutas/controllers/ruta-version.controller.js",
+        "handler": "deleteRutaVersionController",
+        "service": "modules/rutas/services/ruta-version/delete-ruta-version.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN"
+      ],
+      "parameters": [
+        {
+          "name": "idVersion",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Versión de ruta eliminada correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RutasDeleteRutaVersionResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/rutas/versiones/{idVersion}/activar": {
+    "patch": {
+      "tags": [
+        "Rutas"
+      ],
+      "summary": "Versión de ruta activada como vigente correctamente",
+      "description": "Versión de ruta activada como vigente correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "rutas_activarRutaVersion",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/rutas/routes/ruta-version.routes.js",
+        "controller": "modules/rutas/controllers/ruta-version.controller.js",
+        "handler": "activarRutaVersionController",
+        "service": "modules/rutas/services/ruta-version/activar-ruta-version.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN"
+      ],
+      "parameters": [
+        {
+          "name": "idVersion",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Versión de ruta activada como vigente correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RutasActivarRutaVersionResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/rutas/paginado": {
+    "get": {
+      "tags": [
+        "Rutas"
+      ],
+      "summary": "Rutas obtenidas correctamente",
+      "description": "Rutas obtenidas correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "rutas_getRutasPaginated",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/rutas/routes/ruta.routes.js",
+        "controller": "modules/rutas/controllers/ruta.controller.js",
+        "handler": "getRutasPaginatedController",
+        "service": "modules/rutas/services/ruta/get-rutas-paginated.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "estado",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "name": "estado_ruta",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "id_zona",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo; texto para conservar precisión BIGINT."
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "search",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Rutas obtenidas correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RutasGetRutasPaginatedResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/rutas/activas": {
+    "get": {
+      "tags": [
+        "Rutas"
+      ],
+      "summary": "Rutas activas obtenidas correctamente",
+      "description": "Rutas activas obtenidas correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "rutas_getRutasActivas",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/rutas/routes/ruta.routes.js",
+        "controller": "modules/rutas/controllers/ruta.controller.js",
+        "handler": "getRutasActivasController",
+        "service": "modules/rutas/services/ruta/get-rutas-activas.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "responses": {
+        "200": {
+          "description": "Rutas activas obtenidas correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RutasGetRutasActivasResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/rutas/zona/{idZona}": {
+    "get": {
+      "tags": [
+        "Rutas"
+      ],
+      "summary": "Rutas de la zona obtenidas correctamente",
+      "description": "Rutas de la zona obtenidas correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "rutas_getRutasByZona",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/rutas/routes/ruta.routes.js",
+        "controller": "modules/rutas/controllers/ruta.controller.js",
+        "handler": "getRutasByZonaController",
+        "service": "modules/rutas/services/ruta/get-rutas-by-zona.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "idZona",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Rutas de la zona obtenidas correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RutasGetRutasByZonaResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/rutas/view/{id}": {
+    "get": {
+      "tags": [
+        "Rutas"
+      ],
+      "summary": "Ruta obtenida correctamente",
+      "description": "Ruta obtenida correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "rutas_getRutaById",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/rutas/routes/ruta.routes.js",
+        "controller": "modules/rutas/controllers/ruta.controller.js",
+        "handler": "getRutaByIdController",
+        "service": "modules/rutas/services/ruta/get-ruta-by-id.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Ruta obtenida correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RutasGetRutaByIdResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/rutas/codigo": {
+    "get": {
+      "tags": [
+        "Rutas"
+      ],
+      "summary": "Código de la ruta obtenido correctamente",
+      "description": "Código de la ruta obtenido correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "rutas_getLastCodigoRuta",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/rutas/routes/ruta.routes.js",
+        "controller": "modules/rutas/controllers/ruta.controller.js",
+        "handler": "getLastCodigoRutaController",
+        "service": "modules/rutas/services/ruta/get-last-codigo-ruta.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "responses": {
+        "200": {
+          "description": "Código de la ruta obtenido correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RutasGetLastCodigoRutaResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/rutas/resumen-rutas/paginado": {
+    "get": {
+      "tags": [
+        "Rutas"
+      ],
+      "summary": "Zonas con resumen de rutas obtenidas correctamente",
+      "description": "Zonas con resumen de rutas obtenidas correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "rutas_getZonasResumenRutasPaginado",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/rutas/routes/ruta.routes.js",
+        "controller": "modules/rutas/controllers/ruta.controller.js",
+        "handler": "getZonasResumenRutasPaginadoController",
+        "service": "modules/rutas/services/ruta/get-zonas-resumen-rutas-paginado.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "search",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Zonas con resumen de rutas obtenidas correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RutasGetZonasResumenRutasPaginadoResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/rutas/create": {
+    "post": {
+      "tags": [
+        "Rutas"
+      ],
+      "summary": "Ruta registrada correctamente",
+      "description": "Ruta registrada correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "rutas_createRuta",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/rutas/routes/ruta.routes.js",
+        "controller": "modules/rutas/controllers/ruta.controller.js",
+        "handler": "createRutaController",
+        "service": "modules/rutas/services/ruta/create-ruta.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN"
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/RutasCreateRutaRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Ruta registrada correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RutasCreateRutaResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/rutas/update/{id}": {
+    "put": {
+      "tags": [
+        "Rutas"
+      ],
+      "summary": "Ruta actualizada correctamente",
+      "description": "Ruta actualizada correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "rutas_updateRuta",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/rutas/routes/ruta.routes.js",
+        "controller": "modules/rutas/controllers/ruta.controller.js",
+        "handler": "updateRutaController",
+        "service": "modules/rutas/services/ruta/update-ruta.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN"
+      ],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "requestBody": {
+        "required": false,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/RutasUpdateRutaRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Ruta actualizada correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RutasUpdateRutaResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/rutas/estado-ruta/{id}": {
+    "patch": {
+      "tags": [
+        "Rutas"
+      ],
+      "summary": "Estado operativo de la ruta actualizado correctamente",
+      "description": "Estado operativo de la ruta actualizado correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "rutas_changeRutaEstadoRuta",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/rutas/routes/ruta.routes.js",
+        "controller": "modules/rutas/controllers/ruta.controller.js",
+        "handler": "changeRutaEstadoRutaController",
+        "service": "modules/rutas/services/ruta/change-ruta-estado-ruta.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN"
+      ],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/RutasChangeRutaEstadoRutaRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Estado operativo de la ruta actualizado correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RutasChangeRutaEstadoRutaResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/rutas/estado/{id}": {
+    "patch": {
+      "tags": [
+        "Rutas"
+      ],
+      "summary": "Change ruta estado",
+      "description": "Change ruta estado. Roles declarados en la ruta: SUPER_ADMIN, ADMIN. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "rutas_changeRutaEstado",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/rutas/routes/ruta.routes.js",
+        "controller": "modules/rutas/controllers/ruta.controller.js",
+        "handler": "changeRutaEstadoController",
+        "service": "modules/rutas/services/ruta/change-ruta-estado.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN"
+      ],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/RutasChangeRutaEstadoRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Change ruta estado.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RutasChangeRutaEstadoResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/rutas/delete/{id}": {
+    "delete": {
+      "tags": [
+        "Rutas"
+      ],
+      "summary": "Ruta eliminada correctamente",
+      "description": "Ruta eliminada correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "rutas_deleteRuta",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/rutas/routes/ruta.routes.js",
+        "controller": "modules/rutas/controllers/ruta.controller.js",
+        "handler": "deleteRutaController",
+        "service": "modules/rutas/services/ruta/delete-ruta.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN"
+      ],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Ruta eliminada correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RutasDeleteRutaResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  }
+}

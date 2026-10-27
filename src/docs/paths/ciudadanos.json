@@ -1,0 +1,630 @@
+{
+  "/ciudadanos/perfil": {
+    "post": {
+      "tags": [
+        "Ciudadanos"
+      ],
+      "summary": "Perfil ciudadano creado correctamente",
+      "description": "Perfil ciudadano creado correctamente. Roles declarados en la ruta: CIUDADANO. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "ciudadanos_createCitizenProfile",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/ciudadanos/routes/ciudadanos.routes.js",
+        "controller": "modules/ciudadanos/controllers/ciudadano.controller.js",
+        "handler": "createCitizenProfileController",
+        "service": "modules/ciudadanos/services/create-citizen-profile.service.js"
+      },
+      "x-route-roles": [
+        "CIUDADANO"
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CiudadanosCreateCitizenProfileRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Perfil ciudadano creado correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CiudadanosCreateCitizenProfileResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/ciudadanos/me": {
+    "get": {
+      "tags": [
+        "Ciudadanos"
+      ],
+      "summary": "Perfil ciudadano obtenido correctamente",
+      "description": "Perfil ciudadano obtenido correctamente. Roles declarados en la ruta: CIUDADANO. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "ciudadanos_getMyCitizenProfile",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/ciudadanos/routes/ciudadanos.routes.js",
+        "controller": "modules/ciudadanos/controllers/ciudadano.controller.js",
+        "handler": "getMyCitizenProfileController",
+        "service": "modules/ciudadanos/services/get-my-citizen-profile.service.js"
+      },
+      "x-route-roles": [
+        "CIUDADANO"
+      ],
+      "responses": {
+        "200": {
+          "description": "Perfil ciudadano obtenido correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CiudadanosGetMyCitizenProfileResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    },
+    "put": {
+      "tags": [
+        "Ciudadanos"
+      ],
+      "summary": "Perfil ciudadano actualizado correctamente",
+      "description": "Perfil ciudadano actualizado correctamente. Roles declarados en la ruta: CIUDADANO. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "ciudadanos_updateCitizenProfile",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/ciudadanos/routes/ciudadanos.routes.js",
+        "controller": "modules/ciudadanos/controllers/ciudadano.controller.js",
+        "handler": "updateCitizenProfileController",
+        "service": "modules/ciudadanos/services/update-citizen-profile.service.js"
+      },
+      "x-route-roles": [
+        "CIUDADANO"
+      ],
+      "requestBody": {
+        "required": false,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CiudadanosUpdateCitizenProfileRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Perfil ciudadano actualizado correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CiudadanosUpdateCitizenProfileResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/ciudadanos/preferencias-notificacion": {
+    "get": {
+      "tags": [
+        "Ciudadanos"
+      ],
+      "summary": "Preferencias de notificación obtenidas correctamente",
+      "description": "Preferencias de notificación obtenidas correctamente. Roles declarados en la ruta: CIUDADANO. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "ciudadanos_getNotificationPreferences",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/ciudadanos/routes/ciudadanos.routes.js",
+        "controller": "modules/ciudadanos/controllers/preferencia.controller.js",
+        "handler": "getNotificationPreferencesController",
+        "service": "modules/ciudadanos/services/get-notification-preferences.service.js"
+      },
+      "x-route-roles": [
+        "CIUDADANO"
+      ],
+      "responses": {
+        "200": {
+          "description": "Preferencias de notificación obtenidas correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CiudadanosGetNotificationPreferencesResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    },
+    "put": {
+      "tags": [
+        "Ciudadanos"
+      ],
+      "summary": "Preferencias de notificación actualizadas correctamente",
+      "description": "Preferencias de notificación actualizadas correctamente. Roles declarados en la ruta: CIUDADANO. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "ciudadanos_updateNotificationPreferences",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/ciudadanos/routes/ciudadanos.routes.js",
+        "controller": "modules/ciudadanos/controllers/preferencia.controller.js",
+        "handler": "updateNotificationPreferencesController",
+        "service": "modules/ciudadanos/services/update-notification-preferences.service.js"
+      },
+      "x-route-roles": [
+        "CIUDADANO"
+      ],
+      "requestBody": {
+        "required": false,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CiudadanosUpdateNotificationPreferencesRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Preferencias de notificación actualizadas correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CiudadanosUpdateNotificationPreferencesResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/ciudadanos/domicilios": {
+    "get": {
+      "tags": [
+        "Ciudadanos"
+      ],
+      "summary": "Domicilios obtenidos correctamente",
+      "description": "Domicilios obtenidos correctamente. Roles declarados en la ruta: CIUDADANO. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "ciudadanos_getMyAddresses",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/ciudadanos/routes/ciudadanos.routes.js",
+        "controller": "modules/ciudadanos/controllers/domicilio.controller.js",
+        "handler": "getMyAddressesController",
+        "service": "modules/ciudadanos/services/get-my-addresses.service.js"
+      },
+      "x-route-roles": [
+        "CIUDADANO"
+      ],
+      "parameters": [
+        {
+          "name": "incluir_inactivos",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Domicilios obtenidos correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CiudadanosGetMyAddressesResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    },
+    "post": {
+      "tags": [
+        "Ciudadanos"
+      ],
+      "summary": "Domicilio registrado correctamente",
+      "description": "Domicilio registrado correctamente. Roles declarados en la ruta: CIUDADANO. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "ciudadanos_createCitizenAddress",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/ciudadanos/routes/ciudadanos.routes.js",
+        "controller": "modules/ciudadanos/controllers/domicilio.controller.js",
+        "handler": "createCitizenAddressController",
+        "service": "modules/ciudadanos/services/create-citizen-address.service.js"
+      },
+      "x-route-roles": [
+        "CIUDADANO"
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CiudadanosCreateCitizenAddressRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Domicilio registrado correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CiudadanosCreateCitizenAddressResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/ciudadanos/domicilios/{idDomicilio}/principal": {
+    "patch": {
+      "tags": [
+        "Ciudadanos"
+      ],
+      "summary": "Domicilio principal actualizado correctamente",
+      "description": "Domicilio principal actualizado correctamente. Roles declarados en la ruta: CIUDADANO. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "ciudadanos_setPrimaryAddress",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/ciudadanos/routes/ciudadanos.routes.js",
+        "controller": "modules/ciudadanos/controllers/domicilio.controller.js",
+        "handler": "setPrimaryAddressController",
+        "service": "modules/ciudadanos/services/set-primary-address.service.js"
+      },
+      "x-route-roles": [
+        "CIUDADANO"
+      ],
+      "parameters": [
+        {
+          "name": "idDomicilio",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Domicilio principal actualizado correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CiudadanosSetPrimaryAddressResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/ciudadanos/domicilios/{idDomicilio}": {
+    "put": {
+      "tags": [
+        "Ciudadanos"
+      ],
+      "summary": "Domicilio actualizado correctamente",
+      "description": "Domicilio actualizado correctamente. Roles declarados en la ruta: CIUDADANO. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "ciudadanos_updateCitizenAddress",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/ciudadanos/routes/ciudadanos.routes.js",
+        "controller": "modules/ciudadanos/controllers/domicilio.controller.js",
+        "handler": "updateCitizenAddressController",
+        "service": "modules/ciudadanos/services/update-citizen-address.service.js"
+      },
+      "x-route-roles": [
+        "CIUDADANO"
+      ],
+      "parameters": [
+        {
+          "name": "idDomicilio",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "requestBody": {
+        "required": false,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CiudadanosUpdateCitizenAddressRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Domicilio actualizado correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CiudadanosUpdateCitizenAddressResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    },
+    "delete": {
+      "tags": [
+        "Ciudadanos"
+      ],
+      "summary": "Domicilio eliminado correctamente",
+      "description": "Domicilio eliminado correctamente. Roles declarados en la ruta: CIUDADANO. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "ciudadanos_deleteCitizenAddress",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/ciudadanos/routes/ciudadanos.routes.js",
+        "controller": "modules/ciudadanos/controllers/domicilio.controller.js",
+        "handler": "deleteCitizenAddressController",
+        "service": "modules/ciudadanos/services/delete-citizen-address.service.js"
+      },
+      "x-route-roles": [
+        "CIUDADANO"
+      ],
+      "parameters": [
+        {
+          "name": "idDomicilio",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Domicilio eliminado correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CiudadanosDeleteCitizenAddressResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/ciudadanos/domicilios/{idDomicilio}/cronograma": {
+    "get": {
+      "tags": [
+        "Ciudadanos"
+      ],
+      "summary": "Cronograma de recolección obtenido correctamente",
+      "description": "Cronograma de recolección obtenido correctamente. Roles declarados en la ruta: CIUDADANO. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "ciudadanos_getScheduleByAddress",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/ciudadanos/routes/ciudadanos.routes.js",
+        "controller": "modules/ciudadanos/controllers/domicilio.controller.js",
+        "handler": "getScheduleByAddressController",
+        "service": "modules/ciudadanos/services/get-schedule-by-address.service.js"
+      },
+      "x-route-roles": [
+        "CIUDADANO"
+      ],
+      "parameters": [
+        {
+          "name": "idDomicilio",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        },
+        {
+          "name": "fecha_referencia",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Cronograma de recolección obtenido correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CiudadanosGetScheduleByAddressResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  }
+}

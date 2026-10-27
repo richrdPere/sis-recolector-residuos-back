@@ -1,0 +1,495 @@
+{
+  "/codigos-qr/create": {
+    "post": {
+      "tags": [
+        "Códigos QR"
+      ],
+      "summary": "Código QR creado correctamente",
+      "description": "Código QR creado correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "codigos_qr_createQrCode",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/codigos-qr/routes/codigo-qr.routes.js",
+        "controller": "modules/codigos-qr/controllers/codigo-qr.controller.js",
+        "handler": "createQrCodeController",
+        "service": "modules/codigos-qr/services/create-qr-code.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR"
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CodigosQrCreateQrCodeRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Código QR creado correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CodigosQrCreateQrCodeResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/codigos-qr/paginado": {
+    "get": {
+      "tags": [
+        "Códigos QR"
+      ],
+      "summary": "Códigos QR obtenidos correctamente",
+      "description": "Códigos QR obtenidos correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "codigos_qr_getQrCodes",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/codigos-qr/routes/codigo-qr.routes.js",
+        "controller": "modules/codigos-qr/controllers/codigo-qr.controller.js",
+        "handler": "getQrCodesController",
+        "service": "modules/codigos-qr/services/get-qr-codes.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "estado_qr",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "ACTIVO",
+              "INACTIVO",
+              "REVOCADO"
+            ]
+          }
+        },
+        {
+          "name": "id_ruta",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo; texto para conservar precisión BIGINT."
+          }
+        },
+        {
+          "name": "id_zona",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo; texto para conservar precisión BIGINT."
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "search",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "tipo_recurso",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "ZONA",
+              "RUTA"
+            ]
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Códigos QR obtenidos correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CodigosQrGetQrCodesResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/codigos-qr/{idCodigoQr}/imagen": {
+    "get": {
+      "tags": [
+        "Códigos QR"
+      ],
+      "summary": "Generate qr image",
+      "description": "Generate qr image. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "codigos_qr_generateQrImage",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/codigos-qr/routes/codigo-qr.routes.js",
+        "controller": "modules/codigos-qr/controllers/codigo-qr.controller.js",
+        "handler": "generateQrImageController",
+        "service": "modules/codigos-qr/services/generate-qr-image.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "idCodigoQr",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        },
+        {
+          "name": "download",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "name": "formato",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "margin",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "width",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Imagen QR en PNG o SVG. Puede descargarse con download=true.",
+          "content": {
+            "image/png": {
+              "schema": {
+                "type": "string",
+                "format": "binary"
+              }
+            },
+            "image/svg+xml": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/codigos-qr/{idCodigoQr}/estado": {
+    "patch": {
+      "tags": [
+        "Códigos QR"
+      ],
+      "summary": "Estado del código QR actualizado correctamente",
+      "description": "Estado del código QR actualizado correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "codigos_qr_changeQrCodeStatus",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/codigos-qr/routes/codigo-qr.routes.js",
+        "controller": "modules/codigos-qr/controllers/codigo-qr.controller.js",
+        "handler": "changeQrCodeStatusController",
+        "service": "modules/codigos-qr/services/change-qr-code-status.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR"
+      ],
+      "parameters": [
+        {
+          "name": "idCodigoQr",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CodigosQrChangeQrCodeStatusRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Estado del código QR actualizado correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CodigosQrChangeQrCodeStatusResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/codigos-qr/{idCodigoQr}/regenerar": {
+    "patch": {
+      "tags": [
+        "Códigos QR"
+      ],
+      "summary": "Código QR regenerado correctamente",
+      "description": "Código QR regenerado correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "codigos_qr_regenerateQrCode",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/codigos-qr/routes/codigo-qr.routes.js",
+        "controller": "modules/codigos-qr/controllers/codigo-qr.controller.js",
+        "handler": "regenerateQrCodeController",
+        "service": "modules/codigos-qr/services/regenerate-qr-code.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR"
+      ],
+      "parameters": [
+        {
+          "name": "idCodigoQr",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CodigosQrRegenerateQrCodeRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Código QR regenerado correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CodigosQrRegenerateQrCodeResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/codigos-qr/view/{idCodigoQr}": {
+    "get": {
+      "tags": [
+        "Códigos QR"
+      ],
+      "summary": "Código QR obtenido correctamente",
+      "description": "Código QR obtenido correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "codigos_qr_getQrCodeById",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/codigos-qr/routes/codigo-qr.routes.js",
+        "controller": "modules/codigos-qr/controllers/codigo-qr.controller.js",
+        "handler": "getQrCodeByIdController",
+        "service": "modules/codigos-qr/services/get-qr-code-by-id.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "idCodigoQr",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Código QR obtenido correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CodigosQrGetQrCodeByIdResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  }
+}

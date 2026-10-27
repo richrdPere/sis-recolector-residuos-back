@@ -16,15 +16,13 @@ const {
 */
 
 const getRequestMetadata = (req) => {
-  const forwardedFor =
-    req.headers['x-forwarded-for'];
+  const forwardedFor = req.headers['x-forwarded-for'];
 
-  const forwardedIp =
-    typeof forwardedFor === 'string'
-      ? forwardedFor
-        .split(',')[0]
-        .trim()
-      : null;
+  const forwardedIp = typeof forwardedFor === 'string'
+    ? forwardedFor
+      .split(',')[0]
+      .trim()
+    : null;
 
   return {
     ip:
@@ -161,8 +159,7 @@ const refreshSessionController = async (req, res, next) => {
 */
 const logoutController = async (req, res, next) => {
   try {
-    const id_usuario =
-      getAuthenticatedUserId(req);
+    const id_usuario = getAuthenticatedUserId(req);
 
     const data = await logoutService({
       id_usuario,
@@ -207,11 +204,7 @@ const logoutAllController = async (req, res, next,) => {
 | 6. Obtener perfil autenticado
 |--------------------------------------------------------------------------
 */
-const getAuthProfileController = async (
-  req,
-  res,
-  next,
-) => {
+const getAuthProfileController = async (req, res, next) => {
   try {
     const id_usuario = getAuthenticatedUserId(req);
     const data = await getAuthProfileService({
@@ -232,11 +225,7 @@ const getAuthProfileController = async (
 | 7. Cambiar contraseña
 |--------------------------------------------------------------------------
 */
-const changePasswordController = async (
-  req,
-  res,
-  next,
-) => {
+const changePasswordController = async (req, res, next) => {
   try {
     const id_usuario = getAuthenticatedUserId(req);
 
@@ -263,28 +252,6 @@ const changePasswordController = async (
 const registerCiudadanoController = async (req, res, next) => {
   try {
     const body = req.body;
-
-    // if (
-    //   !body ||
-    //   typeof body !== 'object' ||
-    //   Array.isArray(body)
-    // ) {
-    //   return res.status(400).json({
-    //     success: false,
-    //     message: 'Debe enviar un objeto JSON válido.',
-    //     code: 'INVALID_REGISTER_BODY',
-    //   });
-    // }
-
-    // /*
-    // |--------------------------------------------------------------------------
-    // | Selección explícita de campos
-    // |--------------------------------------------------------------------------
-    // |
-    // | No usar ...req.body.
-    // | No aceptar roles, estados ni identificadores de otros usuarios.
-    // |
-    // */
 
     const data = await registerCiudadanoService({
       nombres: body.nombres,

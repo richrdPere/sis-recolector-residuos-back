@@ -22,7 +22,7 @@ module.exports = (db) => {
     require("./recoleccion.associations")(db);
 
     // - Incidentes
-
+    require("./incidencias.associations")(db);
 
     // - Notificaciones
     require("./notificaciones.associations")(db);

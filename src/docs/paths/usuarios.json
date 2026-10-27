@@ -1,0 +1,953 @@
+{
+  "/usuarios/paginado": {
+    "get": {
+      "tags": [
+        "Usuarios"
+      ],
+      "summary": "Usuarios obtenidos correctamente",
+      "description": "Usuarios obtenidos correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "usuarios_getUsuariosPaginated",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/usuarios/routes/usuario.routes.js",
+        "controller": "modules/usuarios/controllers/usuario.controller.js",
+        "handler": "getUsuariosPaginatedController",
+        "service": "modules/usuarios/services/get-usuarios-paginated.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "id_rol",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo; texto para conservar precisión BIGINT."
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "search",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "sort_by",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "sort_order",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Usuarios obtenidos correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UsuariosGetUsuariosPaginatedResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RespuestaErrorLocal"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/usuarios/selector": {
+    "get": {
+      "tags": [
+        "Usuarios"
+      ],
+      "summary": "Selector de usuarios obtenido correctamente",
+      "description": "Selector de usuarios obtenido correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "usuarios_getUsuarioSelector",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/usuarios/routes/usuario.routes.js",
+        "controller": "modules/usuarios/controllers/usuario.controller.js",
+        "handler": "getUsuarioSelectorController",
+        "service": null
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "id_rol",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo; texto para conservar precisión BIGINT."
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "search",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Selector de usuarios obtenido correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UsuariosGetUsuarioSelectorResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RespuestaErrorLocal"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/usuarios/view/{idUsuario}": {
+    "get": {
+      "tags": [
+        "Usuarios"
+      ],
+      "summary": "Usuario obtenido correctamente",
+      "description": "Usuario obtenido correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "usuarios_getUsuarioById",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/usuarios/routes/usuario.routes.js",
+        "controller": "modules/usuarios/controllers/usuario.controller.js",
+        "handler": "getUsuarioByIdController",
+        "service": "modules/usuarios/services/get-usuario-by-id.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "idUsuario",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Usuario obtenido correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UsuariosGetUsuarioByIdResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RespuestaErrorLocal"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/usuarios/{idUsuario}/roles": {
+    "get": {
+      "tags": [
+        "Usuarios"
+      ],
+      "summary": "Roles del usuario obtenidos correctamente",
+      "description": "Roles del usuario obtenidos correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "usuarios_getUsuarioRoles",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/usuarios/routes/usuario.routes.js",
+        "controller": "modules/usuarios/controllers/usuario.controller.js",
+        "handler": "getUsuarioRolesController",
+        "service": "modules/usuarios/services/get-usuario-roles.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "idUsuario",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        },
+        {
+          "name": "estado",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Roles del usuario obtenidos correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UsuariosGetUsuarioRolesResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RespuestaErrorLocal"
+              }
+            }
+          }
+        }
+      }
+    },
+    "post": {
+      "tags": [
+        "Usuarios"
+      ],
+      "summary": "El rol está asignado al usuario",
+      "description": "El rol está asignado al usuario. Roles declarados en la ruta: SUPER_ADMIN. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "usuarios_addUsuarioRol",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/usuarios/routes/usuario.routes.js",
+        "controller": "modules/usuarios/controllers/usuario.controller.js",
+        "handler": "addUsuarioRolController",
+        "service": "modules/usuarios/services/add-usuario-rol.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN"
+      ],
+      "parameters": [
+        {
+          "name": "idUsuario",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/UsuariosAddUsuarioRolRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "El rol está asignado al usuario.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UsuariosAddUsuarioRolResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RespuestaErrorLocal"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/usuarios/create": {
+    "post": {
+      "tags": [
+        "Usuarios"
+      ],
+      "summary": "Usuario registrado correctamente",
+      "description": "Usuario registrado correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "usuarios_createUsuario",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/usuarios/routes/usuario.routes.js",
+        "controller": "modules/usuarios/controllers/usuario.controller.js",
+        "handler": "createUsuarioController",
+        "service": "modules/usuarios/services/create-usuario.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/UsuariosCreateUsuarioRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Usuario registrado correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UsuariosCreateUsuarioResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RespuestaErrorLocal"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/usuarios/update/{id_usuario}": {
+    "put": {
+      "tags": [
+        "Usuarios"
+      ],
+      "summary": "Usuario actualizado correctamente",
+      "description": "Usuario actualizado correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "usuarios_updateUsuario",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/usuarios/routes/usuario.routes.js",
+        "controller": "modules/usuarios/controllers/usuario.controller.js",
+        "handler": "updateUsuarioController",
+        "service": "modules/usuarios/services/update-usuario.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "id_usuario",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "requestBody": {
+        "required": false,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/UsuariosUpdateUsuarioRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Usuario actualizado correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UsuariosUpdateUsuarioResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RespuestaErrorLocal"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/usuarios/estado/{id_usuario}": {
+    "patch": {
+      "tags": [
+        "Usuarios"
+      ],
+      "summary": "Estado del usuario actualizado correctamente",
+      "description": "Estado del usuario actualizado correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "usuarios_changeEstadoUsuario",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/usuarios/routes/usuario.routes.js",
+        "controller": "modules/usuarios/controllers/usuario.controller.js",
+        "handler": "changeEstadoUsuarioController",
+        "service": "modules/usuarios/services/change-estado-usuario.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "id_usuario",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/UsuariosChangeEstadoUsuarioRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Estado del usuario actualizado correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UsuariosChangeEstadoUsuarioResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RespuestaErrorLocal"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/usuarios/reset-password/{id_usuario}": {
+    "patch": {
+      "tags": [
+        "Usuarios"
+      ],
+      "summary": "Contraseña restablecida correctamente",
+      "description": "Contraseña restablecida correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "usuarios_resetPasswordUsuario",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/usuarios/routes/usuario.routes.js",
+        "controller": "modules/usuarios/controllers/usuario.controller.js",
+        "handler": "resetPasswordUsuarioController",
+        "service": "modules/usuarios/services/reset-password.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "id_usuario",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/UsuariosResetPasswordUsuarioRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Contraseña restablecida correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UsuariosResetPasswordUsuarioResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RespuestaErrorLocal"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/usuarios/delete/{id_usuario}": {
+    "delete": {
+      "tags": [
+        "Usuarios"
+      ],
+      "summary": "Usuario eliminado correctamente",
+      "description": "Usuario eliminado correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "usuarios_deleteUsuario",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/usuarios/routes/usuario.routes.js",
+        "controller": "modules/usuarios/controllers/usuario.controller.js",
+        "handler": "deleteUsuarioController",
+        "service": "modules/usuarios/services/delete.usuario.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "id_usuario",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Usuario eliminado correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UsuariosDeleteUsuarioResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RespuestaErrorLocal"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/usuarios/roles": {
+    "get": {
+      "tags": [
+        "Usuarios"
+      ],
+      "summary": "Roles obtenidos correctamente",
+      "description": "Roles obtenidos correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "usuarios_getRoles",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/usuarios/routes/usuario.routes.js",
+        "controller": "modules/usuarios/controllers/usuario.controller.js",
+        "handler": "getRolesController",
+        "service": "modules/usuarios/services/get-roles.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "responses": {
+        "200": {
+          "description": "Roles obtenidos correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UsuariosGetRolesResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RespuestaErrorLocal"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/usuarios/sin-personal": {
+    "get": {
+      "tags": [
+        "Usuarios"
+      ],
+      "summary": "Usuarios sin personal obtenidos correctamente",
+      "description": "Usuarios sin personal obtenidos correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "usuarios_getUsuariosSinPersonal",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/usuarios/routes/usuario.routes.js",
+        "controller": "modules/usuarios/controllers/usuario.controller.js",
+        "handler": "getUsuariosSinPersonalController",
+        "service": "modules/usuarios/services/get-usuarios-sin-personal.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "responses": {
+        "200": {
+          "description": "Usuarios sin personal obtenidos correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UsuariosGetUsuariosSinPersonalResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RespuestaErrorLocal"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/usuarios/{idUsuario}/roles/{idRol}": {
+    "delete": {
+      "tags": [
+        "Usuarios"
+      ],
+      "summary": "Remove usuario rol",
+      "description": "Remove usuario rol. Roles declarados en la ruta: SUPER_ADMIN. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "usuarios_removeUsuarioRol",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/usuarios/routes/usuario.routes.js",
+        "controller": "modules/usuarios/controllers/usuario.controller.js",
+        "handler": "removeUsuarioRolController",
+        "service": "modules/usuarios/services/remove-usuario-rol.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN"
+      ],
+      "parameters": [
+        {
+          "name": "idUsuario",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        },
+        {
+          "name": "idRol",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Remove usuario rol.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UsuariosRemoveUsuarioRolResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RespuestaErrorLocal"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

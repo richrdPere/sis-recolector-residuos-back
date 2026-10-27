@@ -30,20 +30,17 @@ const Vehiculo = sequelize.define('Vehiculo', {
 
     validate: {
       notEmpty: {
-        msg:
-          'El código del vehículo es obligatorio.',
+        msg: 'El código del vehículo es obligatorio.',
       },
 
       len: {
         args: [2, 30],
-        msg:
-          'El código debe tener entre 2 y 30 caracteres.',
+        msg: 'El código debe tener entre 2 y 30 caracteres.',
       },
 
       is: {
         args: /^[A-Z0-9_-]+$/,
-        msg:
-          'El código solo puede contener letras, números, guiones y guiones bajos.',
+        msg: 'El código solo puede contener letras, números, guiones y guiones bajos.',
       },
     },
   },
@@ -68,20 +65,17 @@ const Vehiculo = sequelize.define('Vehiculo', {
 
     validate: {
       notEmpty: {
-        msg:
-          'La placa del vehículo es obligatoria.',
+        msg: 'La placa del vehículo es obligatoria.',
       },
 
       len: {
         args: [5, 15],
-        msg:
-          'La placa debe tener entre 5 y 15 caracteres.',
+        msg: 'La placa debe tener entre 5 y 15 caracteres.',
       },
 
       is: {
         args: /^[A-Z0-9-]+$/,
-        msg:
-          'La placa solo puede contener letras, números y guiones.',
+        msg: 'La placa solo puede contener letras, números y guiones.',
       },
     },
   },
@@ -105,14 +99,12 @@ const Vehiculo = sequelize.define('Vehiculo', {
 
     validate: {
       notEmpty: {
-        msg:
-          'La marca es obligatoria.',
+        msg: 'La marca es obligatoria.',
       },
 
       len: {
         args: [2, 80],
-        msg:
-          'La marca debe tener entre 2 y 80 caracteres.',
+        msg: 'La marca debe tener entre 2 y 80 caracteres.',
       },
     },
   },
@@ -130,14 +122,12 @@ const Vehiculo = sequelize.define('Vehiculo', {
 
     validate: {
       notEmpty: {
-        msg:
-          'El modelo es obligatorio.',
+        msg: 'El modelo es obligatorio.',
       },
 
       len: {
         args: [1, 80],
-        msg:
-          'El modelo puede tener hasta 80 caracteres.',
+        msg: 'El modelo puede tener hasta 80 caracteres.',
       },
     },
   },
@@ -148,8 +138,7 @@ const Vehiculo = sequelize.define('Vehiculo', {
 
     validate: {
       isInt: {
-        msg:
-          'El año debe ser un número entero.',
+        msg: 'El año debe ser un número entero.',
       },
 
       min: {
@@ -163,8 +152,7 @@ const Vehiculo = sequelize.define('Vehiculo', {
           return;
         }
 
-        const maxYear =
-          new Date().getFullYear() + 1;
+        const maxYear = new Date().getFullYear() + 1;
 
         if (Number(value) > maxYear) {
           throw new Error(
@@ -211,11 +199,8 @@ const Vehiculo = sequelize.define('Vehiculo', {
       'MOTOFURGON',
       'OTRO',
     ),
-
     allowNull: false,
-
-    defaultValue:
-      'CAMION_COMPACTADOR',
+    defaultValue: 'CAMION_COMPACTADOR',
   },
 
   /*
@@ -225,23 +210,16 @@ const Vehiculo = sequelize.define('Vehiculo', {
   */
 
   capacidad_maxima: {
-    type: DataTypes.DECIMAL(
-      12,
-      2,
-    ),
-
+    type: DataTypes.DECIMAL(12, 2),
     allowNull: false,
-
     validate: {
       isDecimal: {
-        msg:
-          'La capacidad máxima debe ser un número decimal.',
+        msg: 'La capacidad máxima debe ser un número decimal.',
       },
 
       min: {
         args: [0.01],
-        msg:
-          'La capacidad máxima debe ser mayor que cero.',
+        msg: 'La capacidad máxima debe ser mayor que cero.',
       },
     },
   },
@@ -252,11 +230,8 @@ const Vehiculo = sequelize.define('Vehiculo', {
       'TONELADA',
       'METRO_CUBICO',
     ),
-
     allowNull: false,
-
-    defaultValue:
-      'KILOGRAMO',
+    defaultValue: 'KILOGRAMO',
   },
 
   /*
@@ -277,14 +252,12 @@ const Vehiculo = sequelize.define('Vehiculo', {
 
     validate: {
       isDecimal: {
-        msg:
-          'El kilometraje debe ser un número decimal.',
+        msg: 'El kilometraje debe ser un número decimal.',
       },
 
       min: {
         args: [0],
-        msg:
-          'El kilometraje no puede ser negativo.',
+        msg: 'El kilometraje no puede ser negativo.',
       },
     },
   },
@@ -306,8 +279,7 @@ const Vehiculo = sequelize.define('Vehiculo', {
 
     allowNull: false,
 
-    defaultValue:
-      'DISPONIBLE',
+    defaultValue: 'DISPONIBLE',
   },
 
   /*
@@ -321,10 +293,9 @@ const Vehiculo = sequelize.define('Vehiculo', {
     allowNull: true,
 
     set(value) {
-      const normalized =
-        value == null
-          ? null
-          : String(value).trim();
+      const normalized = value == null
+        ? null
+        : String(value).trim();
 
       this.setDataValue(
         'observacion',
@@ -362,33 +333,19 @@ const Vehiculo = sequelize.define('Vehiculo', {
   },
 },
   {
-    tableName:
-      'vehiculos',
-
-    timestamps:
-      true,
-
-    paranoid:
-      true,
-
-    createdAt:
-      'created_at',
-
-    updatedAt:
-      'updated_at',
-
-    deletedAt:
-      'deleted_at',
-
+    tableName: 'vehiculos',
+    timestamps: true,
+    paranoid: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
+    deletedAt: 'deleted_at',
     indexes: [
       {
         unique: true,
         fields: [
           'codigo',
         ],
-
-        name:
-          'uq_vehiculo_codigo',
+        name: 'uq_vehiculo_codigo',
       },
 
       {
@@ -396,9 +353,7 @@ const Vehiculo = sequelize.define('Vehiculo', {
         fields: [
           'placa',
         ],
-
-        name:
-          'uq_vehiculo_placa',
+        name: 'uq_vehiculo_placa',
       },
 
       {
@@ -406,18 +361,14 @@ const Vehiculo = sequelize.define('Vehiculo', {
           'estado',
           'estado_operativo',
         ],
-
-        name:
-          'idx_vehiculo_estado_operativo',
+        name: 'idx_vehiculo_estado_operativo',
       },
 
       {
         fields: [
           'tipo_vehiculo',
         ],
-
-        name:
-          'idx_vehiculo_tipo',
+        name: 'idx_vehiculo_tipo',
       },
 
       {
@@ -425,18 +376,14 @@ const Vehiculo = sequelize.define('Vehiculo', {
           'marca',
           'modelo',
         ],
-
-        name:
-          'idx_vehiculo_marca_modelo',
+        name: 'idx_vehiculo_marca_modelo',
       },
 
       {
         fields: [
           'deleted_at',
         ],
-
-        name:
-          'idx_vehiculo_deleted_at',
+        name: 'idx_vehiculo_deleted_at',
       },
     ],
   },

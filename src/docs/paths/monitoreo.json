@@ -1,0 +1,456 @@
+{
+  "/monitoreo/operacion": {
+    "get": {
+      "tags": [
+        "Monitoreo"
+      ],
+      "summary": "Monitoreo operativo obtenido correctamente",
+      "description": "Monitoreo operativo obtenido correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "monitoreo_getOperationalMonitor",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/monitoreo/routes/monitoreo.routes.js",
+        "controller": "modules/monitoreo/controllers/monitoreo.controller.js",
+        "handler": "getOperationalMonitorController",
+        "service": "modules/monitoreo/services/monitoreo/get-operational-monitor.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "estado_programacion",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "PROGRAMADA",
+              "ASIGNADA",
+              "ACEPTADA",
+              "EN_CURSO",
+              "PAUSADA",
+              "FINALIZADA",
+              "CANCELADA"
+            ]
+          }
+        },
+        {
+          "name": "estado_recorrido",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "EN_CURSO",
+              "PAUSADO",
+              "FINALIZADO",
+              "CANCELADO"
+            ]
+          }
+        },
+        {
+          "name": "fecha",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "id_ruta",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo; texto para conservar precisión BIGINT."
+          }
+        },
+        {
+          "name": "id_vehiculo",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo; texto para conservar precisión BIGINT."
+          }
+        },
+        {
+          "name": "id_zona",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo; texto para conservar precisión BIGINT."
+          }
+        },
+        {
+          "name": "solo_alertas",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Monitoreo operativo obtenido correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MonitoreoGetOperationalMonitorResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/monitoreo/mapa": {
+    "get": {
+      "tags": [
+        "Monitoreo"
+      ],
+      "summary": "Recorridos activos del mapa obtenidos correctamente",
+      "description": "Recorridos activos del mapa obtenidos correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "monitoreo_getActiveRoutesMap",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/monitoreo/routes/monitoreo.routes.js",
+        "controller": "modules/monitoreo/controllers/monitoreo.controller.js",
+        "handler": "getActiveRoutesMapController",
+        "service": "modules/monitoreo/services/monitoreo/get-active-routes-map.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "estado_programacion",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "PROGRAMADA",
+              "ASIGNADA",
+              "ACEPTADA",
+              "EN_CURSO",
+              "PAUSADA",
+              "FINALIZADA",
+              "CANCELADA"
+            ]
+          }
+        },
+        {
+          "name": "estado_recorrido",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "EN_CURSO",
+              "PAUSADO",
+              "FINALIZADO",
+              "CANCELADO"
+            ]
+          }
+        },
+        {
+          "name": "fecha",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "id_ruta",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo; texto para conservar precisión BIGINT."
+          }
+        },
+        {
+          "name": "id_vehiculo",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo; texto para conservar precisión BIGINT."
+          }
+        },
+        {
+          "name": "id_zona",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo; texto para conservar precisión BIGINT."
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Recorridos activos del mapa obtenidos correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MonitoreoGetActiveRoutesMapResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/monitoreo/alertas": {
+    "get": {
+      "tags": [
+        "Monitoreo"
+      ],
+      "summary": "Alertas operativas obtenidas correctamente",
+      "description": "Alertas operativas obtenidas correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "monitoreo_getOperationalAlerts",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/monitoreo/routes/monitoreo.routes.js",
+        "controller": "modules/monitoreo/controllers/monitoreo.controller.js",
+        "handler": "getOperationalAlertsController",
+        "service": "modules/monitoreo/services/monitoreo/get-operational-alerts.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "estado_programacion",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "PROGRAMADA",
+              "ASIGNADA",
+              "ACEPTADA",
+              "EN_CURSO",
+              "PAUSADA",
+              "FINALIZADA",
+              "CANCELADA"
+            ]
+          }
+        },
+        {
+          "name": "estado_recorrido",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "EN_CURSO",
+              "PAUSADO",
+              "FINALIZADO",
+              "CANCELADO"
+            ]
+          }
+        },
+        {
+          "name": "fecha",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "id_ruta",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo; texto para conservar precisión BIGINT."
+          }
+        },
+        {
+          "name": "id_vehiculo",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo; texto para conservar precisión BIGINT."
+          }
+        },
+        {
+          "name": "id_zona",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo; texto para conservar precisión BIGINT."
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "nivel",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "INFORMATIVA",
+              "ADVERTENCIA",
+              "CRITICA"
+            ]
+          }
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Alertas operativas obtenidas correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MonitoreoGetOperationalAlertsResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/monitoreo/recorridos/{idRecorrido}": {
+    "get": {
+      "tags": [
+        "Monitoreo"
+      ],
+      "summary": "Detalle de monitoreo obtenido correctamente",
+      "description": "Detalle de monitoreo obtenido correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "monitoreo_getRouteMonitorDetail",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/monitoreo/routes/monitoreo.routes.js",
+        "controller": "modules/monitoreo/controllers/monitoreo.controller.js",
+        "handler": "getRouteMonitorDetailController",
+        "service": "modules/monitoreo/services/monitoreo/get-route-monitor-detail.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "idRecorrido",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Detalle de monitoreo obtenido correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MonitoreoGetRouteMonitorDetailResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  }
+}

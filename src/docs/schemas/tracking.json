@@ -1,0 +1,344 @@
+{
+  "TrackingRegisterLocationRequest": {
+    "type": "object",
+    "properties": {
+      "id_recorrido": {
+        "oneOf": [
+          {
+            "type": "integer",
+            "minimum": 1
+          },
+          {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$"
+          }
+        ]
+      },
+      "latitud": {
+        "type": "number",
+        "minimum": -90,
+        "maximum": 90
+      },
+      "longitud": {
+        "type": "number",
+        "minimum": -180,
+        "maximum": 180
+      },
+      "precision_gps": {
+        "type": "number",
+        "nullable": true,
+        "minimum": 0
+      },
+      "altitud": {
+        "type": "number",
+        "nullable": true
+      },
+      "velocidad_mps": {
+        "type": "number",
+        "nullable": true,
+        "minimum": 0
+      },
+      "rumbo": {
+        "type": "number",
+        "nullable": true,
+        "minimum": 0,
+        "maximum": 360
+      },
+      "nivel_bateria": {
+        "type": "number",
+        "nullable": true,
+        "minimum": 0,
+        "maximum": 100
+      },
+      "es_ubicacion_simulada": {
+        "type": "boolean"
+      },
+      "fecha_dispositivo": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "clave_idempotencia": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 100
+      }
+    },
+    "required": [
+      "id_recorrido",
+      "latitud",
+      "longitud",
+      "fecha_dispositivo",
+      "clave_idempotencia"
+    ],
+    "x-source": "modules/tracking/services/register-location.service.js",
+    "description": "Campos identificados en el controlador y servicio. Las validaciones de negocio y restricciones de modelos no incluidas deben verificarse contra la API en ejecución."
+  },
+  "TrackingRegisterLocationResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "posicion": {},
+          "duplicada": {
+            "type": "boolean"
+          },
+          "ultima_ubicacion_actualizada": {
+            "type": "boolean"
+          },
+          "ultima_ubicacion": {}
+        },
+        "description": "Claves observadas en un retorno explícito del servicio. Los objetos asociados y campos calculados sin tipo confirmado se mantienen abiertos.",
+        "additionalProperties": true
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/tracking/controllers/tracking.controller.js",
+    "x-data-contract": "partial-source"
+  },
+  "TrackingRegisterLocationBatchRequest": {
+    "type": "object",
+    "properties": {
+      "id_recorrido": {
+        "oneOf": [
+          {
+            "type": "integer",
+            "minimum": 1
+          },
+          {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$"
+          }
+        ]
+      },
+      "ubicaciones": {
+        "type": "array",
+        "minItems": 1,
+        "maxItems": 500,
+        "items": {
+          "$ref": "#/components/schemas/TrackingUbicacionLoteItem"
+        }
+      }
+    },
+    "required": [
+      "id_recorrido",
+      "ubicaciones"
+    ],
+    "x-source": "modules/tracking/services/register-location-batch.service.js",
+    "description": "Campos identificados en el controlador y servicio. Las validaciones de negocio y restricciones de modelos no incluidas deben verificarse contra la API en ejecución."
+  },
+  "TrackingRegisterLocationBatchResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "recibidas": {},
+          "registradas": {
+            "type": "integer"
+          },
+          "duplicadas": {
+            "type": "integer"
+          },
+          "rechazadas": {
+            "type": "integer"
+          },
+          "resultados": {
+            "type": "array",
+            "items": {}
+          }
+        },
+        "description": "Claves observadas en un retorno explícito del servicio. Los objetos asociados y campos calculados sin tipo confirmado se mantienen abiertos.",
+        "additionalProperties": true
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/tracking/controllers/tracking.controller.js",
+    "x-data-contract": "partial-source"
+  },
+  "TrackingGetActiveVehicleLocationsResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "description": "Resultado devuelto por el servicio; su serialización depende de modelos Sequelize no incluidos. No se impone una forma no confirmada."
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/tracking/controllers/tracking.controller.js",
+    "x-data-contract": "open-model-dependent"
+  },
+  "TrackingGetLastLocationResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "description": "Resultado devuelto por el servicio; su serialización depende de modelos Sequelize no incluidos. No se impone una forma no confirmada."
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/tracking/controllers/tracking.controller.js",
+    "x-data-contract": "open-model-dependent"
+  },
+  "TrackingGetRoutePositionsResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {}
+          },
+          "page": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          },
+          "total_pages": {
+            "type": "integer"
+          },
+          "has_next_page": {
+            "type": "boolean"
+          },
+          "has_previous_page": {
+            "type": "boolean"
+          }
+        },
+        "description": "Claves observadas en un retorno explícito del servicio. Los objetos asociados y campos calculados sin tipo confirmado se mantienen abiertos.",
+        "additionalProperties": true
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/tracking/controllers/tracking.controller.js",
+    "x-data-contract": "partial-source"
+  },
+  "TrackingUbicacionLoteItem": {
+    "type": "object",
+    "properties": {
+      "latitud": {
+        "type": "number",
+        "minimum": -90,
+        "maximum": 90
+      },
+      "longitud": {
+        "type": "number",
+        "minimum": -180,
+        "maximum": 180
+      },
+      "precision_gps": {
+        "type": "number",
+        "nullable": true,
+        "minimum": 0
+      },
+      "altitud": {
+        "type": "number",
+        "nullable": true
+      },
+      "velocidad_mps": {
+        "type": "number",
+        "nullable": true,
+        "minimum": 0
+      },
+      "rumbo": {
+        "type": "number",
+        "nullable": true,
+        "minimum": 0,
+        "maximum": 360
+      },
+      "nivel_bateria": {
+        "type": "number",
+        "nullable": true,
+        "minimum": 0,
+        "maximum": 100
+      },
+      "es_ubicacion_simulada": {
+        "type": "boolean"
+      },
+      "fecha_dispositivo": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "clave_idempotencia": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 100
+      }
+    },
+    "required": [
+      "latitud",
+      "longitud",
+      "fecha_dispositivo",
+      "clave_idempotencia"
+    ],
+    "x-source": "modules/tracking/services/register-location.service.js",
+    "description": "Campos identificados en el controlador y servicio. Las validaciones de negocio y restricciones de modelos no incluidas deben verificarse contra la API en ejecución."
+  }
+}

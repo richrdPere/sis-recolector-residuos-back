@@ -1,0 +1,297 @@
+{
+  "/codigos-qr/publico/{tokenPublico}/informacion": {
+    "get": {
+      "tags": [
+        "Consulta pública QR"
+      ],
+      "summary": "Información pública obtenida correctamente",
+      "description": "Información pública obtenida correctamente. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "codigos_qr_publico_getPublicQrInformation",
+      "security": [],
+      "x-source": {
+        "routes": "modules/codigos-qr/routes/codigo-qr-public.routes.js",
+        "controller": "modules/codigos-qr/controllers/codigo-qr-public.controller.js",
+        "handler": "getPublicQrInformationController",
+        "service": "modules/codigos-qr/services/get-public-qr-information.service.js"
+      },
+      "x-route-roles": [],
+      "parameters": [
+        {
+          "name": "tokenPublico",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "fecha_referencia",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Respuesta pública. Un QR inactivo, revocado o expirado puede devolver HTTP 200 con success:false.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CodigosQrPublicoGetPublicQrInformationResponse"
+              }
+            }
+          }
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        },
+        "404": {
+          "description": "Código QR no encontrado.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CodigosQrPublicoGetPublicQrInformationResponse"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/codigos-qr/publico/{tokenPublico}/cronograma": {
+    "get": {
+      "tags": [
+        "Consulta pública QR"
+      ],
+      "summary": "Cronograma público obtenido correctamente",
+      "description": "Cronograma público obtenido correctamente. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "codigos_qr_publico_getPublicQrSchedule",
+      "security": [],
+      "x-source": {
+        "routes": "modules/codigos-qr/routes/codigo-qr-public.routes.js",
+        "controller": "modules/codigos-qr/controllers/codigo-qr-public.controller.js",
+        "handler": "getPublicQrScheduleController",
+        "service": "modules/codigos-qr/services/get-public-schedule.service.js"
+      },
+      "x-route-roles": [],
+      "parameters": [
+        {
+          "name": "tokenPublico",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "fecha_referencia",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Respuesta pública. Un QR inactivo, revocado o expirado puede devolver HTTP 200 con success:false.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CodigosQrPublicoGetPublicQrScheduleResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Código QR no encontrado.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CodigosQrPublicoGetPublicQrScheduleResponse"
+              }
+            }
+          }
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/codigos-qr/publico/{tokenPublico}/estado": {
+    "get": {
+      "tags": [
+        "Consulta pública QR"
+      ],
+      "summary": "Estado público de la ruta obtenido correctamente",
+      "description": "Estado público de la ruta obtenido correctamente. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "codigos_qr_publico_getPublicQrRouteStatus",
+      "security": [],
+      "x-source": {
+        "routes": "modules/codigos-qr/routes/codigo-qr-public.routes.js",
+        "controller": "modules/codigos-qr/controllers/codigo-qr-public.controller.js",
+        "handler": "getPublicQrRouteStatusController",
+        "service": "modules/codigos-qr/services/get-public-route-status.service.js"
+      },
+      "x-route-roles": [],
+      "parameters": [
+        {
+          "name": "tokenPublico",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "fecha_referencia",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Respuesta pública. Un QR inactivo, revocado o expirado puede devolver HTTP 200 con success:false.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CodigosQrPublicoGetPublicQrRouteStatusResponse"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Código QR no encontrado.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CodigosQrPublicoGetPublicQrRouteStatusResponse"
+              }
+            }
+          }
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/codigos-qr/publico/{tokenPublico}/ubicacion": {
+    "get": {
+      "tags": [
+        "Consulta pública QR"
+      ],
+      "summary": "Get public qr route location",
+      "description": "Get public qr route location. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "codigos_qr_publico_getPublicQrRouteLocation",
+      "security": [],
+      "x-source": {
+        "routes": "modules/codigos-qr/routes/codigo-qr-public.routes.js",
+        "controller": "modules/codigos-qr/controllers/codigo-qr-public.controller.js",
+        "handler": "getPublicQrRouteLocationController",
+        "service": "modules/codigos-qr/services/get-public-route-location.service.js"
+      },
+      "x-route-roles": [],
+      "parameters": [
+        {
+          "name": "tokenPublico",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Respuesta pública. Un QR inactivo, revocado o expirado puede devolver HTTP 200 con success:false.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CodigosQrPublicoGetPublicQrRouteLocationResponse"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Código QR no encontrado.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CodigosQrPublicoGetPublicQrRouteLocationResponse"
+              }
+            }
+          }
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/codigos-qr/publico/{tokenPublico}": {
+    "get": {
+      "tags": [
+        "Consulta pública QR"
+      ],
+      "summary": "Código QR resuelto correctamente",
+      "description": "Código QR resuelto correctamente. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "codigos_qr_publico_resolvePublicQr",
+      "security": [],
+      "x-source": {
+        "routes": "modules/codigos-qr/routes/codigo-qr-public.routes.js",
+        "controller": "modules/codigos-qr/controllers/codigo-qr-public.controller.js",
+        "handler": "resolvePublicQrController",
+        "service": null
+      },
+      "x-route-roles": [],
+      "parameters": [
+        {
+          "name": "tokenPublico",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Respuesta pública. Un QR inactivo, revocado o expirado puede devolver HTTP 200 con success:false.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CodigosQrPublicoResolvePublicQrResponse"
+              }
+            }
+          }
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        },
+        "404": {
+          "description": "Código QR no encontrado.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CodigosQrPublicoResolvePublicQrResponse"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

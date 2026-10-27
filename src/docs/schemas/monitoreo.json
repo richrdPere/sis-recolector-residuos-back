@@ -1,0 +1,150 @@
+{
+  "MonitoreoGetOperationalMonitorResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "fecha_consulta": {},
+          "generado_en": {},
+          "filtros": {},
+          "resumen": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "items": {
+            "type": "array",
+            "items": {}
+          }
+        },
+        "description": "Claves observadas en un retorno explícito del servicio. Los objetos asociados y campos calculados sin tipo confirmado se mantienen abiertos.",
+        "additionalProperties": true
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/monitoreo/controllers/monitoreo.controller.js",
+    "x-data-contract": "partial-source"
+  },
+  "MonitoreoGetActiveRoutesMapResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "fecha_consulta": {},
+          "generado_en": {},
+          "total": {
+            "type": "integer"
+          },
+          "items": {
+            "type": "array",
+            "items": {}
+          }
+        },
+        "description": "Claves observadas en un retorno explícito del servicio. Los objetos asociados y campos calculados sin tipo confirmado se mantienen abiertos.",
+        "additionalProperties": true
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/monitoreo/controllers/monitoreo.controller.js",
+    "x-data-contract": "partial-source"
+  },
+  "MonitoreoGetOperationalAlertsResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "resumen": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "items": {
+            "type": "array",
+            "items": {}
+          },
+          "pagination": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "description": "Claves observadas en un retorno explícito del servicio. Los objetos asociados y campos calculados sin tipo confirmado se mantienen abiertos.",
+        "additionalProperties": true
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/monitoreo/controllers/monitoreo.controller.js",
+    "x-data-contract": "partial-source"
+  },
+  "MonitoreoGetRouteMonitorDetailResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "gps": {},
+          "progreso": {},
+          "capacidad": {},
+          "alertas": {}
+        },
+        "description": "Claves observadas en un retorno explícito del servicio. Los objetos asociados y campos calculados sin tipo confirmado se mantienen abiertos.",
+        "additionalProperties": true
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/monitoreo/controllers/monitoreo.controller.js",
+    "x-data-contract": "partial-source"
+  }
+}

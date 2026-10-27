@@ -1,0 +1,608 @@
+{
+  "ProgramacionesGetVehiculosDisponiblesResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "description": "Resultado devuelto por el servicio; su serialización depende de modelos Sequelize no incluidos. No se impone una forma no confirmada."
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/programaciones/controllers/disponibilidad.controller.js",
+    "x-data-contract": "open-model-dependent"
+  },
+  "ProgramacionesGetConductoresDisponiblesResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "description": "Resultado devuelto por el servicio; su serialización depende de modelos Sequelize no incluidos. No se impone una forma no confirmada."
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/programaciones/controllers/disponibilidad.controller.js",
+    "x-data-contract": "open-model-dependent"
+  },
+  "ProgramacionesGetRecolectoresDisponiblesResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "description": "Resultado devuelto por el servicio; su serialización depende de modelos Sequelize no incluidos. No se impone una forma no confirmada."
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/programaciones/controllers/disponibilidad.controller.js",
+    "x-data-contract": "open-model-dependent"
+  },
+  "ProgramacionesGetMisAsignacionesResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {}
+          },
+          "pagination": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "description": "Claves observadas en un retorno explícito del servicio. Los objetos asociados y campos calculados sin tipo confirmado se mantienen abiertos.",
+        "additionalProperties": true
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/programaciones/controllers/programacion-personal.controller.js",
+    "x-data-contract": "partial-source"
+  },
+  "ProgramacionesRespondAssignmentRequest": {
+    "type": "object",
+    "properties": {
+      "estado_asignacion": {
+        "type": "string"
+      },
+      "observacion": {
+        "type": "string",
+        "nullable": true
+      }
+    },
+    "required": [
+      "estado_asignacion"
+    ],
+    "x-source": "modules/programaciones/services/programacion-personal/respond-assignment.service.js",
+    "description": "Campos identificados en el controlador y servicio. Las validaciones de negocio y restricciones de modelos no incluidas deben verificarse contra la API en ejecución."
+  },
+  "ProgramacionesRespondAssignmentResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "description": "Resultado devuelto por el servicio; su serialización depende de modelos Sequelize no incluidos. No se impone una forma no confirmada."
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/programaciones/controllers/programacion-personal.controller.js",
+    "x-data-contract": "open-model-dependent"
+  },
+  "ProgramacionesGetProgramacionPersonalResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "description": "Resultado devuelto por el servicio; su serialización depende de modelos Sequelize no incluidos. No se impone una forma no confirmada."
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/programaciones/controllers/programacion-personal.controller.js",
+    "x-data-contract": "open-model-dependent"
+  },
+  "ProgramacionesAddProgramacionPersonalRequest": {
+    "type": "object",
+    "properties": {
+      "id_personal": {
+        "oneOf": [
+          {
+            "type": "integer",
+            "minimum": 1
+          },
+          {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$"
+          }
+        ]
+      },
+      "funcion": {
+        "type": "string"
+      },
+      "observacion": {
+        "type": "string",
+        "nullable": true
+      }
+    },
+    "required": [
+      "id_personal",
+      "funcion"
+    ],
+    "x-source": "modules/programaciones/services/programacion-personal/add-programacion-personal.service.js",
+    "description": "Campos identificados en el controlador y servicio. Las validaciones de negocio y restricciones de modelos no incluidas deben verificarse contra la API en ejecución."
+  },
+  "ProgramacionesAddProgramacionPersonalResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "description": "Resultado devuelto por el servicio; su serialización depende de modelos Sequelize no incluidos. No se impone una forma no confirmada."
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/programaciones/controllers/programacion-personal.controller.js",
+    "x-data-contract": "open-model-dependent"
+  },
+  "ProgramacionesRemoveProgramacionPersonalRequest": {
+    "type": "object",
+    "properties": {
+      "observacion": {
+        "type": "string",
+        "nullable": true
+      }
+    },
+    "x-source": "modules/programaciones/services/programacion-personal/remove-programacion-personal.service.js",
+    "description": "Campos identificados en el controlador y servicio. Las validaciones de negocio y restricciones de modelos no incluidas deben verificarse contra la API en ejecución."
+  },
+  "ProgramacionesRemoveProgramacionPersonalResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "description": "Resultado devuelto por el servicio; su serialización depende de modelos Sequelize no incluidos. No se impone una forma no confirmada."
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/programaciones/controllers/programacion-personal.controller.js",
+    "x-data-contract": "open-model-dependent"
+  },
+  "ProgramacionesGetProgramacionesPaginatedResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {}
+          },
+          "total": {
+            "type": "integer"
+          },
+          "page": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "total_pages": {
+            "type": "integer"
+          },
+          "has_next_page": {
+            "type": "boolean"
+          },
+          "has_previous_page": {
+            "type": "boolean"
+          }
+        },
+        "description": "Claves observadas en un retorno explícito del servicio. Los objetos asociados y campos calculados sin tipo confirmado se mantienen abiertos.",
+        "additionalProperties": true
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/programaciones/controllers/programacion.controller.js",
+    "x-data-contract": "partial-source"
+  },
+  "ProgramacionesCreateProgramacionRequest": {
+    "type": "object",
+    "properties": {
+      "id_ruta": {
+        "oneOf": [
+          {
+            "type": "integer",
+            "minimum": 1
+          },
+          {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$"
+          }
+        ]
+      },
+      "id_ruta_version": {
+        "oneOf": [
+          {
+            "type": "integer",
+            "minimum": 1,
+            "nullable": true
+          },
+          {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$"
+          }
+        ]
+      },
+      "id_vehiculo": {
+        "oneOf": [
+          {
+            "type": "integer",
+            "minimum": 1
+          },
+          {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$"
+          }
+        ]
+      },
+      "id_conductor": {
+        "oneOf": [
+          {
+            "type": "integer",
+            "minimum": 1
+          },
+          {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$"
+          }
+        ]
+      },
+      "recolectores": {
+        "type": "array",
+        "items": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "string",
+              "pattern": "^[1-9][0-9]*$"
+            }
+          ]
+        }
+      },
+      "id_supervisor": {
+        "oneOf": [
+          {
+            "type": "integer",
+            "minimum": 1,
+            "nullable": true
+          },
+          {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$"
+          }
+        ]
+      },
+      "fecha_programada": {
+        "type": "string",
+        "format": "date"
+      },
+      "hora_inicio_programada": {
+        "type": "string",
+        "description": "Hora en formato HH:mm:ss."
+      },
+      "hora_fin_programada": {
+        "type": "string",
+        "description": "Hora en formato HH:mm:ss."
+      },
+      "turno": {
+        "type": "string",
+        "nullable": true
+      },
+      "observacion": {
+        "type": "string",
+        "nullable": true
+      }
+    },
+    "required": [
+      "id_ruta",
+      "id_vehiculo",
+      "id_conductor",
+      "fecha_programada",
+      "hora_inicio_programada",
+      "hora_fin_programada"
+    ],
+    "x-source": "modules/programaciones/services/programacion/create-programacion.service.js",
+    "description": "Campos identificados en el controlador y servicio. Las validaciones de negocio y restricciones de modelos no incluidas deben verificarse contra la API en ejecución."
+  },
+  "ProgramacionesCreateProgramacionResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "id_programacion": {},
+          "mensaje": {
+            "type": "string"
+          }
+        },
+        "description": "Claves observadas en un retorno explícito del servicio. Los objetos asociados y campos calculados sin tipo confirmado se mantienen abiertos.",
+        "additionalProperties": true
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/programaciones/controllers/programacion.controller.js",
+    "x-data-contract": "partial-source"
+  },
+  "ProgramacionesUpdateProgramacionRequest": {
+    "type": "object",
+    "properties": {
+      "id_ruta": {
+        "oneOf": [
+          {
+            "type": "integer",
+            "minimum": 1,
+            "nullable": true
+          },
+          {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$"
+          }
+        ]
+      },
+      "id_ruta_version": {
+        "oneOf": [
+          {
+            "type": "integer",
+            "minimum": 1,
+            "nullable": true
+          },
+          {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$"
+          }
+        ]
+      },
+      "id_vehiculo": {
+        "oneOf": [
+          {
+            "type": "integer",
+            "minimum": 1
+          },
+          {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$"
+          }
+        ]
+      },
+      "fecha_programada": {
+        "type": "string",
+        "format": "date"
+      },
+      "hora_inicio_programada": {
+        "type": "string",
+        "description": "Hora en formato HH:mm:ss."
+      },
+      "hora_fin_programada": {
+        "type": "string",
+        "description": "Hora en formato HH:mm:ss."
+      },
+      "turno": {
+        "type": "string",
+        "nullable": true
+      },
+      "observacion": {
+        "type": "string",
+        "nullable": true
+      }
+    },
+    "x-source": "modules/programaciones/services/programacion/update-programacion.service.js",
+    "description": "Campos identificados en el controlador y servicio. Las validaciones de negocio y restricciones de modelos no incluidas deben verificarse contra la API en ejecución."
+  },
+  "ProgramacionesUpdateProgramacionResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "description": "Resultado devuelto por el servicio; su serialización depende de modelos Sequelize no incluidos. No se impone una forma no confirmada."
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/programaciones/controllers/programacion.controller.js",
+    "x-data-contract": "open-model-dependent"
+  },
+  "ProgramacionesCancelProgramacionRequest": {
+    "type": "object",
+    "properties": {
+      "motivo_cancelacion": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "motivo_cancelacion"
+    ],
+    "x-source": "modules/programaciones/services/programacion/cancel-programacion.service.js",
+    "description": "Campos identificados en el controlador y servicio. Las validaciones de negocio y restricciones de modelos no incluidas deben verificarse contra la API en ejecución."
+  },
+  "ProgramacionesCancelProgramacionResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "description": "Resultado devuelto por el servicio; su serialización depende de modelos Sequelize no incluidos. No se impone una forma no confirmada."
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/programaciones/controllers/programacion.controller.js",
+    "x-data-contract": "open-model-dependent"
+  },
+  "ProgramacionesGetProgramacionByIdResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "description": "Resultado devuelto por el servicio; su serialización depende de modelos Sequelize no incluidos. No se impone una forma no confirmada."
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/programaciones/controllers/programacion.controller.js",
+    "x-data-contract": "open-model-dependent"
+  }
+}

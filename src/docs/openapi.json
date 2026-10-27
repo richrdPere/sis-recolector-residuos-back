@@ -1,0 +1,123 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "API del Sistema de Recolección de Residuos",
+    "version": "1.0.0",
+    "description": "Catálogo obtenido de los módulos suministrados. Revisar LEEME.md para prefijos de montaje y límites de cobertura de las respuestas."
+  },
+  "servers": [
+    {
+      "url": "/api",
+      "description": "Prefijo base; confirmar en app.js."
+    }
+  ],
+  "tags": [
+    {
+      "name": "Autenticación",
+      "description": "Servicios del módulo Autenticación."
+    },
+    {
+      "name": "Ciudadanos",
+      "description": "Servicios del módulo Ciudadanos."
+    },
+    {
+      "name": "Consulta pública QR",
+      "description": "Servicios del módulo Consulta pública QR."
+    },
+    {
+      "name": "Códigos QR",
+      "description": "Servicios del módulo Códigos QR."
+    },
+    {
+      "name": "Mantenimientos",
+      "description": "Servicios del módulo Mantenimientos."
+    },
+    {
+      "name": "Dashboard",
+      "description": "Servicios del módulo Dashboard."
+    },
+    {
+      "name": "Monitoreo",
+      "description": "Servicios del módulo Monitoreo."
+    },
+    {
+      "name": "Dispositivos",
+      "description": "Servicios del módulo Dispositivos."
+    },
+    {
+      "name": "Notificaciones",
+      "description": "Servicios del módulo Notificaciones."
+    },
+    {
+      "name": "Personal operativo",
+      "description": "Servicios del módulo Personal operativo."
+    },
+    {
+      "name": "Programaciones",
+      "description": "Servicios del módulo Programaciones."
+    },
+    {
+      "name": "Recolecciones",
+      "description": "Servicios del módulo Recolecciones."
+    },
+    {
+      "name": "Recorridos",
+      "description": "Servicios del módulo Recorridos."
+    },
+    {
+      "name": "Rutas",
+      "description": "Servicios del módulo Rutas."
+    },
+    {
+      "name": "Tracking GPS",
+      "description": "Servicios del módulo Tracking GPS."
+    },
+    {
+      "name": "Usuarios",
+      "description": "Servicios del módulo Usuarios."
+    },
+    {
+      "name": "Vehículos",
+      "description": "Servicios del módulo Vehículos."
+    },
+    {
+      "name": "Zonas",
+      "description": "Servicios del módulo Zonas."
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Ingresar el access_token sin el prefijo Bearer; verificar cabecera con el middleware real."
+      }
+    },
+    "schemas": {
+      "RespuestaErrorLocal": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              false
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "nullable": true,
+            "description": "Estos controladores devuelven null."
+          }
+        },
+        "required": [
+          "success",
+          "message",
+          "data"
+        ]
+      }
+    }
+  },
+  "paths": {}
+}

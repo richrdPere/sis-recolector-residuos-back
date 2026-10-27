@@ -1,0 +1,20 @@
+{
+  "auth": "/auth",
+  "usuarios": "/usuarios",
+  "personal": "/personal",
+  "vehiculos": "/vehiculos",
+  "zonas": "/zonas",
+  "rutas": "/rutas",
+  "programaciones": "/programaciones",
+  "recorridos": "/recorridos",
+  "tracking": "/tracking",
+  "recolecciones": "/recolecciones",
+  "mantenimientos": "/mantenimientos",
+  "ciudadanos": "/ciudadanos",
+  "notificaciones": "/notificaciones",
+  "dispositivos": "/notificaciones/dispositivos",
+  "codigos-qr": "/codigos-qr",
+  "codigos-qr-publico": "/codigos-qr/publico",
+  "dashboard": "/dashboard",
+  "monitoreo": "/monitoreo"
+}

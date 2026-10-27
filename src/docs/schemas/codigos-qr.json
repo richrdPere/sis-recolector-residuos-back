@@ -1,0 +1,290 @@
+{
+  "CodigosQrCreateQrCodeRequest": {
+    "type": "object",
+    "properties": {
+      "tipo_recurso": {
+        "type": "string",
+        "enum": [
+          "ZONA",
+          "RUTA"
+        ]
+      },
+      "id_zona": {
+        "oneOf": [
+          {
+            "type": "integer",
+            "minimum": 1,
+            "nullable": true
+          },
+          {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$"
+          }
+        ]
+      },
+      "id_ruta": {
+        "oneOf": [
+          {
+            "type": "integer",
+            "minimum": 1,
+            "nullable": true
+          },
+          {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$"
+          }
+        ]
+      },
+      "titulo": {
+        "type": "string"
+      },
+      "descripcion": {
+        "type": "string",
+        "nullable": true
+      },
+      "fecha_expiracion": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "observacion": {
+        "type": "string",
+        "nullable": true
+      }
+    },
+    "required": [
+      "tipo_recurso",
+      "titulo"
+    ],
+    "x-source": "modules/codigos-qr/services/create-qr-code.service.js",
+    "description": "Campos identificados en el controlador y servicio. Las validaciones de negocio y restricciones de modelos no incluidas deben verificarse contra la API en ejecución."
+  },
+  "CodigosQrCreateQrCodeResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "codigo_qr": {},
+          "url_publica": {}
+        },
+        "description": "Claves observadas en un retorno explícito del servicio. Los objetos asociados y campos calculados sin tipo confirmado se mantienen abiertos.",
+        "additionalProperties": true
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/codigos-qr/controllers/codigo-qr.controller.js",
+    "x-data-contract": "partial-source"
+  },
+  "CodigosQrGetQrCodesResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {}
+          },
+          "page": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          },
+          "total_pages": {
+            "type": "integer"
+          }
+        },
+        "description": "Claves observadas en un retorno explícito del servicio. Los objetos asociados y campos calculados sin tipo confirmado se mantienen abiertos.",
+        "additionalProperties": true
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/codigos-qr/controllers/codigo-qr.controller.js",
+    "x-data-contract": "partial-source"
+  },
+  "CodigosQrGenerateQrImageResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "content": {},
+          "content_type": {
+            "type": "string"
+          },
+          "file_name": {},
+          "url_publica": {}
+        },
+        "description": "Claves observadas en un retorno explícito del servicio. Los objetos asociados y campos calculados sin tipo confirmado se mantienen abiertos.",
+        "additionalProperties": true
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/codigos-qr/controllers/codigo-qr.controller.js",
+    "x-data-contract": "partial-source"
+  },
+  "CodigosQrChangeQrCodeStatusRequest": {
+    "type": "object",
+    "properties": {
+      "estado_qr": {
+        "type": "string",
+        "enum": [
+          "ACTIVO",
+          "INACTIVO",
+          "REVOCADO"
+        ]
+      },
+      "motivo": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "estado_qr"
+    ],
+    "x-source": "modules/codigos-qr/services/change-qr-code-status.service.js",
+    "description": "Campos identificados en el controlador y servicio. Las validaciones de negocio y restricciones de modelos no incluidas deben verificarse contra la API en ejecución."
+  },
+  "CodigosQrChangeQrCodeStatusResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "description": "Resultado devuelto por el servicio; su serialización depende de modelos Sequelize no incluidos. No se impone una forma no confirmada."
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/codigos-qr/controllers/codigo-qr.controller.js",
+    "x-data-contract": "open-model-dependent"
+  },
+  "CodigosQrRegenerateQrCodeRequest": {
+    "type": "object",
+    "properties": {
+      "motivo": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "motivo"
+    ],
+    "x-source": "modules/codigos-qr/services/regenerate-qr-code.service.js",
+    "description": "Campos identificados en el controlador y servicio. Las validaciones de negocio y restricciones de modelos no incluidas deben verificarse contra la API en ejecución."
+  },
+  "CodigosQrRegenerateQrCodeResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "codigo_anterior": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "codigo_nuevo": {},
+          "url_publica": {}
+        },
+        "description": "Claves observadas en un retorno explícito del servicio. Los objetos asociados y campos calculados sin tipo confirmado se mantienen abiertos.",
+        "additionalProperties": true
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/codigos-qr/controllers/codigo-qr.controller.js",
+    "x-data-contract": "partial-source"
+  },
+  "CodigosQrGetQrCodeByIdResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "enum": [
+          true
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "url_publica": {}
+        },
+        "description": "Claves observadas en un retorno explícito del servicio. Los objetos asociados y campos calculados sin tipo confirmado se mantienen abiertos.",
+        "additionalProperties": true
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/codigos-qr/controllers/codigo-qr.controller.js",
+    "x-data-contract": "partial-source"
+  }
+}

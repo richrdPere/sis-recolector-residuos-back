@@ -16,13 +16,11 @@ const {
 */
 const createVehiculoController = async (req, res, next) => {
     try {
-        const vehiculo =
-            await createVehiculoService(req.body);
+        const vehiculo = await createVehiculoService(req.body);
 
         return res.status(201).json({
             success: true,
-            message:
-                'Vehículo registrado correctamente.',
+            message: 'Vehículo registrado correctamente.',
             data: vehiculo,
         });
     } catch (error) {

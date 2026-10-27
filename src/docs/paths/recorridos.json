@@ -1,0 +1,737 @@
+{
+  "/recorridos/{idRecorrido}/eventos": {
+    "get": {
+      "tags": [
+        "Recorridos"
+      ],
+      "summary": "Eventos del recorrido obtenidos correctamente",
+      "description": "Eventos del recorrido obtenidos correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "recorridos_getRecorridoEventos",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/recorridos/routes/recorrido-evento.routes.js",
+        "controller": "modules/recorridos/controllers/recorrido-evento.controller.js",
+        "handler": "getRecorridoEventosController",
+        "service": "modules/recorridos/services/get-recorrido-eventos.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR"
+      ],
+      "parameters": [
+        {
+          "name": "idRecorrido",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "tipo_evento",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-client-origin",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Origen del cliente; consultar valores permitidos en el backend."
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Eventos del recorrido obtenidos correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecorridosGetRecorridoEventosResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/recorridos/iniciar/{idProgramacion}": {
+    "post": {
+      "tags": [
+        "Recorridos"
+      ],
+      "summary": "Recorrido iniciado correctamente",
+      "description": "Recorrido iniciado correctamente. Roles declarados en la ruta: CONDUCTOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "recorridos_iniciarRecorrido",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/recorridos/routes/recorrido.routes.js",
+        "controller": "modules/recorridos/controllers/recorrido.controller.js",
+        "handler": "iniciarRecorridoController",
+        "service": "modules/recorridos/services/iniciar-recorrido.service.js"
+      },
+      "x-route-roles": [
+        "CONDUCTOR"
+      ],
+      "parameters": [
+        {
+          "name": "idProgramacion",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        },
+        {
+          "name": "x-client-origin",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Origen del cliente; consultar valores permitidos en el backend."
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/RecorridosIniciarRecorridoRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Recorrido iniciado correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecorridosIniciarRecorridoResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/recorridos/pausar/{idRecorrido}": {
+    "patch": {
+      "tags": [
+        "Recorridos"
+      ],
+      "summary": "Recorrido pausado correctamente",
+      "description": "Recorrido pausado correctamente. Roles declarados en la ruta: CONDUCTOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "recorridos_pausarRecorrido",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/recorridos/routes/recorrido.routes.js",
+        "controller": "modules/recorridos/controllers/recorrido.controller.js",
+        "handler": "pausarRecorridoController",
+        "service": "modules/recorridos/services/pausar-recorrido.service.js"
+      },
+      "x-route-roles": [
+        "CONDUCTOR"
+      ],
+      "parameters": [
+        {
+          "name": "idRecorrido",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        },
+        {
+          "name": "x-client-origin",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Origen del cliente; consultar valores permitidos en el backend."
+        }
+      ],
+      "requestBody": {
+        "required": false,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/RecorridosPausarRecorridoRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Recorrido pausado correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecorridosPausarRecorridoResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/recorridos/reanudar/{idRecorrido}": {
+    "patch": {
+      "tags": [
+        "Recorridos"
+      ],
+      "summary": "Recorrido reanudado correctamente",
+      "description": "Recorrido reanudado correctamente. Roles declarados en la ruta: CONDUCTOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "recorridos_reanudarRecorrido",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/recorridos/routes/recorrido.routes.js",
+        "controller": "modules/recorridos/controllers/recorrido.controller.js",
+        "handler": "reanudarRecorridoController",
+        "service": "modules/recorridos/services/reanudar-recorrido.service.js"
+      },
+      "x-route-roles": [
+        "CONDUCTOR"
+      ],
+      "parameters": [
+        {
+          "name": "idRecorrido",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        },
+        {
+          "name": "x-client-origin",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Origen del cliente; consultar valores permitidos en el backend."
+        }
+      ],
+      "requestBody": {
+        "required": false,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/RecorridosReanudarRecorridoRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Recorrido reanudado correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecorridosReanudarRecorridoResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/recorridos/finalizar/{idRecorrido}": {
+    "patch": {
+      "tags": [
+        "Recorridos"
+      ],
+      "summary": "Recorrido finalizado correctamente",
+      "description": "Recorrido finalizado correctamente. Roles declarados en la ruta: CONDUCTOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "recorridos_finalizarRecorrido",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/recorridos/routes/recorrido.routes.js",
+        "controller": "modules/recorridos/controllers/recorrido.controller.js",
+        "handler": "finalizarRecorridoController",
+        "service": "modules/recorridos/services/finalizar-recorrido.service.js"
+      },
+      "x-route-roles": [
+        "CONDUCTOR"
+      ],
+      "parameters": [
+        {
+          "name": "idRecorrido",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        },
+        {
+          "name": "x-client-origin",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Origen del cliente; consultar valores permitidos en el backend."
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/RecorridosFinalizarRecorridoRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Recorrido finalizado correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecorridosFinalizarRecorridoResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/recorridos/mis-recorridos": {
+    "get": {
+      "tags": [
+        "Recorridos"
+      ],
+      "summary": "Get mis recorridos",
+      "description": "Get mis recorridos. Roles declarados en la ruta: CONDUCTOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "recorridos_getMisRecorridos",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/recorridos/routes/recorrido.routes.js",
+        "controller": "modules/recorridos/controllers/recorrido.controller.js",
+        "handler": "getMisRecorridosController",
+        "service": "modules/recorridos/services/get-mis-recorridos.service.js"
+      },
+      "x-route-roles": [
+        "CONDUCTOR"
+      ],
+      "parameters": [
+        {
+          "name": "estado",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "fecha_desde",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        {
+          "name": "fecha_hasta",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "x-client-origin",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Origen del cliente; consultar valores permitidos en el backend."
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Get mis recorridos.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecorridosGetMisRecorridosResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Datos o parámetros no válidos. El formato depende del manejador de errores del backend."
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/recorridos/cancelar/{idRecorrido}": {
+    "patch": {
+      "tags": [
+        "Recorridos"
+      ],
+      "summary": "Recorrido cancelado correctamente",
+      "description": "Recorrido cancelado correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "recorridos_cancelarRecorrido",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/recorridos/routes/recorrido.routes.js",
+        "controller": "modules/recorridos/controllers/recorrido.controller.js",
+        "handler": "cancelarRecorridoController",
+        "service": "modules/recorridos/services/cancelar-recorrido.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR"
+      ],
+      "parameters": [
+        {
+          "name": "idRecorrido",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        },
+        {
+          "name": "x-client-origin",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Origen del cliente; consultar valores permitidos en el backend."
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/RecorridosCancelarRecorridoRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Recorrido cancelado correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecorridosCancelarRecorridoResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "409": {
+          "description": "Conflicto con datos o estado de operación. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/recorridos/activo": {
+    "get": {
+      "tags": [
+        "Recorridos"
+      ],
+      "summary": "Recorrido activo obtenido correctamente",
+      "description": "Recorrido activo obtenido correctamente. Roles declarados en la ruta: CONDUCTOR, RECOLECTOR, SUPERVISOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "recorridos_getRecorridoActivo",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/recorridos/routes/recorrido.routes.js",
+        "controller": "modules/recorridos/controllers/recorrido.controller.js",
+        "handler": "getRecorridoActivoController",
+        "service": "modules/recorridos/services/get-recorrido-activo.service.js"
+      },
+      "x-route-roles": [
+        "CONDUCTOR",
+        "RECOLECTOR",
+        "SUPERVISOR"
+      ],
+      "parameters": [
+        {
+          "name": "x-client-origin",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Origen del cliente; consultar valores permitidos en el backend."
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Recorrido activo obtenido correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecorridosGetRecorridoActivoResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  },
+  "/recorridos/view/{idRecorrido}": {
+    "get": {
+      "tags": [
+        "Recorridos"
+      ],
+      "summary": "Recorrido obtenido correctamente",
+      "description": "Recorrido obtenido correctamente. Roles declarados en la ruta: SUPER_ADMIN, ADMIN, SUPERVISOR, OPERADOR, CONDUCTOR, RECOLECTOR. Las URLs se construyen con el prefijo configurado; confirmar el montaje en el router principal.",
+      "operationId": "recorridos_getRecorridoById",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "x-source": {
+        "routes": "modules/recorridos/routes/recorrido.routes.js",
+        "controller": "modules/recorridos/controllers/recorrido.controller.js",
+        "handler": "getRecorridoByIdController",
+        "service": "modules/recorridos/services/get-recorrido-by-id.service.js"
+      },
+      "x-route-roles": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "SUPERVISOR",
+        "OPERADOR",
+        "CONDUCTOR",
+        "RECOLECTOR"
+      ],
+      "parameters": [
+        {
+          "name": "idRecorrido",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador positivo expresado como texto para conservar precisión."
+          }
+        },
+        {
+          "name": "x-client-origin",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Origen del cliente; consultar valores permitidos en el backend."
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Recorrido obtenido correctamente.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecorridosGetRecorridoByIdResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Autenticación no válida o ausente. El formato depende del manejador de errores del backend."
+        },
+        "403": {
+          "description": "Acceso no autorizado. El formato depende del manejador de errores del backend."
+        },
+        "404": {
+          "description": "Recurso no encontrado. El formato depende del manejador de errores del backend."
+        },
+        "default": {
+          "description": "Otros errores propagados al manejador global. Su contrato no está incluido en el ZIP."
+        }
+      }
+    }
+  }
+}

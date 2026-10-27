@@ -1,0 +1,161 @@
+{
+  "CodigosQrPublicoGetPublicQrInformationResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean"
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "codigo_qr": {},
+          "tipo_recurso": {
+            "type": "string"
+          },
+          "recurso": {},
+          "fecha_consulta": {},
+          "zona": {},
+          "rutas": {}
+        },
+        "description": "Claves observadas en un retorno explícito del servicio. Los objetos asociados y campos calculados sin tipo confirmado se mantienen abiertos.",
+        "additionalProperties": true
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/codigos-qr/controllers/codigo-qr-public.controller.js",
+    "x-data-contract": "partial-source"
+  },
+  "CodigosQrPublicoGetPublicQrScheduleResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean"
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "fecha_consulta": {},
+          "tipo_recurso": {
+            "type": "string"
+          },
+          "zona": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "rutas": {}
+        },
+        "description": "Claves observadas en un retorno explícito del servicio. Los objetos asociados y campos calculados sin tipo confirmado se mantienen abiertos.",
+        "additionalProperties": true
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/codigos-qr/controllers/codigo-qr-public.controller.js",
+    "x-data-contract": "partial-source"
+  },
+  "CodigosQrPublicoGetPublicQrRouteStatusResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean"
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "disponible": {
+            "type": "boolean"
+          },
+          "codigo": {},
+          "mensaje": {},
+          "programacion": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "recorrido": {}
+        },
+        "description": "Claves observadas en un retorno explícito del servicio. Los objetos asociados y campos calculados sin tipo confirmado se mantienen abiertos.",
+        "additionalProperties": true
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/codigos-qr/controllers/codigo-qr-public.controller.js",
+    "x-data-contract": "partial-source"
+  },
+  "CodigosQrPublicoGetPublicQrRouteLocationResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean"
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "disponible": {
+            "type": "boolean"
+          },
+          "latitud": {},
+          "longitud": {},
+          "ultima_actualizacion": {},
+          "estado_recorrido": {},
+          "es_aproximada": {
+            "type": "boolean"
+          },
+          "antiguedad_segundos": {}
+        },
+        "description": "Claves observadas en un retorno explícito del servicio. Los objetos asociados y campos calculados sin tipo confirmado se mantienen abiertos.",
+        "additionalProperties": true
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/codigos-qr/controllers/codigo-qr-public.controller.js",
+    "x-data-contract": "partial-source"
+  },
+  "CodigosQrPublicoResolvePublicQrResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean"
+      },
+      "message": {
+        "type": "string"
+      },
+      "data": {
+        "description": "Resultado del servicio. Contrato interno pendiente de contrastar con los modelos y una respuesta real."
+      }
+    },
+    "required": [
+      "success",
+      "message",
+      "data"
+    ],
+    "x-source": "modules/codigos-qr/controllers/codigo-qr-public.controller.js",
+    "x-data-contract": "open-model-dependent"
+  }
+}
