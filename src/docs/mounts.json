@@ -16,5 +16,6 @@
   "codigos-qr": "/codigos-qr",
   "codigos-qr-publico": "/codigos-qr/publico",
   "dashboard": "/dashboard",
-  "monitoreo": "/monitoreo"
+  "monitoreo": "/monitoreo",
+  "incidencias": "/incidencias"
 }

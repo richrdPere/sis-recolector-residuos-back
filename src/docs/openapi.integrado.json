@@ -37,6 +37,10 @@
       "description": "Servicios del módulo Dashboard."
     },
     {
+      "name": "Incidencias",
+      "description": "Servicios del módulo Incidencias."
+    },
+    {
       "name": "Monitoreo",
       "description": "Servicios del módulo Monitoreo."
     },
