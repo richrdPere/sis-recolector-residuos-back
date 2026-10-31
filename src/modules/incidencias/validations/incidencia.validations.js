@@ -377,7 +377,6 @@ function normalizarEditables(data) {
 // ==========================================================
 // CREAR
 // ==========================================================
-
 function validarCrearIncidencia(data) {
   validarCamposPermitidos(data, [
     ...CAMPOS_EDITABLES,

@@ -1,14 +1,110 @@
 require("dotenv").config();
 const app = require("./src/app.js");
 const http = require("http");
+const db = require('./src/database/models');
 
+// Sockets
 const { initSocket } = require('./src/socket');
 const { emitToUser } = require('./src/socket/usuarios-manager');
+
+// Jobs
+const {
+  startNotificationWorker,
+  stopNotificationWorker,
+} = require('./src/jobs/notification-worker');
 
 async function start() {
   await app.initialize();
   const server = http.createServer(app);
   const io = initSocket(server);
+
+  app.set('io', io);
+
+  // ==========================================================
+  // CIERRE ORDENADO DEL BACKEND
+  // ==========================================================
+
+  let closing = false;
+
+  const shutdown = async (
+    motivo,
+    exitCode = 0,
+  ) => {
+    if (closing) return;
+
+    closing = true;
+    process.exitCode = exitCode;
+
+    console.log(
+      `Cerrando backend: ${motivo}`,
+    );
+
+    // Primero detener el worker y esperar su ejecución actual.
+    try {
+      await stopNotificationWorker();
+    } catch (error) {
+      process.exitCode = 1;
+
+      console.error(
+        'Error deteniendo notificaciones:',
+        error.message,
+      );
+    }
+
+    // Después cerrar sockets y servidor HTTP.
+    try {
+      await new Promise((resolve, reject) => {
+        io.close((error) => {
+          if (error) {
+            reject(error);
+            return;
+          }
+
+          resolve();
+        });
+      });
+    } catch (error) {
+      process.exitCode = 1;
+
+      console.error(
+        'Error cerrando servidor:',
+        error.message,
+      );
+    }
+
+    // MySQL se cierra al final.
+    try {
+      await db.sequelize.close();
+    } catch (error) {
+      process.exitCode = 1;
+
+      console.error(
+        'Error cerrando MySQL:',
+        error.message,
+      );
+    }
+
+    console.log('Cierre del backend terminado.');
+  };
+
+  // Ctrl+C y cierre habitual de PM2.
+  process.once('SIGINT', () => {
+    void shutdown('SIGINT');
+  });
+
+  // Terminación del proceso en el servidor.
+  process.once('SIGTERM', () => {
+    void shutdown('SIGTERM');
+  });
+
+  // MySQL y Firebase ya fueron inicializados por app.initialize().
+  const worker = startNotificationWorker();
+
+  console.log(
+    'Motor de notificaciones:',
+    worker,
+  );
+
 
   // Compatibilidad con el helper anterior; no persiste ni envía push.
   global.sendNotification = (userId, data) =>
@@ -20,7 +116,12 @@ async function start() {
   server.on('error',
     (error) => {
       console.error('Error HTTP:', error.code);
-      process.exitCode = 1;
+      // process.exitCode = 1;
+
+      void shutdown(
+        error.code || 'HTTP_ERROR',
+        1,
+      );
     }
   );
   server.listen(

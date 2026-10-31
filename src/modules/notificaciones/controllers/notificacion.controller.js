@@ -20,92 +20,61 @@ const {
 // Utilidad: Emitir notificación interna
 // =======================================================
 
-const emitInternalNotification = (
-  req,
-  result,
-) => {
-  const io =
-    req.app.get('io');
+// const emitInternalNotification = (req, result) => {
+//   const io = req.app.get('io');
 
-  if (
-    !io ||
-    !result?.creada ||
-    !result
-      .notificacion
-  ) {
-    return;
-  }
+//   if (
+//     !io ||
+//     !result?.creada ||
+//     !result
+//       .notificacion
+//   ) {
+//     return;
+//   }
 
-  const notification =
-    result.notificacion;
+//   const notification = result.notificacion;
 
-  if (
-    notification
-      .enviar_interna !==
-    true
-  ) {
-    return;
-  }
+//   if (
+//     notification
+//       .enviar_interna !==
+//     true
+//   ) {
+//     return;
+//   }
 
-  const recipients =
-    notification
-      .destinatarios ||
-    [];
+//   const recipients = notification.destinatarios || [];
 
-  for (
-    const recipient
-    of recipients
-  ) {
-    io
-      .to(
-        `usuario:${recipient.id_usuario}`,
-      )
-      .emit(
-        'notificacion:nueva',
-        {
-          id_notificacion:
-            notification
-              .id_notificacion,
+//   for (const recipient of recipients) {
+//     io
+//       .to(
+//         `usuario:${recipient.id_usuario}`,
+//       )
+//       .emit(
+//         'notificacion:nueva',
+//         {
+//           id_notificacion: notification.id_notificacion,
 
-          id_notificacion_usuario:
-            recipient
-              .id_notificacion_usuario,
+//           id_notificacion_usuario: recipient.id_notificacion_usuario,
 
-          tipo_notificacion:
-            notification
-              .tipo_notificacion,
+//           tipo_notificacion: notification.tipo_notificacion,
 
-          prioridad:
-            notification
-              .prioridad,
+//           prioridad: notification.prioridad,
 
-          titulo:
-            notification
-              .titulo,
+//           titulo: notification.titulo,
 
-          mensaje:
-            notification
-              .mensaje,
+//           mensaje: notification.mensaje,
 
-          tipo_entidad:
-            notification
-              .tipo_entidad,
+//           tipo_entidad: notification.tipo_entidad,
 
-          id_entidad:
-            notification
-              .id_entidad,
+//           id_entidad: notification.id_entidad,
 
-          datos:
-            notification
-              .datos,
+//           datos: notification.datos,
 
-          created_at:
-            notification
-              .created_at,
-        },
-      );
-  }
-};
+//           created_at: notification.created_at,
+//         },
+//       );
+//   }
+// };
 
 /*
 |--------------------------------------------------------------------------
@@ -114,40 +83,36 @@ const emitInternalNotification = (
 */
 const createNotificationController = async (req, res, next) => {
   try {
-    const metadata =
-      getRequestMetadata(
-        req,
-      );
+    const metadata = getRequestMetadata(req);
 
-    const data =
-      await createNotificationService(
-        {
-          ...req.body,
+    const data = await createNotificationService(
+      {
+        ...req.body,
 
-          /*
-          | El origen administrativo se controla
-          | desde el backend.
-          */
+        /*
+        | El origen administrativo se controla
+        | desde el backend.
+        */
 
-          origen:
-            'WEB',
-        },
-        {
-          id_usuario_creacion:
-            metadata
-              .id_usuario,
-        },
-      );
+        origen:
+          'WEB',
+      },
+      {
+        id_usuario_creacion:
+          metadata
+            .id_usuario,
+      },
+    );
 
     /*
     | La transacción del service ya terminó.
     | Recién ahora emitimos mediante Socket.IO.
     */
 
-    emitInternalNotification(
-      req,
-      data,
-    );
+    // emitInternalNotification(
+    //   req,
+    //   data,
+    // );
 
     return res
       .status(

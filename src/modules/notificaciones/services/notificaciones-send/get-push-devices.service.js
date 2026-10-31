@@ -45,15 +45,13 @@ const getPushDevicesService = async ({
 
   const where = {
     id_usuario: {
-      [Op.in]:
-        normalizedUserIds,
+      [Op.in]: normalizedUserIds,
     },
 
-    permiso_notificaciones:
-      true,
+    // permiso_notificaciones: true,
+    permiso_notificaciones: 'AUTORIZADO',
 
-    estado_dispositivo:
-      'ACTIVO',
+    estado_dispositivo: 'ACTIVO',
 
     token_push: {
       [Op.and]: [

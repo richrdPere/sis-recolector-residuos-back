@@ -134,29 +134,32 @@ function crearPoliticaIncidencias({
         return true;
       }
 
-      case "asignar_responsable":
+      case "asignar_responsable": {
+        // Permiso del usuario que realiza la asignación.
         if (!gestor) {
           return false;
         }
 
+        // Retirar responsable. Las restricciones de estado
+        // permanecen en el service.
         if (!responsable) {
           return true;
         }
 
-        if (
-          typeof esResponsableElegible !== "function"
-        ) {
+        // Verificar al usuario que recibirá la incidencia.
+        if (typeof esResponsableElegible !== "function") {
           return false;
         }
 
-        return (
-          await esResponsableElegible({
-            actor,
-            responsable,
-            incidencia,
-            transaction,
-          })
-        ) === true;
+        const elegible = await esResponsableElegible({
+          actor,
+          responsable,
+          incidencia,
+          transaction,
+        });
+
+        return elegible === true;
+      }
 
       case "cambiar_estado":
         return (

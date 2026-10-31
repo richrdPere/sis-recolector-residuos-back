@@ -24,6 +24,11 @@ const {
   sequelize,
 } = db;
 
+// Services
+const dispatchNotificationService = require('../motor/dispatch-notification.service');
+
+const initialState = 'PENDIENTE';
+
 // =======================================================
 // Service: Crear notificación
 // =======================================================
@@ -287,70 +292,31 @@ const createNotificationService = async ({
         ? 'PENDIENTE'
         : 'ENVIADA';
 
-    const notification =
-      await Notificacion
-        .create(
-          {
-            id_usuario_creacion:
-              creatorId,
-
-            tipo_notificacion:
-              notificationType,
-
-            prioridad:
-              normalizePriority(
-                prioridad,
-              ),
-
-            titulo:
-              normalizedTitle,
-
-            mensaje:
-              normalizedMessage,
-
-            enviar_interna:
-              enviar_interna ===
-              true,
-
-            enviar_push:
-              enviar_push ===
-              true,
-
-            tipo_entidad:
-              normalizedEntityType,
-
-            id_entidad:
-              entityId,
-
-            datos,
-
-            clave_evento:
-              eventKey,
-
-            fecha_programada:
-              scheduledDate,
-
-            fecha_expiracion:
-              expirationDate,
-
-            estado_notificacion:
-              initialState,
-
-            origen:
-              normalizeOrigin(
-                origen,
-              ),
-
-            fecha_procesamiento:
-              initialState ===
-                'ENVIADA'
-                ? now
-                : null,
-          },
-          {
-            transaction,
-          },
-        );
+    const notification = await Notificacion
+      .create(
+        {
+          id_usuario_creacion: creatorId,
+          tipo_notificacion: notificationType,
+          prioridad: normalizePriority(prioridad),
+          titulo: normalizedTitle,
+          mensaje: normalizedMessage,
+          enviar_interna: enviar_interna === true,
+          enviar_push: enviar_push === true,
+          tipo_entidad: normalizedEntityType,
+          id_entidad: entityId,
+          datos,
+          clave_evento: eventKey,
+          fecha_programada: scheduledDate,
+          fecha_expiracion: expirationDate,
+          estado_notificacion: initialState,
+          origen: normalizeOrigin(origen),
+          // fecha_procesamiento: initialState === 'ENVIADA' ? now : null,
+          fecha_procesamiento: null
+        },
+        {
+          transaction,
+        },
+      );
 
     await NotificacionUsuario
       .bulkCreate(
@@ -358,40 +324,40 @@ const createNotificationService = async ({
           (
             userId,
           ) => ({
-            id_notificacion:
-              notification
-                .id_notificacion,
-
-            id_usuario:
-              userId,
-
-            leida:
-              false,
-
-            archivada:
-              false,
-
-            estado_push:
-              enviar_push
-                ? 'PENDIENTE'
-                : 'NO_REQUERIDO',
+            id_notificacion: notification.id_notificacion,
+            id_usuario: userId,
+            leida: false,
+            archivada: false,
+            estado_push: enviar_push ? 'PENDIENTE' : 'NO_REQUERIDO',
           }),
         ),
         {
           transaction,
-          validate:
-            true,
+          validate: true,
         },
       );
 
-    const detail =
-      await getNotificationDetail(
-        notification
-          .id_notificacion,
-        {
-          transaction,
-        },
-      );
+    // Después de createNotificationService y de su commit:
+    if (data.creada) {
+      try {
+        await dispatchNotificationService({
+          id_notificacion: data.notificacion.id_notificacion,
+        });
+      } catch (error) {
+        console.error(
+          '[notificaciones:despacho]',
+          error.name,
+        );
+      }
+    }
+
+    const detail = await getNotificationDetail(
+      notification
+        .id_notificacion,
+      {
+        transaction,
+      },
+    );
 
     if (ownTransaction) {
       await transaction
@@ -399,14 +365,9 @@ const createNotificationService = async ({
     }
 
     return {
-      notificacion:
-        detail,
-
-      creada:
-        true,
-
-      duplicada:
-        false,
+      notificacion: detail,
+      creada: true,
+      duplicada: false,
     };
   } catch (error) {
     if (
@@ -432,24 +393,15 @@ const createNotificationService = async ({
         await Notificacion
           .findOne({
             where: {
-              clave_evento:
-                eventKey,
+              clave_evento: eventKey,
             },
           });
 
       if (existing) {
         return {
-          notificacion:
-            await getNotificationDetail(
-              existing
-                .id_notificacion,
-            ),
-
-          creada:
-            false,
-
-          duplicada:
-            true,
+          notificacion: await getNotificationDetail(existing.id_notificacion),
+          creada: false,
+          duplicada: true,
         };
       }
     }
@@ -459,61 +411,3 @@ const createNotificationService = async ({
 };
 
 module.exports = createNotificationService;
-
-// TODO:  Después de crear una programación y conocer los usuarios asignados:
-
-// await createNotificationService(
-//   {
-//     tipo_notificacion:
-//       'ASIGNACION_RUTA',
-
-//     titulo:
-//       'Nueva ruta asignada',
-
-//     mensaje:
-//       'Se le asignó una nueva ruta de recolección.',
-
-//     destinatarios: [
-//       idUsuarioConductor,
-//       ...usuariosRecolectores,
-//     ],
-
-//     prioridad:
-//       'ALTA',
-
-//     enviar_interna:
-//       true,
-
-//     enviar_push:
-//       false,
-
-//     tipo_entidad:
-//       'PROGRAMACION',
-
-//     id_entidad:
-//       programacion
-//         .id_programacion,
-
-//     datos: {
-//       id_programacion:
-//         programacion
-//           .id_programacion,
-
-//       fecha_programada:
-//         programacion
-//           .fecha_programada,
-//     },
-
-//     clave_evento:
-//       `ASIGNACION_RUTA:PROGRAMACION:${programacion.id_programacion}`,
-
-//     origen:
-//       'SISTEMA',
-//   },
-//   {
-//     id_usuario_creacion:
-//       creatorId,
-
-//     transaction,
-//   },
-// );

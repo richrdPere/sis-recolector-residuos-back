@@ -64,30 +64,30 @@ const asignarResponsableIncidenciaService = async (
           responsable,
           transaction,
         },
-      );
+  );
 
-      ensureIncidenciaOpen(incidencia);
+  ensureIncidenciaOpen(incidencia);
 
-      if (
-        !responsable &&
-        incidencia.estado_incidencia === 'EN_ATENCION'
-      ) {
-        throw new AppError(
-          'Una incidencia en atención debe conservar un responsable.',
-          409,
-          'RESPONSABLE_REQUIRED',
-        );
-      }
+  if (
+    !responsable &&
+    incidencia.estado_incidencia === 'EN_ATENCION'
+  ) {
+    throw new AppError(
+      'Una incidencia en atención debe conservar un responsable.',
+      409,
+      'RESPONSABLE_REQUIRED',
+    );
+  }
 
-      await incidencia.update(data, {
-        transaction,
-      });
+  await incidencia.update(data, {
+    transaction,
+  });
 
-      return getIncidenciaDetail(
-        incidenciaId,
-        transaction,
-      );
-    },
+  return getIncidenciaDetail(
+    incidenciaId,
+    transaction,
+  );
+},
   );
 };
 

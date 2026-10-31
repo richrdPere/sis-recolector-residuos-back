@@ -23,6 +23,8 @@ const {
   autorizarRoles,
 } = require('../../../middlewares/auth.middleware');
 
+const { uploadIncidenciaEvidence } = require('../../../middlewares/incidencia-upload.middleware');
+
 // *********************************************************
 // AUTENTICACIÓN
 // *********************************************************
@@ -164,9 +166,7 @@ router.get('/:id/archivos/:idArchivo',
 
 router.post('/:id/archivos',
   autorizarRoles(...ROLES_REPORTE),
-
-  // Insertar aquí el middleware de carga cuando esté disponible.
-
+  uploadIncidenciaEvidence,
   agregarIncidenciaArchivosController,
 );
 

@@ -158,45 +158,29 @@ const createQrCodeService = async ({
               resourceType,
             ),
 
-          token_publico:
-            token,
+          token_publico: token,
 
-          tipo_recurso:
-            resourceType,
+          tipo_recurso: resourceType,
 
-          id_zona:
-            zoneId,
+          id_zona: zoneId,
 
-          id_ruta:
-            routeId,
+          id_ruta: routeId,
 
-          titulo:
-            normalizedTitle,
+          titulo: normalizedTitle,
 
-          descripcion:
-            descripcion
-              ?.trim() ||
-            null,
+          descripcion: descripcion?.trim() || null,
 
           version: 1,
 
-          estado_qr:
-            'ACTIVO',
+          estado_qr: 'ACTIVO',
 
-          fecha_generacion:
-            new Date(),
+          fecha_generacion: new Date(),
 
-          fecha_expiracion:
-            fecha_expiracion ||
-            null,
+          fecha_expiracion: fecha_expiracion || null,
 
-          id_usuario_creacion:
-            creatorId,
+          id_usuario_creacion: creatorId,
 
-          observacion:
-            observacion
-              ?.trim() ||
-            null,
+          observacion: observacion?.trim() || null,
         },
         {
           transaction,
@@ -206,13 +190,8 @@ const createQrCodeService = async ({
     await transaction.commit();
 
     return {
-      codigo_qr:
-        codigoQr,
-
-      url_publica:
-        buildPublicQrUrl(
-          token,
-        ),
+      codigo_qr: codigoQr,
+      url_publica: buildPublicQrUrl(token),
     };
   } catch (error) {
     if (

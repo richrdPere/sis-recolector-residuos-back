@@ -54,8 +54,7 @@ const authorizeIncidencia = async (
   actor,
   contexto = {},
 ) => {
-  const { autorizar } =
-    obtenerPoliticaIncidencias();
+  const { autorizar } = obtenerPoliticaIncidencias();
 
   const permitido = await autorizar({
     accion,
@@ -98,6 +97,59 @@ const getIncidenciasScope = async (actor) => {
 
   return alcance;
 };
+
+// // ==========================================================
+// // AUTORIZAR OPERACIÓN
+// // ==========================================================
+
+// const authorizeIncidencia = async (
+//   accion,
+//   actor,
+//   contexto = {},
+// ) => {
+//   const { autorizar } = obtenerPoliticaIncidencias();
+
+//   const permitido = await autorizar({
+//     accion,
+//     actor,
+//     ...contexto,
+//   });
+
+//   if (permitido !== true) {
+//     throw new AppError(
+//       'No tiene permiso para esta operación.',
+//       403,
+//       'FORBIDDEN',
+//     );
+//   }
+// };
+
+// // ==========================================================
+// // ALCANCE DEL LISTADO
+// // ==========================================================
+
+// const getIncidenciasScope = async (actor) => {
+//   const { obtenerAlcance } =
+//     obtenerPoliticaIncidencias();
+
+//   const alcance = await obtenerAlcance({
+//     actor,
+//   });
+
+//   if (
+//     !alcance ||
+//     typeof alcance !== 'object' ||
+//     Array.isArray(alcance)
+//   ) {
+//     throw new AppError(
+//       'La política debe devolver un objeto where de alcance.',
+//       500,
+//       'INVALID_AUTHORIZATION_SCOPE',
+//     );
+//   }
+
+//   return alcance;
+// };
 
 // ==========================================================
 // BUSCAR INCIDENCIA
