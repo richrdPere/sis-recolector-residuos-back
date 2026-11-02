@@ -13,6 +13,7 @@ const {
     setPrimaryAddressController,
     deleteCitizenAddressController,
     getScheduleByAddressController,
+    getActiveServiceByAddressController,
 } = require('./domicilio.controller');
 
 const {
@@ -31,6 +32,7 @@ module.exports = {
     setPrimaryAddressController,
     deleteCitizenAddressController,
     getScheduleByAddressController,
+    getActiveServiceByAddressController,
 
     getNotificationPreferencesController,
     updateNotificationPreferencesController,

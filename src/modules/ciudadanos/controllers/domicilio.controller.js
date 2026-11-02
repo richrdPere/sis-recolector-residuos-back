@@ -7,6 +7,7 @@ const {
   setPrimaryAddressService,
   deleteCitizenAddressService,
   getScheduleByAddressService,
+  getActiveServiceByAddressService,
 } = require('../services');
 
 const {
@@ -208,6 +209,27 @@ const getScheduleByAddressController = async (req, res, next) => {
     next(error);
   }
 };
+/*
+|--------------------------------------------------------------------------
+| 7. Obtener servicio activo del domicilio
+|--------------------------------------------------------------------------
+*/
+const getActiveServiceByAddressController = async (req, res, next) => {
+  try {
+    const data = await getActiveServiceByAddressService({
+      id_usuario: getAuthenticatedUserId(req),
+      id_domicilio: req.params.idDomicilio,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Servicio de recolección consultado correctamente.',
+      data,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 module.exports = {
   getMyAddressesController,
@@ -216,4 +238,5 @@ module.exports = {
   setPrimaryAddressController,
   deleteCitizenAddressController,
   getScheduleByAddressController,
+  getActiveServiceByAddressController,
 };

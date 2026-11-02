@@ -15,6 +15,7 @@ const {
   setPrimaryAddressController,
   deleteCitizenAddressController,
   getScheduleByAddressController,
+  getActiveServiceByAddressController,
 
   getNotificationPreferencesController,
   updateNotificationPreferencesController,
@@ -64,5 +65,6 @@ router.patch('/domicilios/:idDomicilio/principal', setPrimaryAddressController);
 router.put('/domicilios/:idDomicilio', updateCitizenAddressController);
 router.delete('/domicilios/:idDomicilio', deleteCitizenAddressController);
 router.get('/domicilios/:idDomicilio/cronograma', getScheduleByAddressController);
+router.get('/domicilios/:idDomicilio/servicio-activo', getActiveServiceByAddressController);
 
 module.exports = router;
