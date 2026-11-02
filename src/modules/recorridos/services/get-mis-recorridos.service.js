@@ -110,12 +110,12 @@ const getMisRecorridosService = async ({
   estado = null,
   fecha_desde = null,
   fecha_hasta = null,
+  search = null,
 }) => {
-  const usuarioId =
-    Number.parseInt(
-      id_usuario,
-      10,
-    );
+  const usuarioId = Number.parseInt(
+    id_usuario,
+    10,
+  );
 
   if (
     !Number.isInteger(
@@ -328,6 +328,105 @@ const getMisRecorridosService = async ({
   // -------------------------------------------
   // 5. Consultar recorridos paginados
   // -------------------------------------------
+
+  // -------------------------------------------------------
+  // BÚSQUEDA SOBRE TODOS LOS RESULTADOS, ANTES DE PAGINAR
+  // -------------------------------------------------------
+
+  const searchText = String(search ?? '').trim();
+
+  if (searchText.length > 120) {
+    throw new AppError(
+      'La búsqueda no puede superar los 120 caracteres.',
+      400,
+      'SEARCH_TOO_LONG',
+    );
+  }
+
+  if (searchText) {
+    const pattern = `%${searchText}%`;
+
+    const programmingConditions = [
+      {
+        '$ruta.codigo$': {
+          [Op.like]: pattern,
+        },
+      },
+      {
+        '$ruta.nombre$': {
+          [Op.like]: pattern,
+        },
+      },
+      {
+        '$vehiculo.codigo$': {
+          [Op.like]: pattern,
+        },
+      },
+      {
+        '$vehiculo.placa$': {
+          [Op.like]: pattern,
+        },
+      },
+    ];
+
+    // Mantener los IDs como texto para no perder precisión BIGINT.
+    const numericSearch = /^[1-9]\d*$/.test(searchText);
+
+    if (numericSearch) {
+      programmingConditions.push({
+        id_programacion: searchText,
+      });
+    }
+
+    const matchingPrograms = await ProgramacionRuta.findAll({
+      attributes: ['id_programacion'],
+
+      where: {
+        id_programacion: {
+          [Op.in]: programacionIds,
+        },
+
+        [Op.or]: programmingConditions,
+      },
+
+      include: [
+        {
+          model: Ruta,
+          as: 'ruta',
+          attributes: [],
+          required: false,
+        },
+        {
+          model: Vehiculo,
+          as: 'vehiculo',
+          attributes: [],
+          required: false,
+        },
+      ],
+
+      raw: true,
+    });
+
+    const matchingIds = matchingPrograms.map(
+      (item) => item.id_programacion,
+    );
+
+    where[Op.or] = [
+      {
+        id_programacion: {
+          [Op.in]: matchingIds,
+        },
+      },
+
+      ...(numericSearch
+        ? [
+          {
+            id_recorrido: searchText,
+          },
+        ]
+        : []),
+    ];
+  }
 
   const {
     count,

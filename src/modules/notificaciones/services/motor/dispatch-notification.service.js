@@ -3,11 +3,18 @@ const db = require('../../../../database/models');
 
 // Utils
 const AppError = require('../../../../utils/app-error');
-const { claimNotification, sendRecipientPush, isFuture, isExpired } = require("../../utils/motor-notification.utils");
+const {
+  validateId,
+  claimNotification,
+  canContinue,
+  sendRecipientPush,
+  isFuture,
+  isExpired,
+} = require('../../utils/motor-notification.utils');
 
 // Socket.IO
 const { getIO } = require('../../../../socket');
-const { emitToUser } = require('../../../../socket/usuarios-manager');
+const notificationEmitter = require('../../../../socket/emitters/notificacion.emitter');
 
 // Modelos
 const {
@@ -48,10 +55,7 @@ const dispatchNotificationService = async ({
 
   urlWeb = null,
 } = {}) => {
-  const notificationId =
-    validateId(
-      id_notificacion,
-    );
+  const notificationId = validateId(id_notificacion);
 
   // ------------------------------------------------------
   // 1. Validar opciones
@@ -169,49 +173,26 @@ const dispatchNotificationService = async ({
         !recipient.leida
       ) {
         try {
-          await emitToUser(
+
+          const publication = await notificationEmitter(
             io,
-            recipient.id_usuario,
-            'notificacion:nueva',
+            notification.id_notificacion,
             {
-              id_notificacion: idString(
-                notification
-                  .id_notificacion,
-              ),
+              id_usuario:
+                recipient.id_usuario,
 
-              id_notificacion_usuario: idString(
-                recipient
-                  .id_notificacion_usuario,
-              ),
-
-              tipo_notificacion: notification.tipo_notificacion,
-
-              prioridad: notification.prioridad,
-
-              titulo: notification.titulo,
-
-              mensaje: notification.mensaje,
-
-              tipo_entidad: notification.tipo_entidad,
-
-              id_entidad: notification.id_entidad,
-
-              datos: notification.datos,
-
-              created_at: notification.created_at,
-
-              refrescar: true,
+              id_notificacion_usuario:
+                recipient.id_notificacion_usuario,
             },
           );
 
-          /*
-           * Cuenta publicaciones intentadas.
-           * No representa acuses de recepción.
-           */
-          summary
-            .socket_publicaciones++;
+          if (publication.publicada) {
+            summary.socket_publicaciones++;
+          }
+
+
         } catch (error) {
-          summary.socket_errores++;
+          // summary.socket_errores++;
 
           console.error(
             '[notificacion:socket]',

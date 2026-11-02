@@ -25,7 +25,7 @@ const {
 } = db;
 
 // Services
-const dispatchNotificationService = require('../motor/dispatch-notification.service');
+// const dispatchNotificationService = require('../motor/dispatch-notification.service');
 
 const initialState = 'PENDIENTE';
 
@@ -279,18 +279,18 @@ const createNotificationService = async ({
       );
     }
 
-    const now =
-      new Date();
+    // const now =
+    //   new Date();
 
-    const isScheduled =
-      scheduledDate &&
-      scheduledDate > now;
+    // const isScheduled =
+    //   scheduledDate &&
+    //   scheduledDate > now;
 
-    const initialState =
-      isScheduled ||
-        enviar_push
-        ? 'PENDIENTE'
-        : 'ENVIADA';
+    // const initialState =
+    //   isScheduled ||
+    //     enviar_push
+    //     ? 'PENDIENTE'
+    //     : 'ENVIADA';
 
     const notification = await Notificacion
       .create(
@@ -310,7 +310,6 @@ const createNotificationService = async ({
           fecha_expiracion: expirationDate,
           estado_notificacion: initialState,
           origen: normalizeOrigin(origen),
-          // fecha_procesamiento: initialState === 'ENVIADA' ? now : null,
           fecha_procesamiento: null
         },
         {
@@ -320,16 +319,13 @@ const createNotificationService = async ({
 
     await NotificacionUsuario
       .bulkCreate(
-        recipientIds.map(
-          (
-            userId,
-          ) => ({
-            id_notificacion: notification.id_notificacion,
-            id_usuario: userId,
-            leida: false,
-            archivada: false,
-            estado_push: enviar_push ? 'PENDIENTE' : 'NO_REQUERIDO',
-          }),
+        recipientIds.map((userId) => ({
+          id_notificacion: notification.id_notificacion,
+          id_usuario: userId,
+          leida: false,
+          archivada: false,
+          estado_push: enviar_push ? 'PENDIENTE' : 'NO_REQUERIDO',
+        }),
         ),
         {
           transaction,
@@ -338,30 +334,28 @@ const createNotificationService = async ({
       );
 
     // Después de createNotificationService y de su commit:
-    if (data.creada) {
-      try {
-        await dispatchNotificationService({
-          id_notificacion: data.notificacion.id_notificacion,
-        });
-      } catch (error) {
-        console.error(
-          '[notificaciones:despacho]',
-          error.name,
-        );
-      }
-    }
+    // if (data.creada) {
+    //   try {
+    //     await dispatchNotificationService({
+    //       id_notificacion: data.notificacion.id_notificacion,
+    //     });
+    //   } catch (error) {
+    //     console.error(
+    //       '[notificaciones:despacho]',
+    //       error.name,
+    //     );
+    //   }
+    // }
 
     const detail = await getNotificationDetail(
-      notification
-        .id_notificacion,
+      notification.id_notificacion,
       {
         transaction,
       },
     );
 
     if (ownTransaction) {
-      await transaction
-        .commit();
+      await transaction.commit();
     }
 
     return {

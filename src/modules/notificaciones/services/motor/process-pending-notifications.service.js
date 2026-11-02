@@ -44,51 +44,49 @@ const hasRetryableDestination = async (
 
   if (!recipients.length) return false;
 
-  const devices =
-    await UsuarioDispositivo.findAll({
-      where: {
-        id_usuario: {
-          [Op.in]: recipients.map(
-            (recipient) => recipient.id_usuario,
-          ),
-        },
-
-        estado_dispositivo: 'ACTIVO',
-
-        permiso_notificaciones: {
-          [Op.in]: [
-            'AUTORIZADO',
-            'PROVISIONAL',
-          ],
-        },
-
-        token_push: {
-          [Op.ne]: null,
-        },
+  const devices = await UsuarioDispositivo.findAll({
+    where: {
+      id_usuario: {
+        [Op.in]: recipients.map(
+          (recipient) => recipient.id_usuario,
+        ),
       },
 
-      attributes: [
-        'id_dispositivo',
-        'id_usuario',
-        'token_push',
-      ],
-    });
+      estado_dispositivo: 'ACTIVO',
 
-  const attempts =
-    await NotificacionEnvio.findAll({
-      where: {
-        id_notificacion_usuario: {
-          [Op.in]: recipients.map(
-            (recipient) =>
-              recipient.id_notificacion_usuario,
-          ),
-        },
+      permiso_notificaciones: {
+        [Op.in]: [
+          'AUTORIZADO',
+          'PROVISIONAL',
+        ],
       },
 
-      order: [
-        ['numero_intento', 'DESC'],
-      ],
-    });
+      token_push: {
+        [Op.ne]: null,
+      },
+    },
+
+    attributes: [
+      'id_dispositivo',
+      'id_usuario',
+      'token_push',
+    ],
+  });
+
+  const attempts = await NotificacionEnvio.findAll({
+    where: {
+      id_notificacion_usuario: {
+        [Op.in]: recipients.map(
+          (recipient) =>
+            recipient.id_notificacion_usuario,
+        ),
+      },
+    },
+
+    order: [
+      ['numero_intento', 'DESC'],
+    ],
+  });
 
   const latest = new Map();
   const successful = new Set();

@@ -412,32 +412,31 @@ async function enqueueNotification({
             )
             .digest('hex');
 
-        const result =
-          await createNotificationService(
-            {
-              ...notificacion,
+        const result = await createNotificationService(
+          {
+            ...notificacion,
 
-              enviar_interna:
-                group.enviar_interna,
+            enviar_interna:
+              group.enviar_interna,
 
-              enviar_push:
-                group.enviar_push,
+            enviar_push:
+              group.enviar_push,
 
-              fecha_programada:
-                group.fecha_programada,
+            fecha_programada:
+              group.fecha_programada,
 
-              destinatarios: [
-                userId,
-              ],
+            destinatarios: [
+              userId,
+            ],
 
-              clave_evento:
-                eventKey,
-            },
-            {
-              id_usuario_creacion,
-              transaction,
-            },
-          );
+            clave_evento:
+              eventKey,
+          },
+          {
+            id_usuario_creacion,
+            transaction,
+          },
+        );
 
         if (result.creada) {
           summary.creadas++;

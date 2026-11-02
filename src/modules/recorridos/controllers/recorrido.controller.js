@@ -284,6 +284,7 @@ const getMisRecorridosController = async (req, res, next) => {
       estado = null,
       fecha_desde = null,
       fecha_hasta = null,
+      search = null,
     } = req.query;
 
     const idUsuario = req.usuario.id_usuario ?? req.usuario.id;
@@ -295,6 +296,7 @@ const getMisRecorridosController = async (req, res, next) => {
       estado,
       fecha_desde,
       fecha_hasta,
+      search,
     });
 
     return res.status(200).json({

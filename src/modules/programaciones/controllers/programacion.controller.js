@@ -8,11 +8,7 @@ const {
   '../services/programacion',
 );
 
-const {
-  getRequestMetadata,
-} = require(
-  '../utils/controller.utils',
-);
+const { getRequestMetadata } = require('../utils/controller.utils');
 
 /*
 |--------------------------------------------------------------------------
