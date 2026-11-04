@@ -19,6 +19,8 @@ const {
 
   getNotificationPreferencesController,
   updateNotificationPreferencesController,
+
+  resolverCoberturaController,
 } = require('../controllers');
 
 // Middlewares
@@ -57,6 +59,11 @@ router.get('/preferencias-notificacion', getNotificationPreferencesController);
 router.put('/preferencias-notificacion', updateNotificationPreferencesController);
 
 // ==========================================================
+// Cobertura
+// ==========================================================
+router.post('/domicilios/resolver-cobertura', resolverCoberturaController);
+
+// ==========================================================
 // Domicilios
 // ==========================================================
 router.get('/domicilios', getMyAddressesController);
@@ -66,5 +73,7 @@ router.put('/domicilios/:idDomicilio', updateCitizenAddressController);
 router.delete('/domicilios/:idDomicilio', deleteCitizenAddressController);
 router.get('/domicilios/:idDomicilio/cronograma', getScheduleByAddressController);
 router.get('/domicilios/:idDomicilio/servicio-activo', getActiveServiceByAddressController);
+
+
 
 module.exports = router;

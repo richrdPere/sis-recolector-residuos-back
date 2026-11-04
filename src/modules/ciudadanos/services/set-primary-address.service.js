@@ -11,6 +11,11 @@ const {
   getAddressOwnedOrFail,
 } = require('../utils/ciudadano-service.utils');
 
+const {
+  validarCiudadanoHabilitado,
+  validarCoberturaDomicilio,
+} = require('../utils/domicilio-cobertura.utils');
+
 // Modelos
 const {
   CiudadanoDomicilio,
@@ -46,21 +51,24 @@ const setPrimaryAddressService = async ({ id_usuario, id_domicilio, }) => {
       },
     );
 
-    const domicilio =
-      await getAddressOwnedOrFail({
-        idDomicilio:
-          addressId,
+    const domicilio = await getAddressOwnedOrFail({
+      idDomicilio: addressId,
+      idCiudadano: ciudadano.id_ciudadano,
 
-        idCiudadano:
-          ciudadano
-            .id_ciudadano,
+      transaction,
 
-        transaction,
+      lock: transaction.LOCK.UPDATE,
+    });
 
-        lock:
-          transaction
-            .LOCK.UPDATE,
-      });
+    validarCiudadanoHabilitado(ciudadano);
+
+    await validarCoberturaDomicilio({
+      idZona: domicilio.id_zona,
+      idRuta: domicilio.id_ruta,
+      latitud: domicilio.latitud,
+      longitud: domicilio.longitud,
+      transaction,
+    });
 
     await CiudadanoDomicilio
       .update(

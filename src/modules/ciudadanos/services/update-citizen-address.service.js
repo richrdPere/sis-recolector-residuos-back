@@ -16,6 +16,12 @@ const {
   validateZoneAndRoute,
 } = require('../utils/ciudadano-service.utils');
 
+const {
+  validarCoordenadasDomicilio,
+  validarCiudadanoHabilitado,
+  validarCoberturaDomicilio,
+} = require('../utils/domicilio-cobertura.utils');
+
 // Modelos
 const {
   CiudadanoDomicilio,
@@ -43,33 +49,31 @@ const updateCitizenAddressService =
         'identificador del domicilio',
       );
 
-    const transaction =
-      await sequelize.transaction();
+    const transaction = await sequelize.transaction();
 
     try {
-      const ciudadano =
-        await getCitizenByUserOrFail(
-          userId,
-          {
-            transaction,
-          },
-        );
-
-      const domicilio =
-        await getAddressOwnedOrFail({
-          idDomicilio:
-            addressId,
-
-          idCiudadano:
-            ciudadano
-              .id_ciudadano,
-
+      const ciudadano = await getCitizenByUserOrFail(
+        userId,
+        {
           transaction,
+          lock: transaction.LOCK.UPDATE,
+        },
+      );
 
-          lock:
-            transaction
-              .LOCK.UPDATE,
-        });
+      const domicilio = await getAddressOwnedOrFail({
+        idDomicilio:
+          addressId,
+
+        idCiudadano:
+          ciudadano
+            .id_ciudadano,
+
+        transaction,
+
+        lock:
+          transaction
+            .LOCK.UPDATE,
+      });
 
       const finalZoneId =
         payload.id_zona !==
@@ -142,40 +146,28 @@ const updateCitizenAddressService =
       }
 
       if (
-        payload.latitud !==
-        undefined ||
-        payload.longitud !==
-        undefined
+        payload.latitud !== undefined ||
+        payload.longitud !== undefined
       ) {
-        const coordinates =
-          validateCoordinates({
-            latitud:
-              payload.latitud ??
-              domicilio.latitud,
+        const coordinates = validarCoordenadasDomicilio({
+          latitud: payload.latitud !== undefined
+            ? payload.latitud
+            : domicilio.latitud,
 
-            longitud:
-              payload.longitud ??
-              domicilio
-                .longitud,
-          });
+          longitud: payload.longitud !== undefined
+            ? payload.longitud
+            : domicilio.longitud,
+        });
 
-        updateData.latitud =
-          coordinates.latitud;
+        updateData.latitud = coordinates.latitud;
 
-        updateData.longitud =
-          coordinates.longitud;
+        updateData.longitud = coordinates.longitud;
 
-        updateData
-          .ubicacion_validada =
-          false;
+        updateData.ubicacion_validada = false;
 
-        updateData
-          .fecha_validacion =
-          null;
+        updateData.fecha_validacion = null;
 
-        updateData
-          .id_usuario_validacion =
-          null;
+        updateData.id_usuario_validacion = null;
       }
 
       if (
@@ -280,6 +272,47 @@ const updateCitizenAddressService =
         updateData
           .estado_domicilio =
           'ACTIVO';
+      }
+
+      const finalState =
+        updateData.estado_domicilio ??
+        domicilio.estado_domicilio;
+
+      // Guardar un domicilio activo siempre exige cobertura válida.
+      // Desactivarlo no exige que siga dentro de cobertura.
+      if (finalState === 'ACTIVO') {
+        validarCiudadanoHabilitado(ciudadano);
+
+        await validarCoberturaDomicilio({
+          idZona: finalZoneId,
+          idRuta: finalRouteId,
+
+          latitud:
+            updateData.latitud ??
+            domicilio.latitud,
+
+          longitud:
+            updateData.longitud ??
+            domicilio.longitud,
+
+          transaction,
+        });
+      }
+
+      const cambioUbicacion =
+        Number(
+          updateData.latitud ?? domicilio.latitud,
+        ) !== Number(domicilio.latitud) ||
+        Number(
+          updateData.longitud ?? domicilio.longitud,
+        ) !== Number(domicilio.longitud) ||
+        String(finalZoneId) !== String(domicilio.id_zona) ||
+        String(finalRouteId) !== String(domicilio.id_ruta);
+
+      if (cambioUbicacion) {
+        updateData.ubicacion_validada = false;
+        updateData.fecha_validacion = null;
+        updateData.id_usuario_validacion = null;
       }
 
       await domicilio.update(

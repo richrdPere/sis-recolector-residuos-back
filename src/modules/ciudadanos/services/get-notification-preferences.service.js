@@ -9,56 +9,99 @@ const { validateId } = require('../validations/ciudadano.validation');
 const { getCitizenByUserOrFail } = require('../utils/ciudadano-service.utils');
 
 // Modelos
-const {
-  CiudadanoPreferenciaNotificacion,
-} = db;
+// const {
+//   CiudadanoPreferenciaNotificacion,
+// } = db;
 
 // ===============================================
 // SERVICE: Obtener preferencias
 // ===============================================
 const getNotificationPreferencesService = async (idUsuario) => {
-  const userId =
-    validateId(
-      idUsuario,
-      'identificador del usuario',
-    );
+  const userId = validateId(
+    idUsuario,
+    'identificador del usuario',
+  );
 
-  const ciudadano =
-    await getCitizenByUserOrFail(
-      userId,
-    );
+  return db.sequelize.transaction(
+    async (transaction) => {
+      const ciudadano =
+        await getCitizenByUserOrFail(
+          userId,
+          {
+            transaction,
+            lock: transaction.LOCK.UPDATE,
+          },
+        );
 
-  const [
-    preferencias,
-  ] =
-    await CiudadanoPreferenciaNotificacion
-      .findOrCreate({
-        where: {
-          id_ciudadano:
-            ciudadano
-              .id_ciudadano,
-        },
+      const [preferencias] =
+        await db.CiudadanoPreferenciaNotificacion.findOrCreate({
+          where: {
+            id_ciudadano: ciudadano.id_ciudadano,
+          },
+          defaults: {
+            id_ciudadano: ciudadano.id_ciudadano,
+            notificaciones_habilitadas: false,
+            canal_push: true,
+            canal_interno: true,
+            estado_preferencia: 'INACTIVA',
+          },
+          transaction,
+        });
 
-        defaults: {
-          id_ciudadano:
-            ciudadano
-              .id_ciudadano,
+      if (
+        ciudadano.acepta_tratamiento_datos !== true ||
+        ciudadano.estado_ciudadano !== 'ACTIVO'
+      ) {
+        await preferencias.update(
+          {
+            notificaciones_habilitadas: false,
+            estado_preferencia: 'INACTIVA',
+          },
+          {
+            transaction,
+          },
+        );
+      }
 
-          notificaciones_habilitadas:
-            true,
+      return preferencias;
+    },
+  );
 
-          canal_push:
-            true,
+  // const ciudadano = await getCitizenByUserOrFail(
+  //   userId,
+  // );
 
-          canal_interno:
-            true,
+  // const [
+  //   preferencias,
+  // ] =
+  //   await CiudadanoPreferenciaNotificacion
+  //     .findOrCreate({
+  //       where: {
+  //         id_ciudadano:
+  //           ciudadano
+  //             .id_ciudadano,
+  //       },
 
-          estado_preferencia:
-            'ACTIVA',
-        },
-      });
+  //       defaults: {
+  //         id_ciudadano:
+  //           ciudadano
+  //             .id_ciudadano,
 
-  return preferencias;
+  //         notificaciones_habilitadas:
+  //           true,
+
+  //         canal_push:
+  //           true,
+
+  //         canal_interno:
+  //           true,
+
+  //         estado_preferencia:
+  //           'ACTIVA',
+  //       },
+  //     });
+
+  // return preferencias;
 };
 
 module.exports = getNotificationPreferencesService;

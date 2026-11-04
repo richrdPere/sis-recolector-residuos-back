@@ -21,6 +21,10 @@ const {
     updateNotificationPreferencesController,
 } = require('./preferencia.controller');
 
+const {
+    resolverCoberturaController,
+} = require('./cobertura.controller');
+
 module.exports = {
     createCitizenProfileController,
     getMyCitizenProfileController,
@@ -36,4 +40,6 @@ module.exports = {
 
     getNotificationPreferencesController,
     updateNotificationPreferencesController,
+
+    resolverCoberturaController
 };

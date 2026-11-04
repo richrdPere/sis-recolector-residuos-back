@@ -5,9 +5,8 @@ const db = require('../../../../database/models');
 const AppError = require('../../../../utils/app-error');
 
 // Services
-const getProgramacionByIdService = require(
-  './get-programacion-by-id.service'
-);
+const getProgramacionByIdService = require('./get-programacion-by-id.service');
+const crearAvisoCiudadano = require('../../../notificaciones/services/ciudadanos/crear-aviso-ciudadano.service');
 
 // Motor de notificaciones
 const {
@@ -326,7 +325,7 @@ const updateProgramacionService = async (
       },
     );
 
-    await registerHistory({
+    const historial = await registerHistory({
       id_programacion: id,
       id_usuario: actorId,
 
@@ -550,6 +549,74 @@ const updateProgramacionService = async (
           transaction,
         });
       }
+    }
+
+    const cambioRuta = changedFields.includes('id_ruta');
+    const cambioTrazado = changedFields.includes('id_ruta_version');
+
+    const cambioHorario = [
+      'fecha_programada',
+      'hora_inicio_programada',
+      'hora_fin_programada',
+    ].some((campo) => changedFields.includes(campo));
+
+    if (cambioRuta || cambioTrazado || cambioHorario) {
+      const evento =
+        cambioRuta || cambioTrazado ? 'CAMBIO_RUTA' : 'CAMBIO_HORARIO';
+
+      const horarioNuevo =
+        `Fecha: ${updatedData.fecha_programada}, ` +
+        `de ${updatedData.hora_inicio_programada} ` +
+        `a ${updatedData.hora_fin_programada}.`;
+
+      const datos = {
+        id_programacion: id,
+        id_historial: historial.id_historial,
+        fecha_programada: updatedData.fecha_programada,
+        hora_inicio_programada: updatedData.hora_inicio_programada,
+        hora_fin_programada: updatedData.hora_fin_programada,
+      };
+
+      if (cambioRuta) {
+        await crearAvisoCiudadano({
+          evento,
+          idRuta: previousData.id_ruta,
+          tipoEntidad: 'PROGRAMACION',
+          idEntidad: id,
+          claveEvento:
+            `CAMBIO_RUTA:PROGRAMACION:${id}:HISTORIAL:${historial.id_historial}:ANTERIOR`,
+          titulo: 'Cambio en el servicio de tu ruta',
+          mensaje:
+            'El servicio previsto para tu ruta fue reasignado. ' +
+            'Consulta el calendario de tu domicilio para ver los servicios disponibles.',
+          datos: {
+            id_programacion: id,
+            id_historial: historial.id_historial,
+          },
+          idUsuarioCreacion: actorId,
+          transaction,
+        });
+      }
+
+      await crearAvisoCiudadano({
+        evento,
+        idRuta: updatedData.id_ruta,
+        tipoEntidad: 'PROGRAMACION',
+        idEntidad: id,
+        claveEvento:
+          `${evento}:PROGRAMACION:${id}:HISTORIAL:${historial.id_historial}:VIGENTE`,
+        titulo:
+          evento === 'CAMBIO_RUTA'
+            ? 'Cambio de ruta de recolección'
+            : 'Cambio de horario de recolección',
+        mensaje:
+          evento === 'CAMBIO_RUTA'
+            ? `Se actualizó el recorrido del servicio. ${horarioNuevo}`
+            : `Se modificó el horario de tu servicio. ${horarioNuevo}`,
+        datos,
+        idUsuarioCreacion: actorId,
+        transaction,
+      });
     }
 
     // ------------------------------------------------------

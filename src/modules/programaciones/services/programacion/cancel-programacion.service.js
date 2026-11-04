@@ -4,14 +4,11 @@ const db = require('../../../../database/models');
 const AppError = require('../../../../utils/app-error');
 
 // Services
-const getProgramacionByIdService = require(
-  './get-programacion-by-id.service'
-);
+const getProgramacionByIdService = require('./get-programacion-by-id.service');
+const crearAvisoCiudadano = require('../../../notificaciones/services/ciudadanos/crear-aviso-ciudadano.service');
 
 // Motor de notificaciones
-const {
-  enqueueNotification,
-} = require('../../../../jobs/notification-worker');
+const { enqueueNotification } = require('../../../../jobs/notification-worker');
 
 // Utils
 const {
@@ -278,24 +275,13 @@ const cancelProgramacionService = async (
     // ------------------------------------------------------
     // 7. Registrar historial
     // ------------------------------------------------------
-
     await registerHistory({
       id_programacion: id,
-
-      id_usuario:
-        actorId,
-
-      tipo_evento:
-        'CANCELACION',
-
-      estado_anterior:
-        previousState,
-
-      estado_nuevo:
-        'CANCELADA',
-
-      observacion:
-        reason,
+      id_usuario: actorId,
+      tipo_evento: 'CANCELACION',
+      estado_anterior: previousState,
+      estado_nuevo: 'CANCELADA',
+      observacion: reason,
 
       ip,
       user_agent,
@@ -389,6 +375,29 @@ const cancelProgramacionService = async (
       });
     }
 
+
+    await crearAvisoCiudadano({
+      evento: 'CANCELACION',
+      idRuta: programacion.id_ruta,
+      tipoEntidad: 'PROGRAMACION',
+      idEntidad: id,
+      claveEvento: `CANCELACION_PROGRAMACION:CIUDADANOS:${id}`,
+      titulo: 'Servicio de recolección cancelado',
+      mensaje:
+        `El servicio del ${programacion.fecha_programada}, ` +
+        `de ${programacion.hora_inicio_programada} ` +
+        `a ${programacion.hora_fin_programada}, fue cancelado. ` +
+        'Consulta el calendario de tu domicilio.',
+      prioridad: 'ALTA',
+      datos: {
+        id_programacion: id,
+        fecha_programada: programacion.fecha_programada,
+        estado_programacion: 'CANCELADA',
+      },
+      fechaEvento: cancellationDate,
+      idUsuarioCreacion: actorId,
+      transaction,
+    });
     // ------------------------------------------------------
     // 9. Confirmar cancelación y avisos
     // ------------------------------------------------------

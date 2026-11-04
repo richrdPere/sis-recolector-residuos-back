@@ -42,6 +42,10 @@ const {
   sequelize,
 } = db;
 
+// Services
+const crearAvisoCiudadano = require('../../notificaciones/services/ciudadanos/crear-aviso-ciudadano.service');
+
+
 // ==========================================================
 // SERVICE: CANCELAR RECORRIDO
 // ==========================================================
@@ -436,6 +440,29 @@ const cancelarRecorridoService = async ({
 
       id_usuario_creacion: userId,
 
+      transaction,
+    });
+
+
+    await crearAvisoCiudadano({
+      evento: 'CANCELACION',
+      idRuta: programacion.id_ruta,
+      tipoEntidad: 'RECORRIDO',
+      idEntidad: recorridoId,
+      claveEvento: `CANCELACION_RECORRIDO:CIUDADANOS:${recorridoId}`,
+      titulo: 'Servicio de recolección interrumpido',
+      mensaje:
+        'El recorrido de recolección de tu ruta fue cancelado. ' +
+        'Consulta el estado del servicio en la aplicación.',
+      prioridad: 'ALTA',
+      datos: {
+        id_recorrido: recorridoId,
+        id_programacion: programacion.id_programacion,
+        estado_recorrido: ESTADOS_RECORRIDO.CANCELADO,
+        fecha_cancelacion: eventDate,
+      },
+      fechaEvento: eventDate,
+      idUsuarioCreacion: userId,
       transaction,
     });
 

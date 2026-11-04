@@ -5,6 +5,8 @@ const {
     FUNCIONES_PERSONAL,
 } = require('../utils/programacion.constans');
 
+
+
 /*
 |--------------------------------------------------------------------------
 | Validar identificador
@@ -233,104 +235,115 @@ const validatePersonalFunction = (
 | Verificar que un horario aplique en una fecha
 |--------------------------------------------------------------------------
 */
+const {
+    scheduleAppliesToDate: calendarScheduleAppliesToDate,
+} = require('../../../utils/calendario-recoleccion.utils');
 
-const scheduleAppliesToDate = (
-    schedule,
-    date,
-) => {
-    const programmedDate =
-        validateDateOnly(
-            date,
-            'fecha programada',
-        );
+const scheduleAppliesToDate = (schedule, date) => {
+    const fecha = validateDateOnly(
+        date,
+        'fecha programada',
+    );
 
-    const startDate =
-        String(
-            schedule.fecha_vigencia_desde,
-        ).slice(0, 10);
-
-    const endDate =
-        schedule.fecha_vigencia_hasta
-            ? String(
-                schedule.fecha_vigencia_hasta,
-            ).slice(0, 10)
-            : null;
-
-    if (
-        programmedDate <
-        startDate
-    ) {
-        return false;
-    }
-
-    if (
-        endDate &&
-        programmedDate >
-        endDate
-    ) {
-        return false;
-    }
-
-    if (
-        schedule.frecuencia ===
-        'SEMANAL'
-    ) {
-        return true;
-    }
-
-    const start =
-        new Date(
-            `${startDate}T00:00:00Z`,
-        );
-
-    const programmed =
-        new Date(
-            `${programmedDate}T00:00:00Z`,
-        );
-
-    const differenceDays =
-        Math.floor(
-            (
-                programmed.getTime() -
-                start.getTime()
-            ) /
-            86400000,
-        );
-
-    if (
-        schedule.frecuencia ===
-        'QUINCENAL'
-    ) {
-        const weeks =
-            Math.floor(
-                differenceDays / 7,
-            );
-
-        return weeks % 2 === 0;
-    }
-
-    if (
-        schedule.frecuencia ===
-        'MENSUAL'
-    ) {
-        return (
-            programmed.getUTCDate() ===
-            start.getUTCDate()
-        );
-    }
-
-    if (
-        schedule.frecuencia ===
-        'ESPECIAL'
-    ) {
-        return (
-            programmedDate ===
-            startDate
-        );
-    }
-
-    return false;
+    return calendarScheduleAppliesToDate(schedule, fecha);
 };
+// const scheduleAppliesToDate = (
+//     schedule,
+//     date,
+// ) => {
+//     const programmedDate =
+//         validateDateOnly(
+//             date,
+//             'fecha programada',
+//         );
+
+//     const startDate =
+//         String(
+//             schedule.fecha_vigencia_desde,
+//         ).slice(0, 10);
+
+//     const endDate =
+//         schedule.fecha_vigencia_hasta
+//             ? String(
+//                 schedule.fecha_vigencia_hasta,
+//             ).slice(0, 10)
+//             : null;
+
+//     if (
+//         programmedDate <
+//         startDate
+//     ) {
+//         return false;
+//     }
+
+//     if (
+//         endDate &&
+//         programmedDate >
+//         endDate
+//     ) {
+//         return false;
+//     }
+
+//     if (
+//         schedule.frecuencia ===
+//         'SEMANAL'
+//     ) {
+//         return true;
+//     }
+
+//     const start =
+//         new Date(
+//             `${startDate}T00:00:00Z`,
+//         );
+
+//     const programmed =
+//         new Date(
+//             `${programmedDate}T00:00:00Z`,
+//         );
+
+//     const differenceDays =
+//         Math.floor(
+//             (
+//                 programmed.getTime() -
+//                 start.getTime()
+//             ) /
+//             86400000,
+//         );
+
+//     if (
+//         schedule.frecuencia ===
+//         'QUINCENAL'
+//     ) {
+//         const weeks =
+//             Math.floor(
+//                 differenceDays / 7,
+//             );
+
+//         return weeks % 2 === 0;
+//     }
+
+//     if (
+//         schedule.frecuencia ===
+//         'MENSUAL'
+//     ) {
+//         return (
+//             programmed.getUTCDate() ===
+//             start.getUTCDate()
+//         );
+//     }
+
+//     if (
+//         schedule.frecuencia ===
+//         'ESPECIAL'
+//     ) {
+//         return (
+//             programmedDate ===
+//             startDate
+//         );
+//     }
+
+//     return false;
+// };
 
 module.exports = {
     validateId,

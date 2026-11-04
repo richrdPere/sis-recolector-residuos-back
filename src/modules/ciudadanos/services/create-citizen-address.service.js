@@ -15,6 +15,12 @@ const {
   validateZoneAndRoute,
 } = require('../utils/ciudadano-service.utils');
 
+const {
+  validarCoordenadasDomicilio,
+  validarCiudadanoHabilitado,
+  validarCoberturaDomicilio,
+} = require('../utils/domicilio-cobertura.utils');
+
 // Models
 const {
   CiudadanoDomicilio,
@@ -59,11 +65,15 @@ const createCitizenAddressService = async ({
       )
       : null;
 
-  const coordinates =
-    validateCoordinates({
-      latitud,
-      longitud,
-    });
+  const coordinates = validarCoordenadasDomicilio({
+    latitud,
+    longitud,
+  });
+  // const coordinates =
+  //   validateCoordinates({
+  //     latitud,
+  //     longitud,
+  //   });
 
   const normalizedAddress =
     validateRequiredText(
@@ -72,53 +82,55 @@ const createCitizenAddressService = async ({
       300,
     );
 
-  const normalizedName =
-    validateRequiredText(
-      nombre_domicilio,
-      'nombre del domicilio',
-      100,
-    );
+  const normalizedName = validateRequiredText(
+    nombre_domicilio,
+    'nombre del domicilio',
+    100,
+  );
 
-  const transaction =
-    await sequelize.transaction();
+  const transaction = await sequelize.transaction();
 
   try {
-    const ciudadano =
-      await getCitizenByUserOrFail(
-        userId,
-        {
-          transaction,
+    const ciudadano = await getCitizenByUserOrFail(
+      userId,
+      {
+        transaction,
 
-          lock:
-            transaction
-              .LOCK.UPDATE,
-        },
-      );
+        lock:
+          transaction
+            .LOCK.UPDATE,
+      },
+    );
 
     await validateZoneAndRoute({
-      idZona:
-        zoneId,
-
-      idRuta:
-        routeId,
-
+      idZona: zoneId,
+      idRuta: routeId,
       transaction,
     });
 
-    const activeAddresses =
-      await CiudadanoDomicilio
-        .count({
-          where: {
-            id_ciudadano:
-              ciudadano
-                .id_ciudadano,
+    validarCiudadanoHabilitado(ciudadano);
 
-            estado_domicilio:
-              'ACTIVO',
-          },
+    await validarCoberturaDomicilio({
+      idZona: zoneId,
+      idRuta: routeId,
+      latitud: coordinates.latitud,
+      longitud: coordinates.longitud,
+      transaction,
+    });
 
-          transaction,
-        });
+    const activeAddresses = await CiudadanoDomicilio
+      .count({
+        where: {
+          id_ciudadano:
+            ciudadano
+              .id_ciudadano,
+
+          estado_domicilio:
+            'ACTIVO',
+        },
+
+        transaction,
+      });
 
     const shouldBePrimary =
       activeAddresses === 0 ||
@@ -145,63 +157,51 @@ const createCitizenAddressService = async ({
         );
     }
 
-    const domicilio =
-      await CiudadanoDomicilio
-        .create(
-          {
-            id_ciudadano:
-              ciudadano
-                .id_ciudadano,
+    const domicilio = await CiudadanoDomicilio
+      .create(
+        {
+          id_ciudadano: ciudadano.id_ciudadano,
 
-            id_zona:
-              zoneId,
+          id_zona: zoneId,
 
-            id_ruta:
-              routeId,
+          id_ruta: routeId,
 
-            nombre_domicilio:
-              normalizedName,
+          nombre_domicilio: normalizedName,
 
-            direccion:
-              normalizedAddress,
+          direccion: normalizedAddress,
 
-            referencia:
-              referencia
-                ?.trim() ||
-              null,
+          referencia: referencia
+            ?.trim() ||
+            null,
 
-            latitud:
-              coordinates
-                .latitud,
+          latitud: coordinates.latitud,
 
-            longitud:
-              coordinates
-                .longitud,
+          longitud: coordinates.longitud,
 
-            precision_ubicacion:
-              precision_ubicacion ??
-              null,
+          precision_ubicacion:
+            precision_ubicacion ??
+            null,
 
-            origen_ubicacion:
-              String(
-                origen_ubicacion,
-              ).toUpperCase(),
+          origen_ubicacion:
+            String(
+              origen_ubicacion,
+            ).toUpperCase(),
 
-            es_principal:
-              shouldBePrimary,
+          es_principal:
+            shouldBePrimary,
 
-            estado_domicilio:
-              'ACTIVO',
+          estado_domicilio:
+            'ACTIVO',
 
-            observacion:
-              observacion
-                ?.trim() ||
-              null,
-          },
-          {
-            transaction,
-          },
-        );
+          observacion:
+            observacion
+              ?.trim() ||
+            null,
+        },
+        {
+          transaction,
+        },
+      );
 
     await transaction.commit();
 

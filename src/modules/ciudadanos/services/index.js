@@ -12,6 +12,7 @@ const getNotificationPreferencesService = require('./get-notification-preference
 const updateNotificationPreferencesService = require('./update-notification-preferences.service');
 const getScheduleByAddressService = require('./get-schedule-by-address.service');
 const getActiveServiceByAddressService = require('./get-active-service-by-address.service');
+const resolverCoberturaService = require("./resolver-covertura.service");
 
 module.exports = {
     createCitizenProfileService,
@@ -26,4 +27,5 @@ module.exports = {
     updateNotificationPreferencesService,
     getScheduleByAddressService,
     getActiveServiceByAddressService,
+    resolverCoberturaService,
 };

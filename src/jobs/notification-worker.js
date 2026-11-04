@@ -87,25 +87,43 @@ function runNotificationWorkerOnce() {
       procesadas: 0,
       omitidas: 0,
       errores: 0,
+      proximidad: {
+        creadas: 0,
+        errores: 0,
+      },
     };
 
-    for (
-      let index = 0;
-      index < config.maxLotesPorCiclo;
-      index++
-    ) {
+    // Encolar los avisos de proximidad antes de procesar los pendientes.
+    try {
+      // Carga diferida porque el servicio ciudadano usa
+      // enqueueNotification de este mismo módulo.
+      const evaluarProximidadRecorridos = require(
+        '../modules/notificaciones/services/ciudadanos/evaluar-proximidad-recorrido.service',
+      );
+
+      summary.proximidad = await evaluarProximidadRecorridos();
+      summary.errores += summary.proximidad.errores;
+    } catch (error) {
+      summary.proximidad.errores++;
+      summary.errores++;
+
+      console.error(
+        '[proximidad:worker]',
+        error.code || error.name,
+      );
+    }
+
+    for (let index = 0; index < config.maxLotesPorCiclo; index++) {
       if (stopping) break;
 
-      const result =
-        await processPendingNotificationsService({
-          limit: config.limit,
-          despues_de: cursor,
-          incluir_reintentos: true,
-          maxIntentos: config.maxIntentos,
-        });
+      const result = await processPendingNotificationsService({
+        limit: config.limit,
+        despues_de: cursor,
+        incluir_reintentos: true,
+        maxIntentos: config.maxIntentos,
+      });
 
-      cursor =
-        result.proximo_cursor ?? null;
+      cursor = result.proximo_cursor ?? null;
 
       summary.lotes++;
       summary.revisadas += result.revisadas;
@@ -113,11 +131,7 @@ function runNotificationWorkerOnce() {
       summary.omitidas += result.omitidas;
       summary.errores += result.errores;
 
-      /*
-       * Terminó una vuelta.
-       * El próximo ciclo empieza desde el inicio para
-       * encontrar avisos nuevos o reintentos ya habilitados.
-       */
+      // El siguiente ciclo inicia una nueva vuelta al terminar esta.
       if (cursor === null) {
         break;
       }
@@ -144,8 +158,7 @@ async function tick() {
   if (!active) return;
 
   try {
-    const result =
-      await runNotificationWorkerOnce();
+    const result = await runNotificationWorkerOnce();
 
     if (
       result.procesadas ||

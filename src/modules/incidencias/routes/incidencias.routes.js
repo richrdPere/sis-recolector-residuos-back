@@ -17,6 +17,8 @@ const {
   deleteIncidenciaArchivoController,
 } = require('../controllers/incidencias.controller');
 
+const publicarAvisoIncidencia = require('../services/publicar-aviso-incidencia.service');
+
 // MIDDLEWARES
 const {
   verificarToken,
@@ -64,6 +66,29 @@ const ROLES_GESTION = [
   'ADMIN',
   'SUPERVISOR',
 ];
+
+router.post(
+  '/:id/aviso-publico',
+  autorizarRoles(...ROLES_GESTION),
+  async (req, res, next) => {
+    try {
+      const resultado = await publicarAvisoIncidencia({
+        idIncidencia: req.params.id,
+        idUsuario: req.usuario.id_usuario,
+      });
+
+      return res.status(200).json({
+        success: true,
+        message: resultado.creadas > 0
+          ? 'Aviso ciudadano registrado.'
+          : 'No se generaron avisos nuevos.',
+        data: resultado,
+      });
+    } catch (error) {
+      return next(error);
+    }
+  },
+);
 
 // *********************************************************
 // CONSULTAS

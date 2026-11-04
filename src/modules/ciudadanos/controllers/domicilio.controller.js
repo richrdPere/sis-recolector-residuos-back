@@ -189,26 +189,46 @@ const deleteCitizenAddressController = async (req, res, next) => {
 */
 const getScheduleByAddressController = async (req, res, next) => {
   try {
-    const idUsuario = getAuthenticatedUserId(req);
+    const data = await getScheduleByAddressService({
+      id_usuario: getAuthenticatedUserId(req),
+      id_domicilio: req.params.idDomicilio,
 
-    const data =
-      await getScheduleByAddressService({
-        id_usuario: idUsuario,
-        id_domicilio: req.params.idDomicilio,
-        fecha_referencia: req.query.fecha_referencia || null,
-      });
+      fecha_referencia: req.query.fecha_referencia,
+      fecha_desde: req.query.fecha_desde,
+      fecha_hasta: req.query.fecha_hasta,
+    });
 
-    return res
-      .status(200)
-      .json({
-        success: true,
-        message: 'Cronograma de recolección obtenido correctamente.',
-        data,
-      });
+    return res.status(200).json({
+      success: true,
+      message: 'Cronograma de recolección obtenido correctamente.',
+      data,
+    });
   } catch (error) {
     next(error);
   }
 };
+// const getScheduleByAddressController = async (req, res, next) => {
+//   try {
+//     const idUsuario = getAuthenticatedUserId(req);
+
+//     const data =
+//       await getScheduleByAddressService({
+//         id_usuario: idUsuario,
+//         id_domicilio: req.params.idDomicilio,
+//         fecha_referencia: req.query.fecha_referencia || null,
+//       });
+
+//     return res
+//       .status(200)
+//       .json({
+//         success: true,
+//         message: 'Cronograma de recolección obtenido correctamente.',
+//         data,
+//       });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 /*
 |--------------------------------------------------------------------------
 | 7. Obtener servicio activo del domicilio

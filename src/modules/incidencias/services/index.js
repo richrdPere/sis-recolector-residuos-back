@@ -11,6 +11,7 @@ const agregarIncidenciaArchivosService = require('./agregar-incidencia-archivos.
 const getIncidenciaArchivosService = require('./get-incidencia-archivos.service');
 const getIncidenciaArchivoService = require('./get-incidencia-archivo.service');
 const deleteIncidenciaArchivoService = require('./delete-incidencia-archivo.service');
+const publicarAvisoIncidencia = require('./publicar-aviso-incidencia.service');
 
 module.exports = {
   createIncidenciaService,
@@ -25,4 +26,5 @@ module.exports = {
   getIncidenciaArchivosService,
   getIncidenciaArchivoService,
   deleteIncidenciaArchivoService,
+  publicarAvisoIncidencia,
 };

@@ -155,6 +155,7 @@ const resolveRecipientsService = async ({
   evento = null,
   id_ruta = null,
   id_zona = null,
+  id_domicilio = null,
   enviar_interna = true,
   enviar_push = true,
   fecha_programada = null,
@@ -355,6 +356,16 @@ const resolveRecipientsService = async ({
       );
     }
 
+    if (
+      normalizedEvent === 'PROXIMIDAD_VEHICULO' &&
+      (id_ruta == null || id_domicilio == null)
+    ) {
+      throw new AppError(
+        'El aviso de proximidad requiere una ruta y un domicilio.',
+        400,
+        'PROXIMITY_SCOPE_REQUIRED',
+      );
+    }
     /*
      * La ruta tiene prioridad. No incluye automáticamente
      * a todos los ciudadanos de la zona de esa ruta.
@@ -362,6 +373,10 @@ const resolveRecipientsService = async ({
     const addressWhere = {
       estado_domicilio: 'ACTIVO',
     };
+
+    if (id_domicilio != null) {
+      addressWhere.id_domicilio = validateId(id_domicilio);
+    }
 
     if (id_ruta != null) {
       addressWhere.id_ruta =
