@@ -299,49 +299,34 @@ const resolvePublicQrService =
       };
     }
 
-    const plainQr =
-      codigoQr.toJSON();
+    const plainQr = codigoQr.toJSON();
 
-    const resource =
-      codigoQr
-        .tipo_recurso ===
-        'ZONA'
-        ? {
-          tipo:
-            'ZONA',
+    const resource = codigoQr.tipo_recurso === 'ZONA'
+      ? {
+        tipo: 'ZONA',
 
-          id:
-            plainQr.zona
-              ?.id_zona,
+        id: plainQr.id_zona,
 
-          nombre:
-            plainQr.zona
-              ?.nombre_zona ??
-            plainQr.zona
-              ?.nombre ??
-            null,
-        }
-        : {
-          tipo:
-            'RUTA',
+        nombre:
+          plainQr.zona?.nombre_zona ??
+          plainQr.zona?.nombre ??
+          'Sector no disponible',
+      }
+      : {
+        tipo: 'RUTA',
 
-          id:
-            plainQr.ruta
-              ?.id_ruta,
+        id: plainQr.id_ruta,
 
-          nombre:
-            plainQr.ruta
-              ?.nombre_ruta ??
-            plainQr.ruta
-              ?.nombre ??
-            null,
-        };
+        nombre:
+          plainQr.ruta?.nombre_ruta ??
+          plainQr.ruta?.nombre ??
+          'Ruta no disponible',
+      };
 
     await registerAccess({
       codigoQr,
       token,
-      resultado:
-        'RESUELTO',
+      resultado: 'RESUELTO',
       ip,
       user_agent,
       referer,

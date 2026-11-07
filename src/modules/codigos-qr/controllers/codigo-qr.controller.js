@@ -130,13 +130,14 @@ const regenerateQrCodeController = async (req, res, next) => {
       id_codigo_qr: req.params.idCodigoQr,
       id_usuario_creacion: idUsuario,
       motivo: req.body.motivo,
+      confirmar_reemplazo: req.body.confirmar_reemplazo,
     });
 
     return res
       .status(201)
       .json({
         success: true,
-        message: 'Código QR regenerado correctamente.',
+        message: 'Código QR reemplazado. El enlace anterior fue revocado.',
         data,
       });
   } catch (error) {

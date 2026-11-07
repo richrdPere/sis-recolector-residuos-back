@@ -55,6 +55,46 @@ const ROLES_DETALLE = [
 // Autenticación
 router.use(verificarToken);
 
+const {
+    resultadoFinalService,
+    autorizarConsultaRecorrido,
+} = require('../services/resultado-final.service');
+
+const {
+    getAuthenticatedUserId,
+} = require('../utils/controller.utils');
+
+const resultado = guardar => async (req, res, next) => {
+    try {
+        const data = await resultadoFinalService({
+            id_recorrido: req.params.idRecorrido,
+            id_usuario: getAuthenticatedUserId(req),
+            payload: guardar ? req.body : null,
+        });
+
+        return res.json({
+            success: true,
+            message: guardar
+                ? 'Resultado confirmado.'
+                : 'Resultado consultado.',
+            data,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+router.get('/:idRecorrido/resultado-final',
+    autorizarRoles('CONDUCTOR', 'RECOLECTOR'),
+    resultado(false),
+);
+
+router.post('/:idRecorrido/resultado-final',
+    autorizarRoles('CONDUCTOR', 'RECOLECTOR'),
+    resultado(true),
+);
+
+
 // ROUTES - MOVILES
 router.post('/iniciar/:idProgramacion',
     autorizarRoles(...ROLES_OPERACION),
@@ -77,7 +117,7 @@ router.patch('/finalizar/:idRecorrido',
 );
 
 router.get('/mis-recorridos',
-    autorizarRoles(...ROLES_OPERACION),
+    autorizarRoles('CONDUCTOR', 'RECOLECTOR'),
     getMisRecorridosController,
 );
 
@@ -95,6 +135,7 @@ router.get('/activo',
 
 router.get('/view/:idRecorrido',
     autorizarRoles(...ROLES_DETALLE),
+    autorizarConsultaRecorrido,
     getRecorridoByIdController,
 );
 

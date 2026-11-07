@@ -26,199 +26,386 @@ const {
 // ===============================================
 // SERVICE: Regenerar imagen del codigo QR
 // ===============================================
-const regenerateQrCodeService = async ({
+module.exports = async function regenerateQrCodeService({
   id_codigo_qr,
   id_usuario_creacion,
   motivo,
-}) => {
-  const id =
-    validateId(
-      id_codigo_qr,
-      'identificador del código QR',
+  confirmar_reemplazo = false,
+}) {
+  if (confirmar_reemplazo !== true) {
+    throw new AppError(
+      'Debe confirmar que el enlace anterior dejará de funcionar.',
+      400,
+      'QR_REPLACEMENT_CONFIRMATION_REQUIRED',
     );
+  }
 
-  const creatorId =
-    validateId(
-      id_usuario_creacion,
-      'identificador del usuario creador',
-    );
+  const id = validateId(
+    id_codigo_qr,
+    'identificador del código QR',
+  );
 
-  const reason =
-    validateRequiredText(
-      motivo,
-      'motivo de regeneración',
-      500,
-    );
+  const creatorId = validateId(
+    id_usuario_creacion,
+    'identificador del usuario creador',
+  );
 
-  const transaction =
-    await sequelize.transaction();
+  const reason = validateRequiredText(
+    motivo,
+    'motivo de reemplazo',
+    500,
+  );
 
-  try {
-    const previousQr =
-      await getQrCodeOrFail(
+  const token = generatePublicToken();
+
+  // Validar la URL antes de modificar la base de datos.
+  const urlPublica = buildPublicQrUrl(token);
+
+  return db.sequelize.transaction(
+    async (transaction) => {
+      const anterior = await getQrCodeOrFail(
         id,
+
         {
           transaction,
-
-          lock:
-            transaction
-              .LOCK.UPDATE,
+          lock: transaction.LOCK.UPDATE,
         },
       );
 
-    if (
-      previousQr
-        .estado_qr ===
-      'REVOCADO'
-    ) {
-      throw new AppError(
-        'El código QR ya fue revocado.',
-        409,
-        'QR_ALREADY_REVOKED',
-      );
-    }
+      if (
+        anterior.estado_qr === 'REVOCADO'
+      ) {
+        throw new AppError(
+          'El código QR ya fue revocado o reemplazado.',
+          409,
+          'QR_ALREADY_REVOKED',
+        );
+      }
 
-    const existingReplacement =
-      await CodigoQr.findOne({
-        where: {
-          id_codigo_reemplazado:
-            previousQr
-              .id_codigo_qr,
-        },
+      const reemplazo =
+        await db.CodigoQr.findOne({
+          where: {
+            id_codigo_reemplazado: id,
+          },
 
-        transaction,
+          transaction,
+        });
 
-        lock:
-          transaction
-            .LOCK.UPDATE,
-      });
+      if (reemplazo) {
+        throw new AppError(
+          'El código QR ya tiene un reemplazo.',
+          409,
+          'QR_ALREADY_REPLACED',
+        );
+      }
 
-    if (
-      existingReplacement
-    ) {
-      throw new AppError(
-        'El código QR ya tiene un reemplazo.',
-        409,
-        'QR_ALREADY_REPLACED',
-      );
-    }
+      const otroActivo =
+        await db.CodigoQr.findOne({
+          where: {
+            tipo_recurso:
+              anterior.tipo_recurso,
 
-    const newToken =
-      generatePublicToken();
+            estado_qr: 'ACTIVO',
 
-    const newQr =
-      await CodigoQr.create(
+            id_codigo_qr: {
+              [Op.ne]: id,
+            },
+
+            ...(
+              anterior.tipo_recurso === 'ZONA'
+                ? {
+                  id_zona:
+                    anterior.id_zona,
+                }
+                : {
+                  id_ruta:
+                    anterior.id_ruta,
+                }
+            ),
+          },
+
+          transaction,
+          lock: transaction.LOCK.UPDATE,
+        });
+
+      if (otroActivo) {
+        throw new AppError(
+          'El recurso ya tiene otro QR activo. Utilice ese código.',
+          409,
+          'ACTIVE_QR_ALREADY_EXISTS',
+        );
+      }
+
+      const nuevo = await db.CodigoQr.create(
         {
           codigo:
             generateAdministrativeCode(
-              previousQr
-                .tipo_recurso,
+              anterior.tipo_recurso,
             ),
 
-          token_publico:
-            newToken,
+          token_publico: token,
 
           tipo_recurso:
-            previousQr
-              .tipo_recurso,
+            anterior.tipo_recurso,
 
-          id_zona:
-            previousQr
-              .id_zona,
+          id_zona: anterior.id_zona,
+          id_ruta: anterior.id_ruta,
 
-          id_ruta:
-            previousQr
-              .id_ruta,
-
-          titulo:
-            previousQr
-              .titulo,
-
-          descripcion:
-            previousQr
-              .descripcion,
+          titulo: anterior.titulo,
+          descripcion: anterior.descripcion,
 
           version:
-            Number(
-              previousQr
-                .version,
-            ) + 1,
+            Number(anterior.version) + 1,
 
           id_codigo_reemplazado:
-            previousQr
-              .id_codigo_qr,
+            anterior.id_codigo_qr,
 
-          estado_qr:
-            'ACTIVO',
+          estado_qr: 'ACTIVO',
 
-          fecha_generacion:
-            new Date(),
+          fecha_generacion: new Date(),
 
-          fecha_expiracion:
-            previousQr
-              .fecha_expiracion,
+          // El reemplazo permanente no hereda
+          // la expiración del código anterior.
+          fecha_expiracion: null,
 
           id_usuario_creacion:
             creatorId,
 
           observacion:
-            `Código regenerado. ${reason}`,
+            `Código reemplazado. ${reason}`,
         },
+
         {
           transaction,
         },
       );
 
-    await previousQr.update(
-      {
-        estado_qr:
-          'REVOCADO',
+      await anterior.update(
+        {
+          estado_qr: 'REVOCADO',
 
-        fecha_revocacion:
-          new Date(),
+          fecha_revocacion:
+            new Date(),
 
-        motivo_revocacion:
-          reason,
-      },
-      {
-        transaction,
-      },
-    );
+          motivo_revocacion:
+            reason,
+        },
 
-    await transaction.commit();
+        {
+          transaction,
+        },
+      );
 
-    return {
-      codigo_anterior: {
-        id_codigo_qr:
-          previousQr
-            .id_codigo_qr,
+      return {
+        codigo_anterior: {
+          id_codigo_qr:
+            anterior.id_codigo_qr,
 
-        codigo:
-          previousQr
-            .codigo,
+          codigo: anterior.codigo,
 
-        estado_qr:
-          previousQr
-            .estado_qr,
-      },
+          estado_qr:
+            anterior.estado_qr,
+        },
 
-      codigo_nuevo:
-        newQr,
-
-      url_publica:
-        buildPublicQrUrl(
-          newToken,
-        ),
-    };
-  } catch (error) {
-    if (
-      !transaction.finished
-    ) {
-      await transaction.rollback();
-    }
-
-    throw error;
-  }
+        codigo_nuevo: nuevo,
+        url_publica: urlPublica,
+      };
+    },
+  );
 };
+// const regenerateQrCodeService = async ({
+//   id_codigo_qr,
+//   id_usuario_creacion,
+//   motivo,
+// }) => {
+//   const id =
+//     validateId(
+//       id_codigo_qr,
+//       'identificador del código QR',
+//     );
 
-module.exports = regenerateQrCodeService;
+//   const creatorId =
+//     validateId(
+//       id_usuario_creacion,
+//       'identificador del usuario creador',
+//     );
+
+//   const reason =
+//     validateRequiredText(
+//       motivo,
+//       'motivo de regeneración',
+//       500,
+//     );
+
+//   const transaction =
+//     await sequelize.transaction();
+
+//   try {
+//     const previousQr =
+//       await getQrCodeOrFail(
+//         id,
+//         {
+//           transaction,
+
+//           lock:
+//             transaction
+//               .LOCK.UPDATE,
+//         },
+//       );
+
+//     if (
+//       previousQr
+//         .estado_qr ===
+//       'REVOCADO'
+//     ) {
+//       throw new AppError(
+//         'El código QR ya fue revocado.',
+//         409,
+//         'QR_ALREADY_REVOKED',
+//       );
+//     }
+
+//     const existingReplacement =
+//       await CodigoQr.findOne({
+//         where: {
+//           id_codigo_reemplazado:
+//             previousQr
+//               .id_codigo_qr,
+//         },
+
+//         transaction,
+
+//         lock:
+//           transaction
+//             .LOCK.UPDATE,
+//       });
+
+//     if (
+//       existingReplacement
+//     ) {
+//       throw new AppError(
+//         'El código QR ya tiene un reemplazo.',
+//         409,
+//         'QR_ALREADY_REPLACED',
+//       );
+//     }
+
+//     const newToken =
+//       generatePublicToken();
+
+//     const newQr =
+//       await CodigoQr.create(
+//         {
+//           codigo:
+//             generateAdministrativeCode(
+//               previousQr
+//                 .tipo_recurso,
+//             ),
+
+//           token_publico:
+//             newToken,
+
+//           tipo_recurso:
+//             previousQr
+//               .tipo_recurso,
+
+//           id_zona:
+//             previousQr
+//               .id_zona,
+
+//           id_ruta:
+//             previousQr
+//               .id_ruta,
+
+//           titulo:
+//             previousQr
+//               .titulo,
+
+//           descripcion:
+//             previousQr
+//               .descripcion,
+
+//           version:
+//             Number(
+//               previousQr
+//                 .version,
+//             ) + 1,
+
+//           id_codigo_reemplazado:
+//             previousQr
+//               .id_codigo_qr,
+
+//           estado_qr:
+//             'ACTIVO',
+
+//           fecha_generacion:
+//             new Date(),
+
+//           fecha_expiracion:
+//             previousQr
+//               .fecha_expiracion,
+
+//           id_usuario_creacion:
+//             creatorId,
+
+//           observacion:
+//             `Código regenerado. ${reason}`,
+//         },
+//         {
+//           transaction,
+//         },
+//       );
+
+//     await previousQr.update(
+//       {
+//         estado_qr:
+//           'REVOCADO',
+
+//         fecha_revocacion:
+//           new Date(),
+
+//         motivo_revocacion:
+//           reason,
+//       },
+//       {
+//         transaction,
+//       },
+//     );
+
+//     await transaction.commit();
+
+//     return {
+//       codigo_anterior: {
+//         id_codigo_qr:
+//           previousQr
+//             .id_codigo_qr,
+
+//         codigo:
+//           previousQr
+//             .codigo,
+
+//         estado_qr:
+//           previousQr
+//             .estado_qr,
+//       },
+
+//       codigo_nuevo:
+//         newQr,
+
+//       url_publica:
+//         buildPublicQrUrl(
+//           newToken,
+//         ),
+//     };
+//   } catch (error) {
+//     if (
+//       !transaction.finished
+//     ) {
+//       await transaction.rollback();
+//     }
+
+//     throw error;
+//   }
+// };
+
+// module.exports = regenerateQrCodeService;

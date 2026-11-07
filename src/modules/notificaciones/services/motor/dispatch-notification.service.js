@@ -325,11 +325,18 @@ const dispatchNotificationService = async ({
      *
      * Se conserva PROCESANDO para revisión.
      */
-    console.error(
-      '[notificacion:dispatch]',
-      notificationId,
-      error.name,
-    );
+    // console.error(
+    //   '[notificacion:dispatch]',
+    //   notificationId,
+    //   error.name,
+    // );
+    console.error('[notificacion:dispatch]', {
+      id_notificacion: notificationId,
+      nombre: error.name,
+      codigo: error.code,
+      mensaje: error.message,
+      stack: error.stack,
+    });
 
     throw error;
   }

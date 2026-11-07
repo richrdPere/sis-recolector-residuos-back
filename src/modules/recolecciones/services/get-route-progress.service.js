@@ -102,13 +102,9 @@ const getRouteProgressService = async (idRecorrido) => {
     );
 
   const mandatoryPoints =
-    points.filter(
-      (
-        point,
-      ) =>
-        point
-          .es_obligatorio !==
-        false,
+    points.filter((point) =>
+      // point.es_obligatorio !== false,
+      point.obligatorio !== false
     );
 
   const attendedMandatory =
@@ -117,26 +113,21 @@ const getRouteProgressService = async (idRecorrido) => {
         point,
       ) =>
         collectedPointIds.has(
-          String(
-            point
-              .id_ruta_punto,
-          ),
+          String(point.id_ruta_punto),
         ),
     ).length;
 
-  const totalMandatory =
-    mandatoryPoints.length;
+  const totalMandatory = mandatoryPoints.length;
 
-  const percentage =
-    totalMandatory > 0
-      ? Number(
-        (
-          attendedMandatory /
-          totalMandatory *
-          100
-        ).toFixed(2),
-      )
-      : 0;
+  const percentage = totalMandatory > 0
+    ? Number(
+      (
+        attendedMandatory /
+        totalMandatory *
+        100
+      ).toFixed(2),
+    )
+    : 0;
 
   const totalsByUnit = {};
 
@@ -145,10 +136,7 @@ const getRouteProgressService = async (idRecorrido) => {
     of registeredCollections
   ) {
     if (
-      item
-        .cantidad_recolectada ===
-      null ||
-      !item.unidad_medida
+      item.cantidad_recolectada === null || !item.unidad_medida
     ) {
       continue;
     }
@@ -168,45 +156,41 @@ const getRouteProgressService = async (idRecorrido) => {
   }
 
   return {
-    id_recorrido:
-      recorridoId,
+    id_recorrido: recorridoId,
 
-    total_puntos:
-      points.length,
+    total_puntos: points.length,
 
-    puntos_atendidos:
-      collectedPointIds.size,
+    puntos_atendidos: collectedPointIds.size,
 
-    puntos_pendientes:
-      Math.max(
-        points.length -
-        collectedPointIds.size,
-        0,
-      ),
+    puntos_pendientes: Math.max(
+      points.length - collectedPointIds.size,
+      0,
+    ),
 
-    puntos_obligatorios:
-      totalMandatory,
+    puntos_obligatorios: totalMandatory,
 
-    obligatorios_atendidos:
-      attendedMandatory,
+    obligatorios_atendidos: attendedMandatory,
 
-    obligatorios_pendientes:
-      Math.max(
-        totalMandatory -
-        attendedMandatory,
-        0,
-      ),
+    obligatorios_pendientes: Math.max(
+      totalMandatory - attendedMandatory,
+      0,
+    ),
 
-    porcentaje_progreso:
-      percentage,
+    porcentaje_progreso: percentage,
 
-    ruta_completada:
-      totalMandatory > 0 &&
-      attendedMandatory ===
-      totalMandatory,
+    ruta_completada: totalMandatory > 0 &&
+      attendedMandatory === totalMandatory,
 
-    cantidades_por_unidad:
-      totalsByUnit,
+    cantidades_por_unidad: recorrido.resultado_final
+      ? {
+        [recorrido.resultado_final.unidad_medida]:
+          recorrido.resultado_final.cantidad_total,
+      }
+      : {},
+
+    resultado_final_pendiente:
+      !recorrido.resultado_final,
+    // cantidades_por_unidad: totalsByUnit,
   };
 };
 

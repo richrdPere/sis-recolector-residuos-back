@@ -1,6 +1,12 @@
 const express = require('express');
 const router = express.Router();
 
+// La ubicación y el estado operativo no deben quedar en caché.
+router.use((_req, res, next) => {
+  res.set('Cache-Control', 'no-store');
+  next();
+});
+
 // Controllers
 const {
   resolvePublicQrController,

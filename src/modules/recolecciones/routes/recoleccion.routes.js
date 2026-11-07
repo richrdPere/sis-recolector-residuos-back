@@ -61,6 +61,12 @@ const ROLES_GESTION = [
 
 router.use(verificarToken);
 
+const { autorizarConsultaRecorrido } = require('../../recorridos/services/resultado-final.service');
+
+router.use('/recorridos/:idRecorrido',
+  autorizarConsultaRecorrido,
+);
+
 // ===============================================
 // Registro móvil
 // ===============================================
@@ -98,7 +104,7 @@ router.get('/recorridos/:idRecorrido/progreso',
 // ===============================================
 // Evidencias
 // ===============================================
-router.post('/evidencias/:idRecoleccion', 
+router.post('/evidencias/:idRecoleccion',
   autorizarRoles(
     ...ROLES_OPERACION,
   ),

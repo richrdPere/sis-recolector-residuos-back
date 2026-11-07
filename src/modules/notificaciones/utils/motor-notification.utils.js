@@ -5,7 +5,7 @@ const { Op } = require('sequelize');
 const db = require('../../../database/models');
 
 // Service
-const registerDeliveryResultService = require('../services/motor/register-delivery-result.service');
+// const registerDeliveryResultService = require('../services/motor/register-delivery-result.service');
 
 // Utils
 const AppError = require('../../../utils/app-error');
@@ -338,6 +338,12 @@ async function sendRecipientPush(
   recipient,
   options,
 ) {
+
+  // Cargar el servicio cuando los módulos ya terminaron de inicializarse.
+  const registerDeliveryResultService = require(
+    '../services/motor/register-delivery-result.service',
+  );
+
   if (!notification.enviar_push) {
     await recipient.update(
       {
@@ -582,43 +588,42 @@ async function sendRecipientPush(
      * Se registra el intento antes de contactar a FCM.
      * Si el proceso se interrumpe, queda constancia.
      */
-    const attempts =
-      await sequelize.transaction(
-        async (transaction) => {
-          const result = [];
+    const attempts = await sequelize.transaction(
+      async (transaction) => {
+        const result = [];
 
-          for (const item of batch) {
-            const attempt =
-              await NotificacionEnvio.create(
-                {
-                  id_notificacion_usuario:
-                    recipient.id_notificacion_usuario,
+        for (const item of batch) {
+          const attempt =
+            await NotificacionEnvio.create(
+              {
+                id_notificacion_usuario:
+                  recipient.id_notificacion_usuario,
 
-                  id_dispositivo:
-                    item.device.id_dispositivo,
+                id_dispositivo:
+                  item.device.id_dispositivo,
 
-                  proveedor: 'FCM',
+                proveedor: 'FCM',
 
-                  numero_intento:
-                    item.numero,
+                numero_intento:
+                  item.numero,
 
-                  estado_envio:
-                    'PROCESANDO',
+                estado_envio:
+                  'PROCESANDO',
 
-                  fecha_intento:
-                    new Date(),
-                },
-                {
-                  transaction,
-                },
-              );
+                fecha_intento:
+                  new Date(),
+              },
+              {
+                transaction,
+              },
+            );
 
-            result.push(attempt);
-          }
+          result.push(attempt);
+        }
 
-          return result;
-        },
-      );
+        return result;
+      },
+    );
 
     attemptedThisRun = true;
 

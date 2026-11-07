@@ -122,8 +122,10 @@ const finalizarRecorridoService = async ({
       );
 
     if (
-      recorrido.estado_recorrido !==
-      ESTADOS_RECORRIDO.EN_CURSO
+      ![
+        ESTADOS_RECORRIDO.EN_CURSO,
+        ESTADOS_RECORRIDO.PAUSADO,
+      ].includes(recorrido.estado_recorrido)
     ) {
       throw new AppError(
         'Solo se puede finalizar un recorrido en curso.',

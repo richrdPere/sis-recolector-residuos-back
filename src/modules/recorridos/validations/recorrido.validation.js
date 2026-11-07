@@ -8,10 +8,12 @@ const validateId = (
 ) => {
     const id = Number(value);
 
-    if (
-        !Number.isInteger(id) ||
-        id <= 0
-    ) {
+    if (!Number.isInteger(id) || id <= 0) {
+        console.trace('[recorridos:INVALID_ID]', {
+            campo: field,
+            valor: value,
+        });
+
         throw new AppError(
             `El ${field} no es válido.`,
             400,

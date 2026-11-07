@@ -32,128 +32,6 @@ const {
 // ===============================================
 // SERVICE: Obtener cronograma publico
 // ===============================================
-// const getRouteSchedule = async ({
-//   ruta,
-//   referenceDate,
-// }) => {
-//   const referenceDateOnly =
-//     formatDateOnly(
-//       referenceDate,
-//     );
-
-//   const searchEnd =
-//     formatDateOnly(
-//       addDays(
-//         referenceDate,
-//         90,
-//       ),
-//     );
-
-//   const horarios =
-//     await RutaHorario.findAll({
-//       where: {
-//         id_ruta:
-//           ruta.id_ruta,
-
-//         estado: true,
-
-//         [Op.and]: [
-//           {
-//             [Op.or]: [
-//               {
-//                 fecha_inicio:
-//                   null,
-//               },
-//               {
-//                 fecha_inicio: {
-//                   [Op.lte]:
-//                     searchEnd,
-//                 },
-//               },
-//             ],
-//           },
-//           {
-//             [Op.or]: [
-//               {
-//                 fecha_fin:
-//                   null,
-//               },
-//               {
-//                 fecha_fin: {
-//                   [Op.gte]:
-//                     referenceDateOnly,
-//                 },
-//               },
-//             ],
-//           },
-//         ],
-//       },
-
-//       order: [
-//         [
-//           'dia_semana',
-//           'ASC',
-//         ],
-//         [
-//           'hora_inicio',
-//           'ASC',
-//         ],
-//       ],
-//     });
-
-//   const scheduleData =
-//     horarios.map(
-//       (horario) => {
-//         const item =
-//           horario.get({
-//             plain: true,
-//           });
-
-//         return {
-//           dia_semana:
-//             item.dia_semana,
-
-//           hora_inicio:
-//             item.hora_inicio,
-
-//           hora_fin:
-//             item.hora_fin,
-
-//           frecuencia:
-//             item.frecuencia,
-
-//           fecha_inicio:
-//             item.fecha_inicio,
-
-//           fecha_fin:
-//             item.fecha_fin,
-//         };
-//       },
-//     );
-
-//   return {
-//     ruta: {
-//       id_ruta:
-//         ruta.id_ruta,
-
-//       nombre:
-//         getRoutePublicName(
-//           ruta,
-//         ),
-//     },
-
-//     horarios:
-//       scheduleData,
-
-//     proxima_recoleccion:
-//       findNextCollection({
-//         schedules:
-//           scheduleData,
-
-//         referenceDate,
-//       }),
-//   };
-// };
 const getRouteSchedule = async ({
   ruta,
   referenceDate,
@@ -244,30 +122,23 @@ const getPublicScheduleService =
       );
     }
 
-    const referenceDateValue =
-      fecha_referencia ||
-      getPeruDateOnly();
+    const referenceDateValue = fecha_referencia || getPeruDateOnly();
 
-    const referenceDate =
-      parseDateOnly(
-        referenceDateValue,
-      );
+    const referenceDate = parseDateOnly(referenceDateValue);
 
     /*
      * Consulta para un QR de ruta.
      */
 
     if (id_ruta) {
-      const routeId =
-        validateId(
-          id_ruta,
-          'identificador de la ruta',
-        );
+      const routeId = validateId(
+        id_ruta,
+        'identificador de la ruta',
+      );
 
-      const ruta =
-        await Ruta.findByPk(
-          routeId,
-        );
+      const ruta = await Ruta.findByPk(
+        routeId,
+      );
 
       if (!ruta) {
         throw new AppError(
@@ -277,11 +148,10 @@ const getPublicScheduleService =
         );
       }
 
-      const routeSchedule =
-        await getRouteSchedule({
-          ruta,
-          referenceDate,
-        });
+      const routeSchedule = await getRouteSchedule({
+        ruta,
+        referenceDate,
+      });
 
       return {
         fecha_consulta:
@@ -308,10 +178,9 @@ const getPublicScheduleService =
         'identificador de la zona',
       );
 
-    const zona =
-      await Zona.findByPk(
-        zoneId,
-      );
+    const zona = await Zona.findByPk(
+      zoneId,
+    );
 
     if (!zona) {
       throw new AppError(
@@ -321,22 +190,23 @@ const getPublicScheduleService =
       );
     }
 
-    const rutas =
-      await Ruta.findAll({
-        where: {
-          id_zona:
-            zoneId,
-
-          estado: true,
+    const rutas = await Ruta.findAll({
+      where: {
+        id_zona: zoneId,
+        estado: true,
+        // estado_ruta: 'ACTIVA',
+        estado_ruta: {
+          [Op.ne]: 'BORRADOR',
         },
+      },
 
-        order: [
-          [
-            'id_ruta',
-            'ASC',
-          ],
+      order: [
+        [
+          'id_ruta',
+          'ASC',
         ],
-      });
+      ],
+    });
 
     const routeSchedules =
       await Promise.all(

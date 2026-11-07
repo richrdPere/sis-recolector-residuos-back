@@ -81,6 +81,14 @@ router.patch('/:idCodigoQr/regenerar',
   regenerateQrCodeController,
 );
 
+router.patch('/:idCodigoQr/reemplazar',
+  autorizarRoles(
+    ...ROLES_GESTION,
+  ),
+
+  regenerateQrCodeController,
+);
+
 // ==========================================================
 // Detalle
 // ==========================================================

@@ -19,6 +19,8 @@ const dashboardRoutes = require('../modules/monitoreo/routes/dashboard.routes');
 const usuarioRoutes = require('../modules/usuarios/routes/usuario.routes');
 const mantenimientosRoutes = require('../modules/mantenimientos/routes/mantenimientos.routes');
 const incidenciasRoutes = require("../modules/incidencias/routes/incidencias.routes");
+const reportesRoutes = require("../modules/reportes/routes/reporte.routes");
+
 
 // Rutas
 router.use("/auth", authRoutes); // COMPLETE 
@@ -38,6 +40,7 @@ router.use('/monitoreo', monitoreoRoutes); // COMPLETE
 router.use('/dashboard', dashboardRoutes); // COMPLETE
 router.use('/usuarios', usuarioRoutes); // COMPLETE
 router.use("/mantenimientos", mantenimientosRoutes); // COMPLETE
-router.use('/incidencias', incidenciasRoutes);
+router.use('/incidencias', incidenciasRoutes); 
+router.use('/reportes', reportesRoutes); 
 
 module.exports = router;

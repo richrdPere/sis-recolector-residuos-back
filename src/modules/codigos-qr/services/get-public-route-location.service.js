@@ -1,271 +1,283 @@
-// services/get-public-route-location.service.js
+const getPublicRouteData = require('./get-public-route-data.service');
 
-const { Op } = require('sequelize');
-const db = require('../../../database/models');
+module.exports = async function getPublicRouteLocationService(
+  params,
+) {
+  const datos = await getPublicRouteData(params);
 
-const AppError = require('../../../utils/app-error');
-
-// Validation
-const { validateId } = require('../validations/codigo-qr.validation');
-
-// Modelos
-const {
-  Ruta,
-  Recorrido,
-  RecorridoUltimaUbicacion,
-} = db;
+  return datos.ubicacion;
+};
 
 
-// ===============================================
-// SERVICE: Ubicacion publica aproximada
-// ===============================================
-const getPublicRouteLocationService =
-  async ({
-    id_ruta,
-  }) => {
-    const routeId =
-      validateId(
-        id_ruta,
-        'identificador de la ruta',
-      );
 
-    const ruta =
-      await Ruta.findByPk(
-        routeId,
-      );
+// // services/get-public-route-location.service.js
 
-    if (!ruta) {
-      throw new AppError(
-        'La ruta no fue encontrada.',
-        404,
-        'ROUTE_NOT_FOUND',
-      );
-    }
+// const { Op } = require('sequelize');
+// const db = require('../../../database/models');
 
-    const recorrido =
-      await Recorrido.findOne({
-        where: {
-          estado_recorrido: {
-            [Op.in]: [
-              'EN_CURSO',
-              'PAUSADO',
-            ],
-          },
-        },
+// const AppError = require('../../../utils/app-error');
 
-        include: [
-          {
-            association:
-              'programacion',
+// // Validation
+// const { validateId } = require('../validations/codigo-qr.validation');
 
-            attributes: [],
+// // Modelos
+// const {
+//   Ruta,
+//   Recorrido,
+//   RecorridoUltimaUbicacion,
+// } = db;
 
-            where: {
-              id_ruta:
-                routeId,
-            },
 
-            required: true,
-          },
-        ],
+// // ===============================================
+// // SERVICE: Ubicacion publica aproximada
+// // ===============================================
+// const getPublicRouteLocationService =
+//   async ({
+//     id_ruta,
+//   }) => {
+//     const routeId =
+//       validateId(
+//         id_ruta,
+//         'identificador de la ruta',
+//       );
 
-        order: [
-          [
-            'fecha_hora_inicio',
-            'DESC',
-          ],
-        ],
-      });
+//     const ruta =
+//       await Ruta.findByPk(
+//         routeId,
+//       );
 
-    if (!recorrido) {
-      return {
-        disponible: false,
+//     if (!ruta) {
+//       throw new AppError(
+//         'La ruta no fue encontrada.',
+//         404,
+//         'ROUTE_NOT_FOUND',
+//       );
+//     }
 
-        motivo:
-          'SIN_RECORRIDO_ACTIVO',
+//     const recorrido =
+//       await Recorrido.findOne({
+//         where: {
+//           estado_recorrido: {
+//             [Op.in]: [
+//               'EN_CURSO',
+//               'PAUSADO',
+//             ],
+//           },
+//         },
 
-        mensaje:
-          'El vehículo no está realizando actualmente esta ruta.',
-      };
-    }
+//         include: [
+//           {
+//             association:
+//               'programacion',
 
-    const location =
-      await RecorridoUltimaUbicacion
-        .findOne({
-          where: {
-            id_recorrido:
-              recorrido
-                .id_recorrido,
-          },
-        });
+//             attributes: [],
 
-    if (!location) {
-      return {
-        disponible: false,
+//             where: {
+//               id_ruta:
+//                 routeId,
+//             },
 
-        motivo:
-          'UBICACION_NO_DISPONIBLE',
+//             required: true,
+//           },
+//         ],
 
-        mensaje:
-          'Todavía no existe una ubicación disponible para el vehículo.',
-      };
-    }
+//         order: [
+//           [
+//             'fecha_hora_inicio',
+//             'DESC',
+//           ],
+//         ],
+//       });
 
-    const plainLocation =
-      location.get({
-        plain: true,
-      });
+//     if (!recorrido) {
+//       return {
+//         disponible: false,
 
-    /*
-     * Ajusta esta selección si tu modelo utiliza un único
-     * nombre específico para la fecha de posición.
-     */
+//         motivo:
+//           'SIN_RECORRIDO_ACTIVO',
 
-    const locationDate =
-      plainLocation
-        .fecha_posicion ||
-      plainLocation
-        .fecha_ubicacion ||
-      plainLocation
-        .fecha_recepcion ||
-      plainLocation
-        .updated_at ||
-      plainLocation
-        .created_at;
+//         mensaje:
+//           'El vehículo no está realizando actualmente esta ruta.',
+//       };
+//     }
 
-    if (!locationDate) {
-      return {
-        disponible: false,
+//     const location =
+//       await RecorridoUltimaUbicacion
+//         .findOne({
+//           where: {
+//             id_recorrido:
+//               recorrido
+//                 .id_recorrido,
+//           },
+//         });
 
-        motivo:
-          'FECHA_UBICACION_NO_DISPONIBLE',
+//     if (!location) {
+//       return {
+//         disponible: false,
 
-        mensaje:
-          'No se pudo determinar la antigüedad de la ubicación.',
-      };
-    }
+//         motivo:
+//           'UBICACION_NO_DISPONIBLE',
 
-    const maxAgeMinutes =
-      Math.max(
-        Number(
-          process.env
-            .PUBLIC_LOCATION_MAX_AGE_MINUTES,
-        ) || 5,
-        1,
-      );
+//         mensaje:
+//           'Todavía no existe una ubicación disponible para el vehículo.',
+//       };
+//     }
 
-    const ageMilliseconds =
-      Date.now() -
-      new Date(
-        locationDate,
-      ).getTime();
+//     const plainLocation =
+//       location.get({
+//         plain: true,
+//       });
 
-    const ageMinutes =
-      ageMilliseconds /
-      60000;
+//     /*
+//      * Ajusta esta selección si tu modelo utiliza un único
+//      * nombre específico para la fecha de posición.
+//      */
 
-    if (
-      ageMinutes >
-      maxAgeMinutes
-    ) {
-      return {
-        disponible: false,
+//     const locationDate =
+//       plainLocation
+//         .fecha_posicion ||
+//       plainLocation
+//         .fecha_ubicacion ||
+//       plainLocation
+//         .fecha_recepcion ||
+//       plainLocation
+//         .updated_at ||
+//       plainLocation
+//         .created_at;
 
-        motivo:
-          'UBICACION_DESACTUALIZADA',
+//     if (!locationDate) {
+//       return {
+//         disponible: false,
 
-        mensaje:
-          'La última ubicación disponible está desactualizada.',
+//         motivo:
+//           'FECHA_UBICACION_NO_DISPONIBLE',
 
-        ultima_actualizacion:
-          locationDate,
-      };
-    }
+//         mensaje:
+//           'No se pudo determinar la antigüedad de la ubicación.',
+//       };
+//     }
 
-    const configuredDecimals =
-      Number(
-        process.env
-          .PUBLIC_LOCATION_DECIMALS,
-      );
+//     const maxAgeMinutes =
+//       Math.max(
+//         Number(
+//           process.env
+//             .PUBLIC_LOCATION_MAX_AGE_MINUTES,
+//         ) || 5,
+//         1,
+//       );
 
-    const decimals =
-      Number.isInteger(
-        configuredDecimals,
-      )
-        ? Math.min(
-          Math.max(
-            configuredDecimals,
-            2,
-          ),
-          4,
-        )
-        : 3;
+//     const ageMilliseconds =
+//       Date.now() -
+//       new Date(
+//         locationDate,
+//       ).getTime();
 
-    const latitude =
-      Number(
-        plainLocation.latitud,
-      );
+//     const ageMinutes =
+//       ageMilliseconds /
+//       60000;
 
-    const longitude =
-      Number(
-        plainLocation.longitud,
-      );
+//     if (
+//       ageMinutes >
+//       maxAgeMinutes
+//     ) {
+//       return {
+//         disponible: false,
 
-    if (
-      !Number.isFinite(
-        latitude,
-      ) ||
-      !Number.isFinite(
-        longitude,
-      )
-    ) {
-      return {
-        disponible: false,
+//         motivo:
+//           'UBICACION_DESACTUALIZADA',
 
-        motivo:
-          'COORDENADAS_NO_DISPONIBLES',
+//         mensaje:
+//           'La última ubicación disponible está desactualizada.',
 
-        mensaje:
-          'La ubicación registrada no contiene coordenadas válidas.',
-      };
-    }
+//         ultima_actualizacion:
+//           locationDate,
+//       };
+//     }
 
-    return {
-      disponible: true,
+//     const configuredDecimals =
+//       Number(
+//         process.env
+//           .PUBLIC_LOCATION_DECIMALS,
+//       );
 
-      latitud:
-        Number(
-          latitude.toFixed(
-            decimals,
-          ),
-        ),
+//     const decimals =
+//       Number.isInteger(
+//         configuredDecimals,
+//       )
+//         ? Math.min(
+//           Math.max(
+//             configuredDecimals,
+//             2,
+//           ),
+//           4,
+//         )
+//         : 3;
 
-      longitud:
-        Number(
-          longitude.toFixed(
-            decimals,
-          ),
-        ),
+//     const latitude =
+//       Number(
+//         plainLocation.latitud,
+//       );
 
-      ultima_actualizacion:
-        locationDate,
+//     const longitude =
+//       Number(
+//         plainLocation.longitud,
+//       );
 
-      estado_recorrido:
-        recorrido
-          .estado_recorrido,
+//     if (
+//       !Number.isFinite(
+//         latitude,
+//       ) ||
+//       !Number.isFinite(
+//         longitude,
+//       )
+//     ) {
+//       return {
+//         disponible: false,
 
-      es_aproximada:
-        true,
+//         motivo:
+//           'COORDENADAS_NO_DISPONIBLES',
 
-      antiguedad_segundos:
-        Math.max(
-          Math.floor(
-            ageMilliseconds /
-            1000,
-          ),
-          0,
-        ),
-    };
-  };
+//         mensaje:
+//           'La ubicación registrada no contiene coordenadas válidas.',
+//       };
+//     }
 
-module.exports = getPublicRouteLocationService;
+//     return {
+//       disponible: true,
+
+//       latitud:
+//         Number(
+//           latitude.toFixed(
+//             decimals,
+//           ),
+//         ),
+
+//       longitud:
+//         Number(
+//           longitude.toFixed(
+//             decimals,
+//           ),
+//         ),
+
+//       ultima_actualizacion:
+//         locationDate,
+
+//       estado_recorrido:
+//         recorrido
+//           .estado_recorrido,
+
+//       es_aproximada:
+//         true,
+
+//       antiguedad_segundos:
+//         Math.max(
+//           Math.floor(
+//             ageMilliseconds /
+//             1000,
+//           ),
+//           0,
+//         ),
+//     };
+//   };
+
+// module.exports = getPublicRouteLocationService;
