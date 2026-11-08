@@ -3,306 +3,391 @@ const { Op } = require('sequelize');
 const db = require('../../../database/models');
 const AppError = require('../../../utils/app-error');
 
-const { Vehiculo } = db;
+// Auditoría
+const {
+  prepararAuditoria,
+} = require('../../auditoria/utils/auditar-cambio.utils');
+
+// Modelos
+const {
+  Vehiculo,
+  sequelize,
+} = db;
+
+// *********************************************************
+// CONSTANTES
+// *********************************************************
 
 const ESTADOS_OPERATIVOS = [
-    'DISPONIBLE',
-    'ASIGNADO',
-    'EN_RUTA',
-    'EN_MANTENIMIENTO',
-    'FUERA_DE_SERVICIO',
+  'DISPONIBLE',
+  'ASIGNADO',
+  'EN_RUTA',
+  'EN_MANTENIMIENTO',
+  'FUERA_DE_SERVICIO',
 ];
 
 const TIPOS_VEHICULO = [
-    'CAMION_COMPACTADOR',
-    'CAMION_BARANDA',
-    'CAMION_VOLQUETE',
-    'MOTOFURGON',
-    'OTRO',
+  'CAMION_COMPACTADOR',
+  'CAMION_BARANDA',
+  'CAMION_VOLQUETE',
+  'MOTOFURGON',
+  'OTRO',
 ];
 
 const UNIDADES_CAPACIDAD = [
-    'KILOGRAMO',
-    'TONELADA',
-    'METRO_CUBICO',
+  'KILOGRAMO',
+  'TONELADA',
+  'METRO_CUBICO',
 ];
 
+// *********************************************************
+// SERVICE: ACTUALIZAR VEHÍCULO
+// *********************************************************
+
 const updateVehiculoService = async (
-    idVehiculo,
-    payload,
+  idVehiculo,
+  payload,
 ) => {
-    const id = Number(idVehiculo);
+  const id = Number(idVehiculo);
 
-    if (!Number.isInteger(id) || id <= 0) {
-        throw new AppError(
-            'El identificador del vehículo no es válido.',
-            400,
-            'INVALID_VEHICLE_ID',
-        );
-    }
+  if (!Number.isSafeInteger(id) || id <= 0) {
+    throw new AppError(
+      'El identificador del vehículo no es válido.',
+      400,
+      'INVALID_VEHICLE_ID',
+    );
+  }
 
-    const vehiculo = await Vehiculo.findByPk(id);
+  if (
+    !payload ||
+    typeof payload !== 'object' ||
+    Array.isArray(payload)
+  ) {
+    throw new AppError(
+      'Los datos del vehículo deben ser un objeto.',
+      400,
+      'INVALID_VEHICLE_PAYLOAD',
+    );
+  }
+
+  return sequelize.transaction(async transaction => {
+
+    // -------------------------------------------------
+    // 1. OBTENER Y BLOQUEAR VEHÍCULO
+    // -------------------------------------------------
+
+    const vehiculo = await Vehiculo.findByPk(
+      id,
+      {
+        transaction,
+        lock: transaction.LOCK.UPDATE,
+      },
+    );
 
     if (!vehiculo) {
-        throw new AppError(
-            'El vehículo no fue encontrado.',
-            404,
-            'VEHICLE_NOT_FOUND',
-        );
+      throw new AppError(
+        'El vehículo no fue encontrado.',
+        404,
+        'VEHICLE_NOT_FOUND',
+      );
     }
 
     const data = {};
 
+    // -------------------------------------------------
+    // 2. CÓDIGO Y PLACA
+    // -------------------------------------------------
+
     if (payload.codigo !== undefined) {
-        const codigo = String(payload.codigo)
-            .trim()
-            .toUpperCase();
+      const codigo = String(payload.codigo)
+        .trim()
+        .toUpperCase();
 
-        if (!codigo) {
-            throw new AppError(
-                'El código no puede estar vacío.',
-                400,
-                'VEHICLE_CODE_REQUIRED',
-            );
-        }
+      if (!codigo) {
+        throw new AppError(
+          'El código no puede estar vacío.',
+          400,
+          'VEHICLE_CODE_REQUIRED',
+        );
+      }
 
-        data.codigo = codigo;
+      data.codigo = codigo;
     }
 
     if (payload.placa !== undefined) {
-        const placa = String(payload.placa)
-            .trim()
-            .toUpperCase()
-            .replace(/\s+/g, '');
+      const placa = String(payload.placa)
+        .trim()
+        .toUpperCase()
+        .replace(/\s+/g, '');
 
-        if (!placa) {
-            throw new AppError(
-                'La placa no puede estar vacía.',
-                400,
-                'VEHICLE_PLATE_REQUIRED',
-            );
-        }
+      if (!placa) {
+        throw new AppError(
+          'La placa no puede estar vacía.',
+          400,
+          'VEHICLE_PLATE_REQUIRED',
+        );
+      }
 
-        data.placa = placa;
+      data.placa = placa;
     }
 
     if (data.codigo || data.placa) {
-        const condiciones = [];
+      const condiciones = [];
 
-        if (data.codigo) {
-            condiciones.push({
-                codigo: data.codigo,
-            });
-        }
-
-        if (data.placa) {
-            condiciones.push({
-                placa: data.placa,
-            });
-        }
-
-        const duplicado = await Vehiculo.findOne({
-            where: {
-                id_vehiculo: {
-                    [Op.ne]: id,
-                },
-                [Op.or]: condiciones,
-            },
-            paranoid: false,
+      if (data.codigo) {
+        condiciones.push({
+          codigo: data.codigo,
         });
+      }
 
-        if (duplicado) {
-            if (
-                data.codigo &&
-                duplicado.codigo === data.codigo
-            ) {
-                throw new AppError(
-                    'Ya existe otro vehículo con ese código.',
-                    409,
-                    'VEHICLE_CODE_ALREADY_EXISTS',
-                );
-            }
+      if (data.placa) {
+        condiciones.push({
+          placa: data.placa,
+        });
+      }
 
-            throw new AppError(
-                'Ya existe otro vehículo con esa placa.',
-                409,
-                'VEHICLE_PLATE_ALREADY_EXISTS',
-            );
+      const duplicado = await Vehiculo.findOne({
+        where: {
+          id_vehiculo: {
+            [Op.ne]: id,
+          },
+          [Op.or]: condiciones,
+        },
+        paranoid: false,
+        transaction,
+      });
+
+      if (duplicado) {
+        if (
+          data.codigo &&
+          duplicado.codigo === data.codigo
+        ) {
+          throw new AppError(
+            'Ya existe otro vehículo con ese código.',
+            409,
+            'VEHICLE_CODE_ALREADY_EXISTS',
+          );
         }
+
+        throw new AppError(
+          'Ya existe otro vehículo con esa placa.',
+          409,
+          'VEHICLE_PLATE_ALREADY_EXISTS',
+        );
+      }
     }
 
-    if (payload.marca !== undefined) {
-        data.marca = String(payload.marca).trim();
+    // -------------------------------------------------
+    // 3. MARCA, MODELO Y AÑO
+    // -------------------------------------------------
 
-        if (!data.marca) {
-            throw new AppError(
-                'La marca no puede estar vacía.',
-                400,
-                'VEHICLE_BRAND_REQUIRED',
-            );
-        }
+    if (payload.marca !== undefined) {
+      data.marca = String(payload.marca).trim();
+
+      if (!data.marca) {
+        throw new AppError(
+          'La marca no puede estar vacía.',
+          400,
+          'VEHICLE_BRAND_REQUIRED',
+        );
+      }
     }
 
     if (payload.modelo !== undefined) {
-        data.modelo = String(payload.modelo).trim();
+      data.modelo = String(payload.modelo).trim();
 
-        if (!data.modelo) {
-            throw new AppError(
-                'El modelo no puede estar vacío.',
-                400,
-                'VEHICLE_MODEL_REQUIRED',
-            );
-        }
+      if (!data.modelo) {
+        throw new AppError(
+          'El modelo no puede estar vacío.',
+          400,
+          'VEHICLE_MODEL_REQUIRED',
+        );
+      }
     }
 
     if (payload.anio !== undefined) {
-        if (payload.anio === null || payload.anio === '') {
-            data.anio = null;
-        } else {
-            const anio = Number(payload.anio);
-            const anioMaximo =
-                new Date().getFullYear() + 1;
+      if (payload.anio === null || payload.anio === '') {
+        data.anio = null;
+      } else {
+        const anio = Number(payload.anio);
+        const anioMaximo = new Date().getFullYear() + 1;
 
-            if (
-                !Number.isInteger(anio) ||
-                anio < 1950 ||
-                anio > anioMaximo
-            ) {
-                throw new AppError(
-                    `El año debe estar entre 1950 y ${anioMaximo}.`,
-                    400,
-                    'INVALID_VEHICLE_YEAR',
-                );
-            }
-
-            data.anio = anio;
+        if (
+          !Number.isInteger(anio) ||
+          anio < 1950 ||
+          anio > anioMaximo
+        ) {
+          throw new AppError(
+            `El año debe estar entre 1950 y ${anioMaximo}.`,
+            400,
+            'INVALID_VEHICLE_YEAR',
+          );
         }
+
+        data.anio = anio;
+      }
     }
 
-    if (payload.tipo_vehiculo !== undefined) {
-        if (
-            !TIPOS_VEHICULO.includes(
-                payload.tipo_vehiculo,
-            )
-        ) {
-            throw new AppError(
-                'El tipo de vehículo no es válido.',
-                400,
-                'INVALID_VEHICLE_TYPE',
-            );
-        }
+    // -------------------------------------------------
+    // 4. TIPO Y CAPACIDAD
+    // -------------------------------------------------
 
-        data.tipo_vehiculo =
-            payload.tipo_vehiculo;
+    if (payload.tipo_vehiculo !== undefined) {
+      if (!TIPOS_VEHICULO.includes(payload.tipo_vehiculo)) {
+        throw new AppError(
+          'El tipo de vehículo no es válido.',
+          400,
+          'INVALID_VEHICLE_TYPE',
+        );
+      }
+
+      data.tipo_vehiculo = payload.tipo_vehiculo;
     }
 
     if (payload.capacidad_maxima !== undefined) {
-        const capacidad =
-            Number(payload.capacidad_maxima);
+      const capacidad = Number(payload.capacidad_maxima);
 
-        if (
-            !Number.isFinite(capacidad) ||
-            capacidad <= 0
-        ) {
-            throw new AppError(
-                'La capacidad máxima debe ser mayor que cero.',
-                400,
-                'INVALID_MAX_CAPACITY',
-            );
-        }
+      if (
+        !Number.isFinite(capacidad) ||
+        capacidad <= 0
+      ) {
+        throw new AppError(
+          'La capacidad máxima debe ser mayor que cero.',
+          400,
+          'INVALID_MAX_CAPACITY',
+        );
+      }
 
-        data.capacidad_maxima = capacidad;
+      data.capacidad_maxima = capacidad;
     }
 
     if (payload.unidad_capacidad !== undefined) {
-        if (
-            !UNIDADES_CAPACIDAD.includes(
-                payload.unidad_capacidad,
-            )
-        ) {
-            throw new AppError(
-                'La unidad de capacidad no es válida.',
-                400,
-                'INVALID_CAPACITY_UNIT',
-            );
-        }
+      if (!UNIDADES_CAPACIDAD.includes(payload.unidad_capacidad)) {
+        throw new AppError(
+          'La unidad de capacidad no es válida.',
+          400,
+          'INVALID_CAPACITY_UNIT',
+        );
+      }
 
-        data.unidad_capacidad =
-            payload.unidad_capacidad;
+      data.unidad_capacidad = payload.unidad_capacidad;
     }
+
+    // -------------------------------------------------
+    // 5. KILOMETRAJE
+    // -------------------------------------------------
 
     if (payload.kilometraje !== undefined) {
-        const kilometraje =
-            Number(payload.kilometraje);
+      const kilometraje = Number(payload.kilometraje);
 
-        if (
-            !Number.isFinite(kilometraje) ||
-            kilometraje < 0
-        ) {
-            throw new AppError(
-                'El kilometraje no puede ser negativo.',
-                400,
-                'INVALID_MILEAGE',
-            );
-        }
+      if (
+        !Number.isFinite(kilometraje) ||
+        kilometraje < 0
+      ) {
+        throw new AppError(
+          'El kilometraje no puede ser negativo.',
+          400,
+          'INVALID_MILEAGE',
+        );
+      }
 
-        if (
-            kilometraje <
-            Number(vehiculo.kilometraje || 0)
-        ) {
-            throw new AppError(
-                'El nuevo kilometraje no puede ser menor al actual.',
-                400,
-                'MILEAGE_CANNOT_DECREASE',
-            );
-        }
+      if (
+        kilometraje <
+        Number(vehiculo.kilometraje || 0)
+      ) {
+        throw new AppError(
+          'El nuevo kilometraje no puede ser menor al actual.',
+          400,
+          'MILEAGE_CANNOT_DECREASE',
+        );
+      }
 
-        data.kilometraje = kilometraje;
+      data.kilometraje = kilometraje;
     }
+
+    // -------------------------------------------------
+    // 6. ESTADO OPERATIVO
+    // -------------------------------------------------
 
     if (payload.estado_operativo !== undefined) {
-        if (
-            !ESTADOS_OPERATIVOS.includes(
-                payload.estado_operativo,
-            )
-        ) {
-            throw new AppError(
-                'El estado operativo no es válido.',
-                400,
-                'INVALID_OPERATIONAL_STATUS',
-            );
-        }
+      if (!ESTADOS_OPERATIVOS.includes(payload.estado_operativo)) {
+        throw new AppError(
+          'El estado operativo no es válido.',
+          400,
+          'INVALID_OPERATIONAL_STATUS',
+        );
+      }
 
-        data.estado_operativo =
-            payload.estado_operativo;
+      data.estado_operativo = payload.estado_operativo;
     }
 
-    if (payload.color !== undefined) {
-        data.color =
-            payload.color?.trim() || null;
-    }
+    // -------------------------------------------------
+    // 7. CAMPOS OPCIONALES
+    // -------------------------------------------------
 
-    if (payload.observacion !== undefined) {
-        data.observacion =
-            payload.observacion?.trim() || null;
-    }
+    for (const campo of [
+      'color',
+      'observacion',
+      'foto_url',
+    ]) {
+      const valor = payload[campo];
 
-    if (payload.foto_url !== undefined) {
-        data.foto_url =
-            payload.foto_url?.trim() || null;
+      if (valor === undefined) continue;
+
+      if (valor !== null && typeof valor !== 'string') {
+        throw new AppError(
+          `El campo ${campo} debe ser un texto o null.`,
+          400,
+          'INVALID_VEHICLE_FIELD',
+        );
+      }
+
+      data[campo] = valor?.trim() || null;
     }
 
     if (!Object.keys(data).length) {
-        throw new AppError(
-            'No se proporcionaron campos para actualizar.',
-            400,
-            'NO_UPDATE_FIELDS',
-        );
+      throw new AppError(
+        'No se proporcionaron campos para actualizar.',
+        400,
+        'NO_UPDATE_FIELDS',
+      );
     }
 
-    await vehiculo.update(data);
+    // -------------------------------------------------
+    // 8. CAPTURAR ESTADO ANTERIOR
+    // -------------------------------------------------
+
+    const auditarVehiculo = prepararAuditoria(
+      'VEHICULO',
+      'ACTUALIZAR',
+      vehiculo,
+    );
+
+    // -------------------------------------------------
+    // 9. ACTUALIZAR VEHÍCULO
+    // -------------------------------------------------
+
+    await vehiculo.update(
+      data,
+      { transaction },
+    );
+
+    // Audita los valores realmente persistidos.
+    await vehiculo.reload({
+      transaction,
+    });
+
+    // -------------------------------------------------
+    // 10. REGISTRAR AUDITORÍA
+    // -------------------------------------------------
+
+    await auditarVehiculo(
+      vehiculo,
+      transaction,
+    );
 
     return vehiculo;
+  });
 };
 
 module.exports = updateVehiculoService;

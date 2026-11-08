@@ -82,14 +82,25 @@ module.exports = async function regenerateQrCodeService({
         );
       }
 
-      const reemplazo =
-        await db.CodigoQr.findOne({
-          where: {
-            id_codigo_reemplazado: id,
-          },
+      // Auditoria
+      const auditarAnterior = prepararAuditoria(
+        'QR',
+        'REVOCAR_POR_REEMPLAZO',
+        anterior,
+      );
 
-          transaction,
-        });
+      const auditarNuevo = prepararAuditoria(
+        'QR',
+        'CREAR_REEMPLAZO',
+      );
+
+      const reemplazo = await db.CodigoQr.findOne({
+        where: {
+          id_codigo_reemplazado: id,
+        },
+
+        transaction,
+      });
 
       if (reemplazo) {
         throw new AppError(
@@ -99,34 +110,30 @@ module.exports = async function regenerateQrCodeService({
         );
       }
 
-      const otroActivo =
-        await db.CodigoQr.findOne({
-          where: {
-            tipo_recurso:
-              anterior.tipo_recurso,
+      const otroActivo = await db.CodigoQr.findOne({
+        where: {
+          tipo_recurso: anterior.tipo_recurso,
 
-            estado_qr: 'ACTIVO',
+          estado_qr: 'ACTIVO',
 
-            id_codigo_qr: {
-              [Op.ne]: id,
-            },
-
-            ...(
-              anterior.tipo_recurso === 'ZONA'
-                ? {
-                  id_zona:
-                    anterior.id_zona,
-                }
-                : {
-                  id_ruta:
-                    anterior.id_ruta,
-                }
-            ),
+          id_codigo_qr: {
+            [Op.ne]: id,
           },
 
-          transaction,
-          lock: transaction.LOCK.UPDATE,
-        });
+          ...(
+            anterior.tipo_recurso === 'ZONA'
+              ? {
+                id_zona: anterior.id_zona,
+              }
+              : {
+                id_ruta: anterior.id_ruta,
+              }
+          ),
+        },
+
+        transaction,
+        lock: transaction.LOCK.UPDATE,
+      });
 
       if (otroActivo) {
         throw new AppError(
@@ -138,10 +145,9 @@ module.exports = async function regenerateQrCodeService({
 
       const nuevo = await db.CodigoQr.create(
         {
-          codigo:
-            generateAdministrativeCode(
-              anterior.tipo_recurso,
-            ),
+          codigo: generateAdministrativeCode(
+            anterior.tipo_recurso,
+          ),
 
           token_publico: token,
 
@@ -193,6 +199,23 @@ module.exports = async function regenerateQrCodeService({
 
         {
           transaction,
+        },
+      );
+
+      // Auditoria
+      await auditarAnterior(
+        anterior,
+        transaction,
+        {
+          motivo: reason,
+        },
+      );
+
+      await auditarNuevo(
+        nuevo,
+        transaction,
+        {
+          motivo: reason,
         },
       );
 

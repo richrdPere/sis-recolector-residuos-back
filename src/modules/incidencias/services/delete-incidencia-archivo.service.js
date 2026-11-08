@@ -45,6 +45,9 @@ const deleteIncidenciaArchivoService = async (
         true,
       );
 
+      // Auditoria
+      const auditar = prepararAuditoria('INCIDENCIA', 'ELIMINAR', incidencia);
+
       const archivo = await IncidenciaArchivo.findOne({
         where: {
           id_incidencia: incidenciaId,
@@ -80,6 +83,9 @@ const deleteIncidenciaArchivoService = async (
         { estado: false },
         { transaction },
       );
+
+      // Auditoria
+      await auditar(incidencia, transaction);
 
       await archivo.destroy({
         transaction,

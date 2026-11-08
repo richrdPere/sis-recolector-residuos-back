@@ -19,6 +19,8 @@ const {
   construirRespuestaAsignacion,
 } = require("../utils/usuario-service.utils");
 
+// Auditoria
+const { prepararAuditoria } = require('../../auditoria/utils/auditar-cambio.utils');
 
 // *********************************************************
 // SERVICE: REMOVER / DESACTIVAR ROL
@@ -60,10 +62,19 @@ const removeUsuarioRolService = async (params) => {
       );
     }
 
+    const auditarRol = prepararAuditoria(
+      'ROL_USUARIO',
+      'RETIRAR_ROL',
+      asignacion,
+    );
+
     await asignacion.update(
       { estado: false },
       { transaction }
     );
+
+    // Auditoria
+    await auditarRol(asignacion, transaction);
 
     return construirRespuestaAsignacion(
       asignacion,

@@ -25,6 +25,9 @@ const {
   sequelize,
 } = db;
 
+// Auditoria
+const { prepararAuditoria } = require('../../../auditoria/utils/auditar-cambio.utils');
+
 // ==========================================================
 // SERVICE: CANCELAR PROGRAMACIÓN
 // ==========================================================
@@ -106,33 +109,38 @@ const cancelProgramacionService = async (
       );
     }
 
-    const previousState =
-      programacion.estado_programacion;
+    const previousState = programacion.estado_programacion;
+
+    // Capturar antes de modificar la programación.
+    const auditarProgramacion = prepararAuditoria(
+      'PROGRAMACION',
+      'CANCELAR',
+      programacion,
+    );
 
     // ------------------------------------------------------
     // 3. Obtener destinatarios ANTES de retirar asignaciones
     // ------------------------------------------------------
 
-    const assignments =
-      await ProgramacionPersonal.findAll({
-        where: {
-          id_programacion: id,
+    const assignments = await ProgramacionPersonal.findAll({
+      where: {
+        id_programacion: id,
 
-          estado_asignacion: {
-            [Op.notIn]: [
-              'RECHAZADO',
-              'RETIRADO',
-              'FINALIZADO',
-            ],
-          },
+        estado_asignacion: {
+          [Op.notIn]: [
+            'RECHAZADO',
+            'RETIRADO',
+            'FINALIZADO',
+          ],
         },
+      },
 
-        attributes: [
-          'id_personal',
-        ],
+      attributes: [
+        'id_personal',
+      ],
 
-        transaction,
-      });
+      transaction,
+    });
 
     const personalIds = [
       ...new Set(
@@ -201,33 +209,59 @@ const cancelProgramacionService = async (
     );
 
     // ------------------------------------------------------
+    // Capturar las asignaciones que serán retiradas
+    // ------------------------------------------------------
+
+    const whereAsignacionesRetiro = {
+      id_programacion: id,
+
+      estado_asignacion: {
+        [Op.notIn]: [
+          'RECHAZADO',
+          'FINALIZADO',
+          'RETIRADO',
+        ],
+      },
+    };
+
+    const asignacionesAuditoria = await ProgramacionPersonal.findAll({
+      where: whereAsignacionesRetiro,
+      transaction,
+      lock: transaction.LOCK.UPDATE,
+    });
+
+    const auditoresAsignaciones = asignacionesAuditoria.map(asignacion => ({
+      asignacion,
+
+      auditar: prepararAuditoria(
+        'ASIGNACION',
+        'CANCELAR_ASIGNACION',
+        asignacion,
+      ),
+    }));
+    // ------------------------------------------------------
     // 5. Retirar asignaciones
     // ------------------------------------------------------
 
     await ProgramacionPersonal.update(
       {
-        estado_asignacion:
-          'RETIRADO',
-
-        observacion:
-          'Asignación retirada por cancelación de la programación.',
+        estado_asignacion: 'RETIRADO',
+        observacion: 'Asignación retirada por cancelación de la programación.',
       },
       {
-        where: {
-          id_programacion: id,
-
-          estado_asignacion: {
-            [Op.notIn]: [
-              'FINALIZADO',
-              'RETIRADO',
-            ],
-          },
-        },
-
+        where: whereAsignacionesRetiro,
         transaction,
       },
     );
 
+    for (const item of auditoresAsignaciones) {
+      await item.asignacion.reload({ transaction });
+
+      await item.auditar(
+        item.asignacion,
+        transaction,
+      );
+    }
     // ------------------------------------------------------
     // 6. Cancelar avisos anteriores todavía pendientes
     // ------------------------------------------------------
@@ -398,6 +432,19 @@ const cancelProgramacionService = async (
       idUsuarioCreacion: actorId,
       transaction,
     });
+
+    // Auditoría de la cancelación de la programación.
+    await auditarProgramacion(
+      programacion,
+      transaction,
+      {
+        // El campo motivo de auditoría admite hasta 1000 caracteres.
+        // El motivo completo permanece en la programación y su historial.
+        motivo: reason.slice(0, 1000),
+      },
+    );
+
+
     // ------------------------------------------------------
     // 9. Confirmar cancelación y avisos
     // ------------------------------------------------------
@@ -429,157 +476,3 @@ const cancelProgramacionService = async (
 
 module.exports = cancelProgramacionService;
 
-// const { Op } = require('sequelize');
-// const db = require('../../../../database/models');
-// const AppError = require('../../../../utils/app-error');
-
-// // Service
-// const getProgramacionByIdService = require("./get-programacion-by-id.service");
-
-// // Utils
-// const {
-//   validateId,
-//   registerHistory,
-// } = require("../../utils/programacion-service.utils");
-
-// // Modelos
-// const {
-//   ProgramacionRuta,
-//   ProgramacionPersonal,
-//   sequelize,
-// } = db;
-
-// // ===============================================
-// // SERVICE: Cancelar programacion
-// // ===============================================
-// const cancelProgramacionService = async (
-//   idProgramacion,
-//   {
-//     motivo_cancelacion,
-//     id_usuario,
-//     ip = null,
-//     user_agent = null,
-//   },
-// ) => {
-//   const id = validateId(
-//     idProgramacion,
-//     'identificador de la programación',
-//   );
-
-//   const reason =
-//     String(
-//       motivo_cancelacion ||
-//       '',
-//     ).trim();
-
-//   if (!reason) {
-//     throw new AppError(
-//       'El motivo de cancelación es obligatorio.',
-//       400,
-//       'CANCELLATION_REASON_REQUIRED',
-//     );
-//   }
-
-//   const transaction =
-//     await sequelize.transaction();
-
-//   try {
-//     const programacion =
-//       await ProgramacionRuta
-//         .findByPk(id, {
-//           transaction,
-//           lock:
-//             transaction.LOCK
-//               .UPDATE,
-//         });
-
-//     if (!programacion) {
-//       throw new AppError(
-//         'La programación no fue encontrada.',
-//         404,
-//         'PROGRAMMING_NOT_FOUND',
-//       );
-//     }
-
-//     if (
-//       [
-//         'FINALIZADA',
-//         'CANCELADA',
-//       ].includes(
-//         programacion
-//           .estado_programacion,
-//       )
-//     ) {
-//       throw new AppError(
-//         'La programación no puede cancelarse.',
-//         409,
-//         'PROGRAMMING_CANNOT_BE_CANCELLED',
-//       );
-//     }
-
-//     const previousState =
-//       programacion
-//         .estado_programacion;
-
-//     await programacion.update(
-//       {
-//         estado_programacion:
-//           'CANCELADA',
-
-//         motivo_cancelacion:
-//           reason,
-
-//         fecha_cancelacion:
-//           new Date(),
-//       },
-//       {
-//         transaction,
-//       },
-//     );
-
-//     await ProgramacionPersonal
-//       .update(
-//         {
-//           estado_asignacion: 'RETIRADO',
-//           observacion: 'Asignación retirada por cancelación de la programación.',
-//         },
-//         {
-//           where: {
-//             id_programacion:              id,
-//             estado_asignacion: {
-//               [Op.notIn]: [
-//                 'FINALIZADO',
-//                 'RETIRADO',
-//               ],
-//             },
-//           },
-
-//           transaction,
-//         },
-//       );
-
-//     await registerHistory({
-//       id_programacion: id,
-//       id_usuario,
-//       tipo_evento: 'CANCELACION',
-//       estado_anterior: previousState,
-//       estado_nuevo: 'CANCELADA',
-//       observacion: reason,
-//       ip,
-//       user_agent,
-//       transaction,
-//     });
-
-//     await transaction.commit();
-
-//     return getProgramacionByIdService(id);
-//   } catch (error) {
-//     if (!transaction.finished) {
-//       await transaction.rollback();
-//     }
-
-//     throw error;
-//   }
-// };
-
-// module.exports = cancelProgramacionService;

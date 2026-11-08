@@ -11,6 +11,10 @@ const {
   sequelize,
 } = db;
 
+// Auditoria
+const { prepararAuditoria } = require('../../../auditoria/utils/auditar-cambio.utils');
+
+
 // ===============================================
 // SERVICE: Activar ruta version
 // ===============================================
@@ -76,6 +80,32 @@ const activarRutaVersionService = async (idVersion) => {
       );
     }
 
+    // Auditoria
+    const versionesAnteriores = await RutaVersion.findAll({
+      where: {
+        id_ruta: version.id_ruta,
+        vigente: true,
+      },
+      transaction,
+      lock: transaction.LOCK.UPDATE,
+    });
+
+    const auditoresAnteriores = versionesAnteriores.map(item => ({
+      version: item,
+
+      auditar: prepararAuditoria(
+        'VERSION',
+        'DESACTIVAR_VIGENCIA',
+        item,
+      ),
+    }));
+
+    const auditarVersion = prepararAuditoria(
+      'VERSION',
+      'ACTIVAR_VERSION',
+      version,
+    );
+
     await RutaVersion.update(
       {
         vigente: false,
@@ -99,6 +129,18 @@ const activarRutaVersionService = async (idVersion) => {
         transaction,
       },
     );
+
+    // Auditoria
+    for (const item of auditoresAnteriores) {
+      await item.version.reload({ transaction });
+
+      await item.auditar(
+        item.version,
+        transaction,
+      );
+    }
+
+    await auditarVersion(version, transaction);
 
     await transaction.commit();
 

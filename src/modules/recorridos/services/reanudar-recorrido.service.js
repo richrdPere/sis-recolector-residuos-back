@@ -56,46 +56,40 @@ const reanudarRecorridoService = async ({
   ip = null,
   user_agent = null,
 }) => {
-  const recorridoId =
-    validateId(
-      id_recorrido,
-      'identificador del recorrido',
-    );
+  const recorridoId = validateId(
+    id_recorrido,
+    'identificador del recorrido',
+  );
 
-  const userId =
-    validateId(
-      id_usuario,
-      'identificador del usuario',
-    );
+  const userId = validateId(
+    id_usuario,
+    'identificador del usuario',
+  );
 
-  const location =
-    validateCoordinates({
-      latitud,
-      longitud,
-    });
+  const location = validateCoordinates({
+    latitud,
+    longitud,
+  });
 
-  const eventDate =
-    validateEventDate(
-      fecha_evento,
-    );
+  const eventDate = validateEventDate(
+    fecha_evento,
+  );
 
-  const idempotencyKey =
-    validateIdempotencyKey(
-      clave_idempotencia,
-    );
+  const idempotencyKey = validateIdempotencyKey(
+    clave_idempotencia,
+  );
 
-  const previousEvent =
-    await findIdempotentEvent({
-      clave_idempotencia:
-        idempotencyKey,
+  const previousEvent = await findIdempotentEvent({
+    clave_idempotencia:
+      idempotencyKey,
 
-      tipo_evento:
-        TIPOS_EVENTO_RECORRIDO
-          .REANUDACION,
+    tipo_evento:
+      TIPOS_EVENTO_RECORRIDO
+        .REANUDACION,
 
-      id_usuario:
-        userId,
-    });
+    id_usuario:
+      userId,
+  });
 
   if (previousEvent) {
     return getRecorridoDetail(
@@ -103,16 +97,21 @@ const reanudarRecorridoService = async ({
     );
   }
 
-  const transaction =
-    await sequelize.transaction();
+  const transaction = await sequelize.transaction();
 
   try {
-    const recorrido =
-      await getRecorridoOrFail(
-        recorridoId,
-        transaction,
-        true,
-      );
+    const recorrido = await getRecorridoOrFail(
+      recorridoId,
+      transaction,
+      true,
+    );
+
+    // Auditoria
+    const auditarRecorrido = prepararAuditoria(
+      'RECORRIDO',
+      'REANUDAR',
+      recorrido,
+    );
 
     if (
       recorrido.estado_recorrido !==
@@ -135,12 +134,11 @@ const reanudarRecorridoService = async ({
       transaction,
     });
 
-    const programacion =
-      await getProgramacionOrFail(
-        recorrido.id_programacion,
-        transaction,
-        true,
-      );
+    const programacion = await getProgramacionOrFail(
+      recorrido.id_programacion,
+      transaction,
+      true,
+    );
 
     await recorrido.update(
       {
@@ -192,6 +190,16 @@ const reanudarRecorridoService = async ({
       user_agent,
       transaction,
     });
+
+    // Auditoria
+    await auditarRecorrido(
+      recorrido,
+      transaction,
+      {
+        clave_operacion: idempotencyKey,
+        fecha_dispositivo: eventDate,
+      },
+    );
 
     await transaction.commit();
 

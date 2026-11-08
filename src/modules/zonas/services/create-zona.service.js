@@ -1,4 +1,5 @@
 const { Op } = require('sequelize');
+
 const db = require('../../../database/models');
 const AppError = require('../../../utils/app-error');
 
@@ -8,12 +9,19 @@ const {
   normalizeText,
 } = require('../../rutas/utils/rutas-service.utils');
 
-// Modelos
-const { Zona } = db;
+// Auditoría
+const { prepararAuditoria } = require('../../auditoria/utils/auditar-cambio.utils');
 
-// ===============================================
-// SERVICE: Crear zona
-// ===============================================
+// Modelos
+const {
+  Zona,
+  sequelize,
+} = db;
+
+// *********************************************************
+// SERVICE: CREAR ZONA
+// *********************************************************
+
 const createZonaService = async ({
   codigo,
   nombre,
@@ -23,16 +31,10 @@ const createZonaService = async ({
   centro_latitud = null,
   centro_longitud = null,
 }) => {
-  const normalizedCode =
-    normalizeCode(codigo);
+  const normalizedCode = normalizeCode(codigo);
+  const normalizedName = normalizeText(nombre);
 
-  const normalizedName =
-    normalizeText(nombre);
-
-  if (
-    !normalizedCode ||
-    !normalizedName
-  ) {
+  if (!normalizedCode || !normalizedName) {
     throw new AppError(
       'El código y nombre de la zona son obligatorios.',
       400,
@@ -40,56 +42,70 @@ const createZonaService = async ({
     );
   }
 
-  const duplicada =
-    await Zona.findOne({
+  return sequelize.transaction(async transaction => {
+
+    // 1. Comprobar duplicados, incluyendo zonas eliminadas.
+    const duplicada = await Zona.findOne({
       where: {
         [Op.or]: [
-          {
-            codigo:
-              normalizedCode,
-          },
-          {
-            nombre:
-              normalizedName,
-          },
+          { codigo: normalizedCode },
+          { nombre: normalizedName },
         ],
       },
-
       paranoid: false,
+      transaction,
     });
 
-  if (duplicada) {
-    const code =
-      duplicada.codigo ===
-        normalizedCode
+    if (duplicada) {
+      const code = duplicada.codigo === normalizedCode
         ? 'ZONE_CODE_ALREADY_EXISTS'
         : 'ZONE_NAME_ALREADY_EXISTS';
 
-    throw new AppError(
-      code ===
-        'ZONE_CODE_ALREADY_EXISTS'
-        ? 'El código de la zona ya está registrado.'
-        : 'El nombre de la zona ya está registrado.',
-      409,
-      code,
+      throw new AppError(
+        code === 'ZONE_CODE_ALREADY_EXISTS'
+          ? 'El código de la zona ya está registrado.'
+          : 'El nombre de la zona ya está registrado.',
+        409,
+        code,
+      );
+    }
+
+    // 2. Preparar auditoría de creación.
+    const auditarZona = prepararAuditoria(
+      'ZONA',
+      'CREAR',
     );
-  }
 
-  return Zona.create({
-    codigo: normalizedCode,
-    nombre: normalizedName,
+    // 3. Crear zona.
+    const zona = await Zona.create(
+      {
+        codigo: normalizedCode,
+        nombre: normalizedName,
+        descripcion: descripcion?.trim() || null,
+        color,
+        poligono_geojson,
+        centro_latitud,
+        centro_longitud,
+        estado: true,
+      },
+      {
+        transaction,
+      },
+    );
 
-    descripcion:
-      descripcion?.trim() ||
-      null,
+    // Recuperar los valores realmente persistidos.
+    await zona.reload({
+      transaction,
+    });
 
-    color,
-    poligono_geojson,
-    centro_latitud,
-    centro_longitud,
-    estado: true,
+    // 4. Registrar auditoría en la misma transacción.
+    await auditarZona(
+      zona,
+      transaction,
+    );
+
+    return zona;
   });
 };
-
 
 module.exports = createZonaService;

@@ -1,168 +1,233 @@
 const { Op } = require('sequelize');
+
 const db = require('../../../database/models');
 const AppError = require('../../../utils/app-error');
 
 // Service
-const getZonaByIdService = require("./get-zona-by-id.service");
+const getZonaByIdService = require('./get-zona-by-id.service');
 
 // Utils
 const {
-    validateId,
-    normalizeCode,
-    normalizeText,
+  validateId,
+  normalizeCode,
+  normalizeText,
 } = require('../../rutas/utils/rutas-service.utils');
 
-// Modelos
-const { Zona } = db;
+// Auditoría
+const {
+  prepararAuditoria,
+} = require('../../auditoria/utils/auditar-cambio.utils');
 
-// ===============================================
-// SERVICE: Actualizar zona 
-// ===============================================
+// Modelos
+const {
+  Zona,
+  sequelize,
+} = db;
+
+// *********************************************************
+// SERVICE: ACTUALIZAR ZONA
+// *********************************************************
+
 const updateZonaService = async (
-    idZona,
-    payload,
+  idZona,
+  payload,
 ) => {
-    const id = validateId(
-        idZona,
-        'identificador de la zona',
+  const id = validateId(
+    idZona,
+    'identificador de la zona',
+  );
+
+  if (
+    !payload ||
+    typeof payload !== 'object' ||
+    Array.isArray(payload)
+  ) {
+    throw new AppError(
+      'Los datos de la zona deben ser un objeto.',
+      400,
+      'INVALID_ZONE_PAYLOAD',
+    );
+  }
+
+  await sequelize.transaction(async transaction => {
+
+    // -------------------------------------------------
+    // 1. OBTENER Y BLOQUEAR ZONA
+    // -------------------------------------------------
+
+    const zona = await Zona.findByPk(
+      id,
+      {
+        transaction,
+        lock: transaction.LOCK.UPDATE,
+      },
     );
 
-    const zona =
-        await Zona.findByPk(id);
-
     if (!zona) {
-        throw new AppError(
-            'La zona no fue encontrada.',
-            404,
-            'ZONE_NOT_FOUND',
-        );
+      throw new AppError(
+        'La zona no fue encontrada.',
+        404,
+        'ZONE_NOT_FOUND',
+      );
     }
 
     const data = {};
 
-    if (
-        payload.codigo !==
-        undefined
-    ) {
-        const codigo =
-            normalizeCode(
-                payload.codigo,
-            );
+    // -------------------------------------------------
+    // 2. VALIDAR CÓDIGO
+    // -------------------------------------------------
 
-        if (!codigo) {
-            throw new AppError(
-                'El código no puede estar vacío.',
-                400,
-                'ZONE_CODE_REQUIRED',
-            );
-        }
+    if (payload.codigo !== undefined) {
+      const codigo = normalizeCode(
+        payload.codigo,
+      );
 
-        const duplicada =
-            await Zona.findOne({
-                where: {
-                    codigo,
+      if (!codigo) {
+        throw new AppError(
+          'El código no puede estar vacío.',
+          400,
+          'ZONE_CODE_REQUIRED',
+        );
+      }
 
-                    id_zona: {
-                        [Op.ne]: id,
-                    },
-                },
+      const duplicada = await Zona.findOne({
+        where: {
+          codigo,
+          id_zona: {
+            [Op.ne]: id,
+          },
+        },
+        paranoid: false,
+        transaction,
+      });
 
-                paranoid: false,
-            });
+      if (duplicada) {
+        throw new AppError(
+          'El código de la zona ya está registrado.',
+          409,
+          'ZONE_CODE_ALREADY_EXISTS',
+        );
+      }
 
-        if (duplicada) {
-            throw new AppError(
-                'El código de la zona ya está registrado.',
-                409,
-                'ZONE_CODE_ALREADY_EXISTS',
-            );
-        }
-
-        data.codigo = codigo;
+      data.codigo = codigo;
     }
 
-    if (
-        payload.nombre !==
-        undefined
-    ) {
-        const nombre =
-            normalizeText(
-                payload.nombre,
-            );
+    // -------------------------------------------------
+    // 3. VALIDAR NOMBRE
+    // -------------------------------------------------
 
-        if (!nombre) {
-            throw new AppError(
-                'El nombre no puede estar vacío.',
-                400,
-                'ZONE_NAME_REQUIRED',
-            );
-        }
+    if (payload.nombre !== undefined) {
+      const nombre = normalizeText(
+        payload.nombre,
+      );
 
-        const duplicada =
-            await Zona.findOne({
-                where: {
-                    nombre,
+      if (!nombre) {
+        throw new AppError(
+          'El nombre no puede estar vacío.',
+          400,
+          'ZONE_NAME_REQUIRED',
+        );
+      }
 
-                    id_zona: {
-                        [Op.ne]: id,
-                    },
-                },
+      const duplicada = await Zona.findOne({
+        where: {
+          nombre,
+          id_zona: {
+            [Op.ne]: id,
+          },
+        },
+        paranoid: false,
+        transaction,
+      });
 
-                paranoid: false,
-            });
+      if (duplicada) {
+        throw new AppError(
+          'El nombre de la zona ya está registrado.',
+          409,
+          'ZONE_NAME_ALREADY_EXISTS',
+        );
+      }
 
-        if (duplicada) {
-            throw new AppError(
-                'El nombre de la zona ya está registrado.',
-                409,
-                'ZONE_NAME_ALREADY_EXISTS',
-            );
-        }
-
-        data.nombre = nombre;
+      data.nombre = nombre;
     }
+
+    // -------------------------------------------------
+    // 4. CAMPOS OPCIONALES
+    // -------------------------------------------------
 
     const optionalFields = [
-        'color',
-        'poligono_geojson',
-        'centro_latitud',
-        'centro_longitud',
+      'color',
+      'poligono_geojson',
+      'centro_latitud',
+      'centro_longitud',
     ];
 
-    optionalFields.forEach(
-        (field) => {
-            if (
-                payload[field] !==
-                undefined
-            ) {
-                data[field] =
-                    payload[field];
-            }
-        },
-    );
+    for (const field of optionalFields) {
+      if (payload[field] !== undefined) {
+        data[field] = payload[field];
+      }
+    }
 
-    if (
-        payload.descripcion !==
-        undefined
-    ) {
-        data.descripcion =
-            payload.descripcion
-                ?.trim() || null;
+    if (payload.descripcion !== undefined) {
+      if (
+        payload.descripcion !== null &&
+        typeof payload.descripcion !== 'string'
+      ) {
+        throw new AppError(
+          'La descripción debe ser un texto o null.',
+          400,
+          'INVALID_ZONE_DESCRIPTION',
+        );
+      }
+
+      data.descripcion =
+        payload.descripcion?.trim() || null;
     }
 
     if (!Object.keys(data).length) {
-        throw new AppError(
-            'No se proporcionaron campos para actualizar.',
-            400,
-            'NO_UPDATE_FIELDS',
-        );
+      throw new AppError(
+        'No se proporcionaron campos para actualizar.',
+        400,
+        'NO_UPDATE_FIELDS',
+      );
     }
 
-    await zona.update(data);
+    // -------------------------------------------------
+    // 5. CAPTURAR ESTADO ANTERIOR
+    // -------------------------------------------------
 
-    return getZonaByIdService(
-        id,
+    const auditarZona = prepararAuditoria(
+      'ZONA',
+      'ACTUALIZAR',
+      zona,
     );
+
+    // -------------------------------------------------
+    // 6. ACTUALIZAR ZONA
+    // -------------------------------------------------
+
+    await zona.update(
+      data,
+      { transaction },
+    );
+
+    await zona.reload({
+      transaction,
+    });
+
+    // -------------------------------------------------
+    // 7. REGISTRAR AUDITORÍA
+    // -------------------------------------------------
+
+    await auditarZona(
+      zona,
+      transaction,
+    );
+  });
+
+  // La transacción ya está confirmada.
+  // Conservamos la estructura de respuesta del service actual.
+  return getZonaByIdService(id);
 };
 
 module.exports = updateZonaService;

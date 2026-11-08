@@ -19,6 +19,9 @@ const {
   validarDisponibilidad,
 } = require("../validations/mantenimientos.validation");
 
+// Auditoria
+const { prepararAuditoria } = require('../../auditoria/utils/auditar-cambio.utils');
+
 // Modelos
 const { sequelize } = db;
 
@@ -92,6 +95,9 @@ const updateMantenimientoService = async ({
 
       mantenimiento.set(datos);
 
+      // Auditoria
+      const auditar = prepararAuditoria('MANTENIMIENTO', 'ACTUALIZAR', mantenimiento);
+
       const inicio = new Date(
         mantenimiento.fecha_inicio_programada,
       );
@@ -137,6 +143,9 @@ const updateMantenimientoService = async ({
         anterior,
         transaction,
       });
+
+      // Auditoria
+      await auditar(mantenimiento, transaction);
 
       return obtenerDetalle(id, transaction);
     },

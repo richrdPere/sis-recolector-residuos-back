@@ -45,22 +45,31 @@ const reorderRutaPuntosService = async (
       transaction,
     );
 
-    const existingPoints =
-      await RutaPunto.findAll({
-        where: {
-          id_ruta_version:
-            versionId,
+    const existingPoints = await RutaPunto.findAll({
+      where: {
+        id_ruta_version:
+          versionId,
 
-          estado: true,
-        },
+        estado: true,
+      },
 
-        transaction,
-      });
+      transaction,
+    });
 
-    if (
-      existingPoints.length !==
-      puntos.length
-    ) {
+    // Auditoria
+    const auditoresPuntos = existingPoints.map(punto => ({
+      punto,
+
+      auditar: prepararAuditoria(
+        'PUNTO',
+        'REORDENAR',
+        punto,
+      ),
+    }));
+
+
+
+    if (existingPoints.length !== puntos.length) {
       throw new AppError(
         'Debe enviar todos los puntos activos de la versión.',
         400,
@@ -176,6 +185,16 @@ const reorderRutaPuntosService = async (
 
           transaction,
         },
+      );
+    }
+
+    // Auditoria
+    for (const item of auditoresPuntos) {
+      await item.punto.reload({ transaction });
+
+      await item.auditar(
+        item.punto,
+        transaction,
       );
     }
 

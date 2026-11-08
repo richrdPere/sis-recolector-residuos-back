@@ -48,6 +48,10 @@ const updateIncidenciaService = async (
         transaction,
       });
 
+      // Auditoria
+      const auditar = prepararAuditoria('INCIDENCIA', 'ACTUALIZAR', incidencia);
+
+
       ensureIncidenciaOpen(incidencia);
 
       if (
@@ -70,6 +74,9 @@ const updateIncidenciaService = async (
       await incidencia.update(data, {
         transaction,
       });
+
+      // Auditoria
+      await auditar(incidencia, transaction);
 
       return getIncidenciaDetail(
         incidenciaId,

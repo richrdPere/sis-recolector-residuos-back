@@ -12,6 +12,9 @@ const {
 // Utils
 const { obtenerUsuarioExistente } = require("../utils/usuario-service.utils");
 
+// Auditoria
+const { prepararAuditoria } = require('../../auditoria/utils/auditar-cambio.utils');
+
 // *********************************************************
 // SERVICE: CAMBIAR ESTADO DEL USUARIO
 // *********************************************************
@@ -48,6 +51,12 @@ const changeEstadoUsuarioService = async (params = {}) => {
       },
     );
 
+    const auditarUsuario = prepararAuditoria(
+      'USUARIO',
+      estado ? 'ACTIVAR' : 'DESACTIVAR',
+      usuario,
+    );
+
     const changed = Boolean(usuario.estado) !== estado;
 
     if (changed) {
@@ -55,6 +64,9 @@ const changeEstadoUsuarioService = async (params = {}) => {
         { estado },
         { transaction },
       );
+
+      // Auditoria
+      await auditarUsuario(usuario, transaction);
     }
 
     return {

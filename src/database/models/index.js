@@ -64,10 +64,11 @@ db.Ciudadano = require("./ciudadanos/ciudadano.model");
 db.CodigoQr = require('./codigo-qr/codigo_qr.model');
 db.CodigoQrAcceso = require('./codigo-qr/codigo_qr_acceso.model');
 
-// - Reporte y Auditoria
+// - Reportes
 db.ReporteExportacion = require("./auditoria/reporte-exportacion.model");
 
-
+// - Auditoria
+db.AuditoriaEvento = require('./auditoria/auditoria-evento.model');
 
 // CARGAR ASOCIACIONES
 require("../associations")(db);

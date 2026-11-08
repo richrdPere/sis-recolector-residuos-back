@@ -2,22 +2,22 @@ const db = require('../../../database/models');
 
 // Utils
 const {
-    error,
-    validarId,
-    validarBody,
-    texto,
+  error,
+  validarId,
+  validarBody,
+  texto,
 } = require("../utils/mantenimientos.utils");
 
 // Validation
 const {
-    obtenerDetalle,
-    validarActor,
-    bloquearOrden,
-    registrarHistorial,
+  obtenerDetalle,
+  validarActor,
+  bloquearOrden,
+  registrarHistorial,
 } = require("../validations/mantenimientos.validation");
 
 // Modelos
-const {    sequelize} = db;
+const { sequelize } = db;
 
 // *********************************************************
 // SERVICE: CANCELAR MANTENIMIENTO
@@ -47,8 +47,7 @@ const cancelarMantenimientoService = async ({
         transaction,
       );
 
-      const { mantenimiento } =
-        await bloquearOrden(id, transaction);
+      const { mantenimiento } = await bloquearOrden(id, transaction);
 
       if (mantenimiento.estado_mantenimiento !== 'PROGRAMADO') {
         error(
@@ -66,6 +65,9 @@ const cancelarMantenimientoService = async ({
         fecha_cancelacion: new Date(),
       });
 
+      // Auditoria
+      const auditar = prepararAuditoria('MANTENIMIENTO', 'CANCELAR', mantenimiento);
+
       await mantenimiento.save({ transaction });
 
       await registrarHistorial({
@@ -76,6 +78,9 @@ const cancelarMantenimientoService = async ({
         observacion: motivo,
         transaction,
       });
+
+      // Auditoria
+      await auditar(mantenimiento, transaction);
 
       return obtenerDetalle(id, transaction);
     },

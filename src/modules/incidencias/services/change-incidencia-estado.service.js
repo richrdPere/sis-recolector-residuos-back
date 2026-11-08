@@ -56,6 +56,10 @@ const changeIncidenciaEstadoService = async (
         },
       );
 
+      // Auditoria
+      const auditar = prepararAuditoria('INCIDENCIA', 'CAMBIAR_ESTADO', incidencia);
+
+
       ensureIncidenciaEnabled(incidencia);
 
       validarTransicion(
@@ -98,6 +102,9 @@ const changeIncidenciaEstadoService = async (
         },
         { transaction },
       );
+
+      // Auditoria
+      await auditar(incidencia, transaction);
 
       return getIncidenciaDetail(
         incidenciaId,

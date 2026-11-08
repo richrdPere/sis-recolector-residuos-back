@@ -18,6 +18,9 @@ const {
   revocarSesionesUsuario,
 } = require("../utils/usuario-write.utils");
 
+// Auditoria
+const { prepararAuditoria } = require('../../auditoria/utils/auditar-cambio.utils');
+
 // *********************************************************
 // SERVICE: ELIMINAR USUARIO
 // *********************************************************
@@ -44,6 +47,12 @@ const deleteUsuarioService = async (params = {}) => {
       }
     );
 
+    const auditarUsuario = prepararAuditoria(
+      'USUARIO',
+      'ELIMINAR',
+      usuario,
+    );
+
     const sesionesRevocadas = await revocarSesionesUsuario(
       idUsuario,
       transaction
@@ -67,6 +76,9 @@ const deleteUsuarioService = async (params = {}) => {
 
     // Usuario tiene paranoid: true.
     await usuario.destroy({ transaction });
+
+    // Auditoria
+    await auditarUsuario(null, transaction);
 
     return {
       id_usuario: usuario.id_usuario,

@@ -110,16 +110,21 @@ const finalizarRecorridoService = async ({
     );
   }
 
-  const transaction =
-    await sequelize.transaction();
+  const transaction = await sequelize.transaction();
 
   try {
-    const recorrido =
-      await getRecorridoOrFail(
-        recorridoId,
-        transaction,
-        true,
-      );
+    const recorrido = await getRecorridoOrFail(
+      recorridoId,
+      transaction,
+      true,
+    );
+
+    // Auditoria
+    const auditarRecorrido = prepararAuditoria(
+      'RECORRIDO',
+      'FINALIZAR',
+      recorrido,
+    );
 
     if (
       ![
@@ -280,6 +285,16 @@ const finalizarRecorridoService = async ({
       transaction,
     });
 
+      // Auditoria
+    await auditarRecorrido(
+      recorrido,
+      transaction,
+      {
+        clave_operacion: idempotencyKey,
+        fecha_dispositivo: eventDate,
+      },
+    );
+    
     await transaction.commit();
 
     return getRecorridoDetail(

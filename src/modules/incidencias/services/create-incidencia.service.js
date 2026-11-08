@@ -79,11 +79,10 @@ const createIncidenciaService = async (
       // 1. Resolver contexto y autorizar
       // ----------------------------------------------------
 
-      const contexto =
-        await resolveIncidenciaContext(
-          data,
-          transaction,
-        );
+      const contexto = await resolveIncidenciaContext(
+        data,
+        transaction,
+      );
 
       await authorizeIncidencia(
         'crear',
@@ -94,6 +93,9 @@ const createIncidenciaService = async (
           transaction,
         },
       );
+
+      // Auditoria
+      const auditar = prepararAuditoria('INCIDENCIA', 'CREAR');
 
       // ----------------------------------------------------
       // 2. Crear incidencia
@@ -278,6 +280,9 @@ const createIncidenciaService = async (
           transaction,
         });
       }
+
+      // Auditoria
+      await auditar(incidencia, transaction);
 
       // ----------------------------------------------------
       // 5. Devolver detalle

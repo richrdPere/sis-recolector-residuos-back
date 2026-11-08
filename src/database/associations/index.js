@@ -33,6 +33,9 @@ module.exports = (db) => {
     // - Codigos QR 
     require("./codigos_qr.associations")(db);
 
-    // - Reportes y Auditoria
+    // - Reportes
     require("./reportes.associations")(db);
+
+    // - Auditoría
+    require('./auditoria.associations')(db);
 }

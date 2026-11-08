@@ -98,15 +98,14 @@ const respondAssignmentService = async ({
     // 4. Obtener perfil del usuario autenticado
     // ------------------------------------------------------
 
-    const personal =
-      await PersonalOperativo.findOne({
-        where: {
-          id_usuario: userId,
-          estado: true,
-        },
+    const personal = await PersonalOperativo.findOne({
+      where: {
+        id_usuario: userId,
+        estado: true,
+      },
 
-        transaction,
-      });
+      transaction,
+    });
 
     if (!personal) {
       throw new AppError(
@@ -171,27 +170,19 @@ const respondAssignmentService = async ({
     }
 
     // ------------------------------------------------------
-    // 7. Bloquear y revalidar asignación
+    // 7. Bloquear y revalidar asignación + Auditoria
     // ------------------------------------------------------
+    const auditar = prepararAuditoria('ASIGNACION', 'RESPONDER_ASIGNACION', assignment);
 
-    const assignment =
-      await ProgramacionPersonal.findOne({
-        where: {
-          id_programacion_personal:
-            assignmentId,
-
-          id_programacion:
-            programacion.id_programacion,
-
-          id_personal:
-            personal.id_personal,
-        },
-
-        transaction,
-
-        lock:
-          transaction.LOCK.UPDATE,
-      });
+    const assignment = await ProgramacionPersonal.findOne({
+      where: {
+        id_programacion_personal: assignmentId,
+        id_programacion: programacion.id_programacion,
+        id_personal: personal.id_personal,
+      },
+      transaction,
+      lock: transaction.LOCK.UPDATE,
+    });
 
     if (!assignment) {
       throw new AppError(
@@ -457,6 +448,9 @@ const respondAssignmentService = async ({
         transaction,
       });
     }
+
+    // Auditoria
+    await auditar(assignment, transaction);
 
     // ------------------------------------------------------
     // 14. Confirmar respuesta y aviso

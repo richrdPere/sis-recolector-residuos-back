@@ -18,6 +18,10 @@ const {
   sequelize,
 } = db;
 
+// Auditoria
+const { prepararAuditoria } = require('../../auditoria/utils/auditar-cambio.utils');
+
+
 /*
 |--------------------------------------------------------------------------
 | Validar dependencias del módulo
@@ -290,6 +294,24 @@ const loginService = async ({
       },
     );
 
+    // Auditoria
+    const auditarLogin = prepararAuditoria(
+      'SESION',
+      'INICIAR_SESION',
+      {
+        id_usuario: usuario.id_usuario,
+        ultimo_acceso: usuario.ultimo_acceso,
+      },
+      {
+        // El login todavía no tiene req.usuario.
+        // Se utiliza el usuario cuya contraseña ya fue verificada.
+        usuario: {
+          id_usuario: usuario.id_usuario,
+          roles: usuario.roles.map(rol => rol.nombre),
+        },
+      },
+    );
+
     await usuario.update(
       {
         ultimo_acceso: loginDate,
@@ -297,6 +319,16 @@ const loginService = async ({
       {
         transaction,
       },
+    );
+
+
+    // Auditoria
+    await auditarLogin(
+      {
+        id_usuario: usuario.id_usuario,
+        ultimo_acceso: loginDate,
+      },
+      transaction,
     );
 
     await transaction.commit();

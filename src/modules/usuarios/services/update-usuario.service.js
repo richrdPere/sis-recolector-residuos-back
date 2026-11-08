@@ -24,6 +24,10 @@ const {
   traducirErrorEscritura,
 } = require("../utils/usuario-write.utils");
 
+// Auditoria
+const { prepararAuditoria } = require('../../auditoria/utils/auditar-cambio.utils');
+
+
 // *********************************************************
 // SERVICE: ACTUALIZAR USUARIO
 // *********************************************************
@@ -89,6 +93,18 @@ const updateUsuarioService = async (params = {}) => {
         }
       );
 
+      const auditarUsuario = prepararAuditoria(
+        'USUARIO',
+        'ACTUALIZAR',
+        usuario,
+      );
+
+      const auditarPersona = prepararAuditoria(
+        'PERSONA',
+        'ACTUALIZAR',
+        persona,
+      );
+
       if (!persona) {
         throw crearHttpError(
           "La persona asociada al usuario no existe.",
@@ -119,6 +135,11 @@ const updateUsuarioService = async (params = {}) => {
         await persona.update(datosPersona, { transaction });
       }
 
+      // Auditoria
+      await auditarUsuario(usuario, transaction);
+      await auditarPersona(persona, transaction);
+
+      // Return
       return obtenerUsuarioSeguro(idUsuario, transaction);
     });
   } catch (error) {

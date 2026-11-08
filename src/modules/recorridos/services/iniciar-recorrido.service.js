@@ -43,6 +43,9 @@ const {
   sequelize,
 } = db;
 
+// Auditoria
+const { prepararAuditoria } = require('../../auditoria/utils/auditar-cambio.utils');
+
 // Services
 const crearAvisoCiudadano = require('../../notificaciones/services/ciudadanos/crear-aviso-ciudadano.service');
 
@@ -236,42 +239,59 @@ const iniciarRecorridoService = async ({
     // 6. Crear recorrido
     // ------------------------------------------------------
 
-    const recorrido =
-      await Recorrido.create(
-        {
-          id_programacion:
-            programmingId,
+    // Auditoria
+    const auditarRecorrido = prepararAuditoria(
+      'RECORRIDO',
+      'INICIAR',
+    );
 
-          id_usuario_inicio:
-            userId,
+    const auditarProgramacion = prepararAuditoria(
+      'PROGRAMACION',
+      'CAMBIAR_ESTADO_POR_RECORRIDO',
+      programacion,
+    );
 
-          estado_recorrido:
-            ESTADOS_RECORRIDO.EN_CURSO,
+    const auditarVehiculo = prepararAuditoria(
+      'VEHICULO',
+      'CAMBIAR_ESTADO_POR_RECORRIDO',
+      vehiculo,
+    );
 
-          fecha_hora_inicio:
-            eventDate,
+    const recorrido = await Recorrido.create(
+      {
+        id_programacion:
+          programmingId,
 
-          latitud_inicio:
-            location.latitud,
+        id_usuario_inicio:
+          userId,
 
-          longitud_inicio:
-            location.longitud,
+        estado_recorrido:
+          ESTADOS_RECORRIDO.EN_CURSO,
 
-          precision_inicio:
-            accuracy,
+        fecha_hora_inicio:
+          eventDate,
 
-          kilometraje_inicio:
-            initialMileage,
+        latitud_inicio:
+          location.latitud,
 
-          observacion_inicio:
-            observation,
+        longitud_inicio:
+          location.longitud,
 
-          estado: true,
-        },
-        {
-          transaction,
-        },
-      );
+        precision_inicio:
+          accuracy,
+
+        kilometraje_inicio:
+          initialMileage,
+
+        observacion_inicio:
+          observation,
+
+        estado: true,
+      },
+      {
+        transaction,
+      },
+    );
 
     // ------------------------------------------------------
     // 7. Registrar evento de inicio
@@ -512,6 +532,43 @@ const iniciarRecorridoService = async ({
       idUsuarioCreacion: userId,
       transaction,
     });
+
+
+    // Auditoria
+    await auditarRecorrido(
+      recorrido,
+      transaction,
+      {
+        clave_operacion: idempotencyKey,
+        fecha_dispositivo: eventDate,
+      },
+    );
+
+    // Auditoria
+    await auditarRecorrido(
+      recorrido,
+      transaction,
+      {
+        clave_operacion: idempotencyKey,
+        fecha_dispositivo: eventDate,
+      },
+    );
+
+    await auditarProgramacion(
+      programacion,
+      transaction,
+      {
+        clave_operacion: idempotencyKey,
+      },
+    );
+
+    await auditarVehiculo(
+      vehiculo,
+      transaction,
+      {
+        clave_operacion: idempotencyKey,
+      },
+    );
 
     // ------------------------------------------------------
     // 11. Confirmar recorrido y avisos

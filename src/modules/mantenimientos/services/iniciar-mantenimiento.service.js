@@ -48,8 +48,7 @@ const iniciarMantenimientoService = async ({
         transaction,
       );
 
-      const { mantenimiento, vehiculo } =
-        await bloquearOrden(id, transaction);
+      const { mantenimiento, vehiculo } = await bloquearOrden(id, transaction);
 
       if (mantenimiento.estado_mantenimiento !== 'PROGRAMADO') {
         error(
@@ -73,6 +72,9 @@ const iniciarMantenimientoService = async ({
         );
       }
 
+      // Auditoria
+      const auditar = prepararAuditoria('MANTENIMIENTO', 'INICIAR', mantenimiento);
+
       await validarSinOperacionActiva(
         vehiculo.id_vehiculo,
         transaction,
@@ -80,8 +82,7 @@ const iniciarMantenimientoService = async ({
 
       const ahora = new Date();
 
-      const fin = datos.fecha_fin_programada ??
-        new Date(mantenimiento.fecha_fin_programada);
+      const fin = datos.fecha_fin_programada ?? new Date(mantenimiento.fecha_fin_programada);
 
       if (fin <= ahora) {
         error(
@@ -97,13 +98,16 @@ const iniciarMantenimientoService = async ({
         transaction,
       });
 
-      const kilometraje = datos.kilometraje_ingreso ??
-        String(vehiculo.kilometraje);
+      // Después de bloquearlo, antes de cambiarlo.
+      const auditarVehiculo = prepararAuditoria(
+        'VEHICULO',
+        'CAMBIAR_ESTADO_POR_MANTENIMIENTO',
+        vehiculo,
+      );
 
-      if (
-        Number(kilometraje) <
-        Number(vehiculo.kilometraje)
-      ) {
+      const kilometraje = datos.kilometraje_ingreso ?? String(vehiculo.kilometraje);
+
+      if (Number(kilometraje) < Number(vehiculo.kilometraje)) {
         error(
           'El kilometraje de ingreso no puede ser menor al registrado en el vehículo.',
         );
@@ -136,6 +140,11 @@ const iniciarMantenimientoService = async ({
         anterior,
         transaction,
       });
+
+      // Auditoria
+      await auditar(mantenimiento, transaction);
+
+      await auditarVehiculo(vehiculo, transaction);
 
       return obtenerDetalle(id, transaction);
     },

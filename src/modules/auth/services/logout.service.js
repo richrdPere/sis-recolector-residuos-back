@@ -20,8 +20,7 @@ const logoutService = async ({
         );
     }
 
-    const payload =
-        verifyRefreshToken(refresh_token);
+    const payload = verifyRefreshToken(refresh_token);
 
     if (
         Number(payload.id_usuario) !==

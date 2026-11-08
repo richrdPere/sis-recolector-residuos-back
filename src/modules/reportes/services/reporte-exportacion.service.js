@@ -13,6 +13,10 @@ const {
   validarFiltrosResumen,
 } = require('./reporte-resumen.service');
 
+// Auditoria
+const { prepararAuditoria } = require('../../auditoria/utils/auditar-cambio.utils');
+
+
 /*
 Contrato del exportador:
 
@@ -77,10 +81,9 @@ const generarExportacionReporteService = async ({
     );
   }
 
-  const filtros =
-    tipo_reporte === 'RESUMEN_OPERATIVO'
-      ? validarFiltrosResumen(query)
-      : construir(tipo_reporte, query).filtros;
+  const filtros = tipo_reporte === 'RESUMEN_OPERATIVO'
+    ? validarFiltrosResumen(query)
+    : construir(tipo_reporte, query).filtros;
 
   const registro = await db.ReporteExportacion.create({
     id_usuario,
@@ -130,10 +133,7 @@ const generarExportacionReporteService = async ({
           });
         }
 
-        for (
-          const cantidad of
-          datos.cantidades_por_unidad || []
-        ) {
+        for (const cantidad of datos.cantidades_por_unidad || []) {
           items.push({
             indicador: 'residuos recolectados',
             valor: cantidad.cantidad_total,
@@ -141,9 +141,7 @@ const generarExportacionReporteService = async ({
           });
         }
 
-        if (
-          datos.resultados_pendientes !== undefined
-        ) {
+        if (datos.resultados_pendientes !== undefined) {
           items.push({
             indicador:
               'residuos: resultados pendientes',
@@ -244,18 +242,47 @@ const generarExportacionReporteService = async ({
       csv: 'text/csv; charset=utf-8',
     }[formato];
 
-    await registro.update({
-      columnas: dataset.columnas.map(
-        columna => columna.key,
-      ),
+    // Auditoria
+    const auditarExportacion = prepararAuditoria(
+      'EXPORTACION',
+      'COMPLETAR_EXPORTACION',
+      registro,
+    );
+
+    await db.sequelize.transaction(async transaction => {
+      await registro.update(
+        {
+          columnas: dataset.columnas.map(columna => columna.key),
+        },
+        { transaction },
+      );
+
+      await registro.marcarCompletado({
+        nombre_archivo,
+        mime_type,
+        total_registros: dataset.items.length,
+        tamano_bytes: buffer.length,
+        transaction,
+      });
+
+      await auditarExportacion(
+        registro,
+        transaction,
+      );
     });
 
-    await registro.marcarCompletado({
-      nombre_archivo,
-      mime_type,
-      total_registros: dataset.items.length,
-      tamano_bytes: buffer.length,
-    });
+    // await registro.update({
+    //   columnas: dataset.columnas.map(
+    //     columna => columna.key,
+    //   ),
+    // });
+
+    // await registro.marcarCompletado({
+    //   nombre_archivo,
+    //   mime_type,
+    //   total_registros: dataset.items.length,
+    //   tamano_bytes: buffer.length,
+    // });
 
     return {
       id_reporte_exportacion:

@@ -1,6 +1,10 @@
 const express = require("express");
 const router = express.Router();
 
+// Middleware - Auditoria
+const { contextoAuditoriaMiddleware } = require('../modules/auditoria/utils/auditoria-contexto.utils');
+
+// Rutas principales
 const authRoutes = require("../modules/auth/routes/auth.routes");
 const vehiculoRoutes = require("../modules/vehiculos/routes/vehiculo.routes");
 const personalRoutes = require('../modules/personal/routes');
@@ -20,10 +24,14 @@ const usuarioRoutes = require('../modules/usuarios/routes/usuario.routes');
 const mantenimientosRoutes = require('../modules/mantenimientos/routes/mantenimientos.routes');
 const incidenciasRoutes = require("../modules/incidencias/routes/incidencias.routes");
 const reportesRoutes = require("../modules/reportes/routes/reporte.routes");
+const auditoriaRoutes = require('../modules/auditoria/routes/auditoria.routes');
 
 
 // Rutas
 router.use("/auth", authRoutes); // COMPLETE 
+
+router.use(contextoAuditoriaMiddleware);
+
 router.use("/vehiculos", vehiculoRoutes); // COMPLETE 
 router.use('/personal', personalRoutes); // COMPLETE 
 router.use('/rutas', rutasRoutes); // COMPLETE
@@ -40,7 +48,10 @@ router.use('/monitoreo', monitoreoRoutes); // COMPLETE
 router.use('/dashboard', dashboardRoutes); // COMPLETE
 router.use('/usuarios', usuarioRoutes); // COMPLETE
 router.use("/mantenimientos", mantenimientosRoutes); // COMPLETE
-router.use('/incidencias', incidenciasRoutes); 
-router.use('/reportes', reportesRoutes); 
+router.use('/incidencias', incidenciasRoutes); // COMPLETE
+router.use('/reportes', reportesRoutes); // COMPLETE
+router.use('/auditoria', auditoriaRoutes); // COMPLETE
 
 module.exports = router;
+
+// Para las IP detrás de un proxy, configura trust proxy según tu despliegue. No extraigas directamente x-forwarded-for.

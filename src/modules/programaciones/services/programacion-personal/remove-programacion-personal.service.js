@@ -71,16 +71,15 @@ const removeProgramacionPersonalService = async (
     // 2. Obtener y bloquear programación
     // ------------------------------------------------------
 
-    const programacion =
-      await ProgramacionRuta.findByPk(
-        programmingId,
-        {
-          transaction,
+    const programacion = await ProgramacionRuta.findByPk(
+      programmingId,
+      {
+        transaction,
 
-          lock:
-            transaction.LOCK.UPDATE,
-        },
-      );
+        lock:
+          transaction.LOCK.UPDATE,
+      },
+    );
 
     if (!programacion) {
       throw new AppError(
@@ -106,24 +105,24 @@ const removeProgramacionPersonalService = async (
     }
 
     // ------------------------------------------------------
-    // 3. Obtener asignación
+    // 3. Obtener asignación + auditoria
     // ------------------------------------------------------
+    const auditar = prepararAuditoria('ASIGNACION', 'RETIRAR_PERSONAL', assignment);
 
-    const assignment =
-      await ProgramacionPersonal.findOne({
-        where: {
-          id_programacion:
-            programmingId,
+    const assignment = await ProgramacionPersonal.findOne({
+      where: {
+        id_programacion:
+          programmingId,
 
-          id_programacion_personal:
-            assignmentId,
-        },
+        id_programacion_personal:
+          assignmentId,
+      },
 
-        transaction,
+      transaction,
 
-        lock:
-          transaction.LOCK.UPDATE,
-      });
+      lock:
+        transaction.LOCK.UPDATE,
+    });
 
     if (!assignment) {
       throw new AppError(
@@ -347,6 +346,9 @@ const removeProgramacionPersonalService = async (
         transaction,
       });
     }
+
+    // Auditoria
+    await auditar(assignment, transaction);
 
     // ------------------------------------------------------
     // 9. Confirmar retiro y aviso

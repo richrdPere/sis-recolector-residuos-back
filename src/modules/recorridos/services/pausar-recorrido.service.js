@@ -109,12 +109,18 @@ const pausarRecorridoService = async ({
         await sequelize.transaction();
 
     try {
-        const recorrido =
-            await getRecorridoOrFail(
-                recorridoId,
-                transaction,
-                true,
-            );
+        const recorrido = await getRecorridoOrFail(
+            recorridoId,
+            transaction,
+            true,
+        );
+
+        // Auditoria
+        const auditarRecorrido = prepararAuditoria(
+            'RECORRIDO',
+            'PAUSAR',
+            recorrido,
+        );
 
         if (
             recorrido.estado_recorrido !==
@@ -189,6 +195,16 @@ const pausarRecorridoService = async ({
             user_agent,
             transaction,
         });
+
+        // Auditoria
+        await auditarRecorrido(
+            recorrido,
+            transaction,
+            {
+                clave_operacion: idempotencyKey,
+                fecha_dispositivo: eventDate,
+            },
+        );
 
         await transaction.commit();
 

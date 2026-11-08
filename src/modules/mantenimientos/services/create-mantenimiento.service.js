@@ -2,106 +2,114 @@ const db = require('../../../database/models');
 
 // Utils
 const {
-    CAMPOS_CREACION,
-    error,
-    validarBody,
-    validarIntervalo,
-    prepararDatos,
+  CAMPOS_CREACION,
+  error,
+  validarBody,
+  validarIntervalo,
+  prepararDatos,
 } = require("../utils/mantenimientos.utils");
 
 // Validation
 const {
-    bloquearVehiculo,
-    obtenerDetalle,
-    validarActor,
-    registrarHistorial,
-    validarDisponibilidad,
+  bloquearVehiculo,
+  obtenerDetalle,
+  validarActor,
+  registrarHistorial,
+  validarDisponibilidad,
 } = require("../validations/mantenimientos.validation");
+
+// Auditoria
+const { prepararAuditoria } = require('../../auditoria/utils/auditar-cambio.utils');
 
 // Modelos
 const {
-    sequelize,
-    VehiculoMantenimiento,
+  sequelize,
+  VehiculoMantenimiento,
 } = db;
 
 // *********************************************************
 // SERVICE: CREAR MANTENIMIENTO
 // *********************************************************
 const createMantenimientoService = async ({
-    usuarioId,
-    body,
+  usuarioId,
+  body,
 }) => {
-    validarBody(body, CAMPOS_CREACION);
+  validarBody(body, CAMPOS_CREACION);
 
-    const datos = prepararDatos(body);
+  const datos = prepararDatos(body);
 
-    for (const campo of [
-        'id_vehiculo',
-        'tipo_mantenimiento',
-        'fecha_inicio_programada',
-        'fecha_fin_programada',
-        'motivo',
-    ]) {
-        if (datos[campo] == null) {
-            error(`${campo} es obligatorio.`);
-        }
+  for (const campo of [
+    'id_vehiculo',
+    'tipo_mantenimiento',
+    'fecha_inicio_programada',
+    'fecha_fin_programada',
+    'motivo',
+  ]) {
+    if (datos[campo] == null) {
+      error(`${campo} es obligatorio.`);
     }
+  }
 
-    validarIntervalo(
-        datos.fecha_inicio_programada,
-        datos.fecha_fin_programada,
-    );
+  validarIntervalo(
+    datos.fecha_inicio_programada,
+    datos.fecha_fin_programada,
+  );
 
-    return sequelize.transaction(
-        async (transaction) => {
-            const actorId = await validarActor(
-                usuarioId,
-                transaction,
-            );
+  return sequelize.transaction(
+    async (transaction) => {
+      const actorId = await validarActor(
+        usuarioId,
+        transaction,
+      );
 
-            const vehiculo = await bloquearVehiculo(
-                datos.id_vehiculo,
-                transaction,
-            );
+      const vehiculo = await bloquearVehiculo(
+        datos.id_vehiculo,
+        transaction,
+      );
 
-            if (!vehiculo.estado) {
-                error(
-                    'El vehículo está desactivado administrativamente.',
-                    409,
-                );
-            }
+      if (!vehiculo.estado) {
+        error(
+          'El vehículo está desactivado administrativamente.',
+          409,
+        );
+      }
 
-            await validarDisponibilidad({
-                idVehiculo: vehiculo.id_vehiculo,
-                inicio: datos.fecha_inicio_programada,
-                fin: datos.fecha_fin_programada,
-                transaction,
-            });
+      await validarDisponibilidad({
+        idVehiculo: vehiculo.id_vehiculo,
+        inicio: datos.fecha_inicio_programada,
+        fin: datos.fecha_fin_programada,
+        transaction,
+      });
 
-            const mantenimiento =
-                await VehiculoMantenimiento.create(
-                    {
-                        ...datos,
-                        id_usuario_creacion: actorId,
-                        estado_mantenimiento: 'PROGRAMADO',
-                    },
-                    { transaction },
-                );
+      // Auditoria
+      const auditar = prepararAuditoria('MANTENIMIENTO', 'CREAR');
 
-            await registrarHistorial({
-                mantenimiento,
-                usuarioId: actorId,
-                tipoEvento: 'CREACION',
-                anterior: null,
-                transaction,
-            });
-
-            return obtenerDetalle(
-                mantenimiento.id_mantenimiento,
-                transaction,
-            );
+      const mantenimiento = await VehiculoMantenimiento.create(
+        {
+          ...datos,
+          id_usuario_creacion: actorId,
+          estado_mantenimiento: 'PROGRAMADO',
         },
-    );
+        { transaction },
+      );
+
+      await registrarHistorial({
+        mantenimiento,
+        usuarioId: actorId,
+        tipoEvento: 'CREACION',
+        anterior: null,
+        transaction,
+      });
+
+      // Auditoria
+      await auditar(mantenimiento, transaction);
+
+      return obtenerDetalle(
+        mantenimiento.id_mantenimiento,
+        transaction,
+      );
+    },
+  );
 };
 
 module.exports = createMantenimientoService;

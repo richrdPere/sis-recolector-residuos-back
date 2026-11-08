@@ -57,8 +57,7 @@ const finalizarMantenimientoService = async ({
         transaction,
       );
 
-      const { mantenimiento, vehiculo } =
-        await bloquearOrden(id, transaction);
+      const { mantenimiento, vehiculo } = await bloquearOrden(id, transaction);
 
       if (mantenimiento.estado_mantenimiento !== 'EN_PROCESO') {
         error(
@@ -74,16 +73,15 @@ const finalizarMantenimientoService = async ({
         );
       }
 
-      const otraIntervencion =
-        await VehiculoMantenimiento.findOne({
-          where: {
-            id_vehiculo: vehiculo.id_vehiculo,
-            id_mantenimiento: { [Op.ne]: id },
-            estado_mantenimiento: 'EN_PROCESO',
-          },
+      const otraIntervencion = await VehiculoMantenimiento.findOne({
+        where: {
+          id_vehiculo: vehiculo.id_vehiculo,
+          id_mantenimiento: { [Op.ne]: id },
+          estado_mantenimiento: 'EN_PROCESO',
+        },
 
-          transaction,
-        });
+        transaction,
+      });
 
       if (otraIntervencion) {
         error(
@@ -97,11 +95,16 @@ const finalizarMantenimientoService = async ({
         transaction,
       );
 
+      // Después de bloquearlo, antes de cambiarlo.
+      const auditarVehiculo = prepararAuditoria(
+        'VEHICULO',
+        'CAMBIAR_ESTADO_POR_MANTENIMIENTO',
+        vehiculo,
+      );
+
       const ahora = new Date();
 
-      const kilometrajeSalida =
-        datos.kilometraje_salida ??
-        mantenimiento.kilometraje_ingreso;
+      const kilometrajeSalida = datos.kilometraje_salida ?? mantenimiento.kilometraje_ingreso;
 
       const minimo = Math.max(
         Number(vehiculo.kilometraje),
@@ -124,6 +127,9 @@ const finalizarMantenimientoService = async ({
         id_usuario_finalizacion: actorId,
         fecha_fin_real: ahora,
       });
+
+      // Auditoria
+      const auditar = prepararAuditoria('MANTENIMIENTO', 'FINALIZAR', mantenimiento);
 
       await mantenimiento.save({ transaction });
 
@@ -172,6 +178,11 @@ const finalizarMantenimientoService = async ({
         anterior,
         transaction,
       });
+
+      // Auditoria
+      await auditar(mantenimiento, transaction);
+
+      await auditarVehiculo(vehiculo, transaction);
 
       return obtenerDetalle(id, transaction);
     },

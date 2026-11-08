@@ -39,6 +39,9 @@ const changeIncidenciaHabilitacionService = async (
         true,
       );
 
+      // Auditoria
+      const auditar = prepararAuditoria('INCIDENCIA', 'CAMBIAR_HABILITACION', incidencia);
+
       await authorizeIncidencia(
         'cambiar_habilitacion',
         actor,
@@ -52,6 +55,9 @@ const changeIncidenciaHabilitacionService = async (
       await incidencia.update(data, {
         transaction,
       });
+
+      // Auditoria
+      await auditar(incidencia, transaction);
 
       return getIncidenciaDetail(
         incidenciaId,

@@ -22,6 +22,9 @@ const {
   '../utils/codigo-qr-service.utils',
 );
 
+// Auditoria
+const { prepararAuditoria } = require('../../auditoria/utils/auditar-cambio.utils');
+
 // Modelos
 const {
   CodigoQr,
@@ -147,45 +150,52 @@ const createQrCodeService = async ({
       );
     }
 
-    const token =
-      generatePublicToken();
+    // Auditoria
+    const auditarQr = prepararAuditoria(
+      'QR',
+      'CREAR',
+    );
 
-    const codigoQr =
-      await CodigoQr.create(
-        {
-          codigo:
-            generateAdministrativeCode(
-              resourceType,
-            ),
+    const token = generatePublicToken();
 
-          token_publico: token,
+    const codigoQr = await CodigoQr.create(
+      {
+        codigo:
+          generateAdministrativeCode(
+            resourceType,
+          ),
 
-          tipo_recurso: resourceType,
+        token_publico: token,
 
-          id_zona: zoneId,
+        tipo_recurso: resourceType,
 
-          id_ruta: routeId,
+        id_zona: zoneId,
 
-          titulo: normalizedTitle,
+        id_ruta: routeId,
 
-          descripcion: descripcion?.trim() || null,
+        titulo: normalizedTitle,
 
-          version: 1,
+        descripcion: descripcion?.trim() || null,
 
-          estado_qr: 'ACTIVO',
+        version: 1,
 
-          fecha_generacion: new Date(),
+        estado_qr: 'ACTIVO',
 
-          fecha_expiracion: fecha_expiracion || null,
+        fecha_generacion: new Date(),
 
-          id_usuario_creacion: creatorId,
+        fecha_expiracion: fecha_expiracion || null,
 
-          observacion: observacion?.trim() || null,
-        },
-        {
-          transaction,
-        },
-      );
+        id_usuario_creacion: creatorId,
+
+        observacion: observacion?.trim() || null,
+      },
+      {
+        transaction,
+      },
+    );
+
+    // Auditoria
+    await auditarQr(codigoQr, transaction);
 
     await transaction.commit();
 

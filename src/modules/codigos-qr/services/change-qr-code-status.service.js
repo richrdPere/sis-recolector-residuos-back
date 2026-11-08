@@ -20,6 +20,10 @@ const {
   sequelize,
 } = db;
 
+// Auditoria
+const { prepararAuditoria } = require('../../auditoria/utils/auditar-cambio.utils');
+
+
 // ===============================================
 // SERVICE: Cambiar estado del codigo QR
 // ===============================================
@@ -50,6 +54,13 @@ const changeQrCodeStatusService = async ({
       },
     );
 
+    // Auditoria
+    const auditarQr = prepararAuditoria(
+      'QR',
+      'CAMBIAR_ESTADO',
+      codigoQr,
+    );
+
     if (codigoQr.estado_qr === 'REVOCADO' && nextState !== 'REVOCADO') {
       throw new AppError(
         'Un código QR revocado no puede volver a activarse.',
@@ -72,11 +83,13 @@ const changeQrCodeStatusService = async ({
         );
       }
 
+
+
       await codigoQr.update(
         {
-          estado_qr:            'REVOCADO',
-          fecha_revocacion:            new Date(),
-          motivo_revocacion:            reason,
+          estado_qr: 'REVOCADO',
+          fecha_revocacion: new Date(),
+          motivo_revocacion: reason,
         },
         {
           transaction,
@@ -154,6 +167,9 @@ const changeQrCodeStatusService = async ({
         },
       );
     }
+
+    // Auditoria
+    await auditarQr(codigoQr, transaction);
 
     await transaction.commit();
 

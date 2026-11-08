@@ -22,6 +22,9 @@ const {
   registerHistory,
 } = require("../../utils/programacion-service.utils");
 
+// Auditoria
+const { prepararAuditoria } = require('../../../auditoria/utils/auditar-cambio.utils');
+
 // Modelos
 const {
   ProgramacionRuta,
@@ -118,8 +121,7 @@ const createProgramacionService = async ({
     );
   }
 
-  const transaction =
-    await sequelize.transaction();
+  const transaction = await sequelize.transaction();
 
   try {
     // ------------------------------------------------------
@@ -217,6 +219,8 @@ const createProgramacionService = async ({
     // ------------------------------------------------------
     // 5. Crear programación
     // ------------------------------------------------------
+    const auditarProgramacion = prepararAuditoria('PROGRAMACION', 'CREAR');
+
     const programacion = await ProgramacionRuta.create(
       {
         id_ruta: Number(id_ruta),
@@ -243,11 +247,16 @@ const createProgramacionService = async ({
     );
 
     // ------------------------------------------------------
-    // 6. Registrar asignaciones
+    // 6. Registrar asignaciones y su auditoría
     // ------------------------------------------------------
 
     for (const member of team) {
-      await ProgramacionPersonal.create(
+      const auditarAsignacion = prepararAuditoria(
+        'ASIGNACION',
+        'ASIGNAR_PERSONAL',
+      );
+
+      const asignacion = await ProgramacionPersonal.create(
         {
           id_programacion: programacion.id_programacion,
           id_personal: member.id_personal,
@@ -258,6 +267,11 @@ const createProgramacionService = async ({
         {
           transaction,
         },
+      );
+
+      await auditarAsignacion(
+        asignacion,
+        transaction,
       );
     }
 
@@ -350,6 +364,12 @@ const createProgramacionService = async ({
       // La notificación participa en esta transacción.
       transaction,
     });
+
+    // Auditoría de creación de la programación.
+    await auditarProgramacion(
+      programacion,
+      transaction,
+    );
 
     // ------------------------------------------------------
     // 9. Confirmar operación completa

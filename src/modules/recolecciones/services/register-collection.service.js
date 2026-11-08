@@ -17,6 +17,9 @@ const {
   calculateDistanceMeters,
 } = require('../utils/recoleccion-service.utils');
 
+// Auditoria
+const { prepararAuditoria } = require('../../auditoria/utils/auditar-cambio.utils');
+
 // Modelos
 const {
   RecoleccionPunto,
@@ -93,15 +96,14 @@ const registerCollectionService = async (
     };
   };
 
-  const existingByKey =
-    await RecoleccionPunto
-      .findOne({
-        where: {
-          clave_idempotencia:
-            normalizedData
-              .clave_idempotencia,
-        },
-      });
+  const existingByKey = await RecoleccionPunto
+    .findOne({
+      where: {
+        clave_idempotencia:
+          normalizedData
+            .clave_idempotencia,
+      },
+    });
 
   if (existingByKey) {
     return duplicado(existingByKey);
@@ -169,6 +171,12 @@ const registerCollectionService = async (
       punto.longitud,
     );
 
+    // Auditoria
+    const auditarAtencion = prepararAuditoria(
+      'ATENCION',
+      'REGISTRAR_ATENCION',
+    );
+
     const collection = await RecoleccionPunto
       .create(
         {
@@ -195,6 +203,16 @@ const registerCollectionService = async (
           transaction,
         },
       );
+
+    // Auditoria
+    await auditarAtencion(
+      collection,
+      transaction,
+      {
+        clave_operacion: normalizedData.clave_idempotencia,
+        fecha_dispositivo: normalizedData.fecha_dispositivo,
+      },
+    );
 
     await transaction.commit();
 
