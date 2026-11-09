@@ -10,6 +10,8 @@ const db = require('../../../database/models');
 // Utils
 const AppError = require('../../../utils/app-error');
 
+const { revisarRecordatorio } = require('../services/ciudadanos/recordatorio-programacion.utils');
+
 // Firebase
 const { getFirebaseMessaging } = require('../../../config/firebase-admin');
 
@@ -153,11 +155,62 @@ async function claimNotification(id, reintentar) {
         };
       }
 
+      // ------------------------------------------------------
+      // Comprobar recordatorios automáticos antes de enviarlos
+      // ------------------------------------------------------
+
+      const revision = await revisarRecordatorio(
+        notification,
+        transaction,
+      );
+
+      if (revision.accion === 'CANCELAR') {
+        await notification.update(
+          {
+            estado_notificacion:
+              'CANCELADA',
+
+            fecha_procesamiento:
+              new Date(),
+          },
+          {
+            transaction,
+            hooks: false,
+          },
+        );
+
+        return {
+          omitida: true,
+          motivo: revision.motivo,
+        };
+      }
+
+      // Para recordatorios vigentes, aplicar los canales
+      // que el ciudadano tiene habilitados actualmente.
       if (
-        notification.estado_notificacion !==
-        'PENDIENTE' &&
-        !reintentar
+        revision.enviar_interna !== undefined
       ) {
+        await notification.update(
+          {
+            enviar_interna: revision.enviar_interna,
+            enviar_push: revision.enviar_push,
+            fecha_programada: revision.fecha_programada,
+          },
+          {
+            transaction,
+            hooks: false,
+          },
+        );
+      }
+
+      if (revision.accion === 'DIFERIR') {
+        return {
+          omitida: true,
+          motivo: 'RECORDATORIO_APLAZADO',
+        };
+      }
+
+      if (notification.estado_notificacion !== 'PENDIENTE' && !reintentar) {
         return {
           omitida: true,
           motivo: 'REINTENTO_NO_SOLICITADO',

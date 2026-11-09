@@ -163,6 +163,9 @@ const resolveRecipientsService = async ({
   fecha_servicio = null,
   transaction = null,
   maxDestinatarios = 1000,
+
+  // Nuevo: permite generar recordatorios por lotes.
+  id_ciudadano = null,
 } = {}) => {
   if (
     !['USUARIOS', 'CIUDADANOS'].includes(
@@ -392,6 +395,14 @@ const resolveRecipientsService = async ({
       where: {
         estado_ciudadano: 'ACTIVO',
         acepta_tratamiento_datos: true,
+
+        ...(id_ciudadano == null
+          ? {}
+          : {
+            id_ciudadano: validateId(
+              id_ciudadano,
+            ),
+          }),
       },
 
       include: [

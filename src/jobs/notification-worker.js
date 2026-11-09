@@ -87,11 +87,45 @@ function runNotificationWorkerOnce() {
       procesadas: 0,
       omitidas: 0,
       errores: 0,
+
+      recordatorios: {
+        programaciones: 0,
+        ciudadanos: 0,
+        creadas: 0,
+        duplicadas: 0,
+        excluidos: 0,
+        errores: 0,
+      },
+
       proximidad: {
         creadas: 0,
         errores: 0,
       },
     };
+
+    // ------------------------------------------------------
+    // Generar recordatorios de próximas programaciones
+    // ------------------------------------------------------
+
+    try {
+      // Carga diferida: el generador utiliza
+      // enqueueNotification de este mismo módulo.
+      const generarRecordatorios = require(
+        '../modules/notificaciones/services/ciudadanos/generar-recordatorios.service',
+      );
+
+      summary.recordatorios = await generarRecordatorios();
+
+      summary.errores += summary.recordatorios.errores;
+    } catch (error) {
+      summary.recordatorios.errores++;
+      summary.errores++;
+
+      console.error(
+        '[recordatorios:worker]',
+        error.code || error.name,
+      );
+    }
 
     // Encolar los avisos de proximidad antes de procesar los pendientes.
     try {

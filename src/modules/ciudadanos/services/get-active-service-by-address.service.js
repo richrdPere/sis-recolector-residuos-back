@@ -19,6 +19,9 @@ const {
   Recorrido,
 } = db;
 
+// Services
+const getAddressEtaService = require('./get-address-eta.service');
+
 // ==========================================================
 // PROYECCIÓN DE DATOS PARA EL MAPA CIUDADANO
 // ==========================================================
@@ -198,6 +201,7 @@ const getActiveServiceByAddressService = async ({
             association: 'ultima_ubicacion',
             required: false,
             attributes: [
+              'id_posicion',
               'latitud',
               'longitud',
               'rumbo',
@@ -275,6 +279,13 @@ const getActiveServiceByAddressService = async ({
         };
       }
 
+      const eta = await getAddressEtaService({
+        recorrido,
+        version,
+        domicilio,
+        transaction,
+      });
+
       return {
         fecha_consulta: new Date().toISOString(),
         situacion: recorrido.estado_recorrido,
@@ -284,13 +295,10 @@ const getActiveServiceByAddressService = async ({
           id_recorrido: recorrido.id_recorrido,
           estado: recorrido.estado_recorrido,
           fecha_programada: programacion.fecha_programada,
-          hora_inicio_programada:
-            programacion.hora_inicio_programada,
-          hora_fin_programada:
-            programacion.hora_fin_programada,
-          ultima_ubicacion: projectLocation(
-            recorrido.get('ultima_ubicacion'),
-          ),
+          hora_inicio_programada: programacion.hora_inicio_programada,
+          hora_fin_programada: programacion.hora_fin_programada,
+          ultima_ubicacion: projectLocation(recorrido.get('ultima_ubicacion')),
+          eta,
         },
       };
     },
