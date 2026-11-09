@@ -3,31 +3,34 @@ const AppError = require('../../../utils/app-error');
 
 // Constants
 const {
-    ESTADOS_RECORRIDO,
-    ESTADOS_PROGRAMACION,
-    TIPOS_EVENTO_RECORRIDO,
+  ESTADOS_RECORRIDO,
+  ESTADOS_PROGRAMACION,
+  TIPOS_EVENTO_RECORRIDO,
 } = require('../utils/recorrido.constants');
 
 // Validations
 const {
-    validateId,
-    validateCoordinates,
-    validatePrecision,
-    validateEventDate,
-    validateIdempotencyKey,
-    normalizeOrigin,
-    validateObservation,
+  validateId,
+  validateCoordinates,
+  validatePrecision,
+  validateEventDate,
+  validateIdempotencyKey,
+  normalizeOrigin,
+  validateObservation,
 } = require('../validations/recorrido.validation');
 
 // Utils
 const {
-    getRecorridoOrFail,
-    getProgramacionOrFail,
-    assertAssignedDriver,
-    createRecorridoEvent,
-    findIdempotentEvent,
-    getRecorridoDetail,
+  getRecorridoOrFail,
+  getProgramacionOrFail,
+  assertAssignedDriver,
+  createRecorridoEvent,
+  findIdempotentEvent,
+  getRecorridoDetail,
 } = require('../utils/recorrido-service.utils');
+
+// Auditoría
+const { prepararAuditoria } = require('../../auditoria/utils/auditar-cambio.utils');
 
 // Models
 const { sequelize } = db;
@@ -36,188 +39,201 @@ const { sequelize } = db;
 // Service: Pausar recorrido
 // =======================================================
 const pausarRecorridoService = async ({
-    id_recorrido,
-    id_usuario,
-    fecha_evento = null,
-    latitud = null,
-    longitud = null,
-    precision_gps = null,
-    observacion = null,
-    clave_idempotencia = null,
-    origen = 'APP',
-    ip = null,
-    user_agent = null,
+  id_recorrido,
+  id_usuario,
+  fecha_evento = null,
+  latitud = null,
+  longitud = null,
+  precision_gps = null,
+  observacion = null,
+  clave_idempotencia = null,
+  origen = 'APP',
+  ip = null,
+  user_agent = null,
 }) => {
-    const recorridoId =
-        validateId(
-            id_recorrido,
-            'identificador del recorrido',
-        );
+  const recorridoId =
+    validateId(
+      id_recorrido,
+      'identificador del recorrido',
+    );
 
-    const userId =
-        validateId(
-            id_usuario,
-            'identificador del usuario',
-        );
+  const userId =
+    validateId(
+      id_usuario,
+      'identificador del usuario',
+    );
 
-    const location =
-        validateCoordinates({
-            latitud,
-            longitud,
-        });
+  const location =
+    validateCoordinates({
+      latitud,
+      longitud,
+    });
 
-    const eventDate =
-        validateEventDate(
-            fecha_evento,
-        );
+  const eventDate =
+    validateEventDate(
+      fecha_evento,
+    );
 
-    const accuracy =
-        validatePrecision(
-            precision_gps,
-        );
+  const accuracy =
+    validatePrecision(
+      precision_gps,
+    );
 
-    const observation =
-        validateObservation(
-            observacion,
-        );
+  const observation =
+    validateObservation(
+      observacion,
+    );
 
-    const idempotencyKey =
-        validateIdempotencyKey(
-            clave_idempotencia,
-        );
+  const idempotencyKey =
+    validateIdempotencyKey(
+      clave_idempotencia,
+    );
 
-    const previousEvent =
-        await findIdempotentEvent({
-            clave_idempotencia:
-                idempotencyKey,
+  const previousEvent =
+    await findIdempotentEvent({
+      clave_idempotencia:
+        idempotencyKey,
 
-            tipo_evento:
-                TIPOS_EVENTO_RECORRIDO
-                    .PAUSA,
+      tipo_evento:
+        TIPOS_EVENTO_RECORRIDO
+          .PAUSA,
 
-            id_usuario:
-                userId,
-        });
+      id_usuario:
+        userId,
+    });
 
-    if (previousEvent) {
-        return getRecorridoDetail(
-            previousEvent.id_recorrido,
-        );
+  if (previousEvent) {
+    return getRecorridoDetail(
+      previousEvent.id_recorrido,
+    );
+  }
+
+  const transaction = await sequelize.transaction();
+
+  try {
+    const recorrido = await getRecorridoOrFail(
+      recorridoId,
+      transaction,
+      true,
+    );
+
+
+
+    if (
+      recorrido.estado_recorrido !==
+      ESTADOS_RECORRIDO.EN_CURSO
+    ) {
+      throw new AppError(
+        'Solo se puede pausar un recorrido en curso.',
+        409,
+        'ROUTE_EXECUTION_CANNOT_PAUSE',
+      );
     }
 
-    const transaction =
-        await sequelize.transaction();
+    await assertAssignedDriver({
+      id_programacion: recorrido.id_programacion,
+      id_usuario: userId,
+      transaction,
+    });
 
-    try {
-        const recorrido = await getRecorridoOrFail(
-            recorridoId,
-            transaction,
-            true,
-        );
+    const programacion = await getProgramacionOrFail(
+      recorrido.id_programacion,
+      transaction,
+      true,
+    );
 
-        // Auditoria
-        const auditarRecorrido = prepararAuditoria(
-            'RECORRIDO',
-            'PAUSAR',
-            recorrido,
-        );
+    // ------------------------------------------------------
+    // CAPTURAR ESTADOS ANTERIORES
+    // ------------------------------------------------------
 
-        if (
-            recorrido.estado_recorrido !==
-            ESTADOS_RECORRIDO.EN_CURSO
-        ) {
-            throw new AppError(
-                'Solo se puede pausar un recorrido en curso.',
-                409,
-                'ROUTE_EXECUTION_CANNOT_PAUSE',
-            );
-        }
+    const auditarRecorrido = prepararAuditoria(
+      'RECORRIDO',
+      'PAUSAR',
+      recorrido,
+    );
 
-        await assertAssignedDriver({
-            id_programacion:
-                recorrido.id_programacion,
+    const auditarProgramacion = prepararAuditoria(
+      'PROGRAMACION',
+      'PAUSAR_POR_RECORRIDO',
+      programacion,
+    );
 
-            id_usuario:
-                userId,
+    await recorrido.update(
+      {
+        estado_recorrido: ESTADOS_RECORRIDO.PAUSADO,
+      },
+      {
+        transaction,
+      },
+    );
 
-            transaction,
-        });
+    await programacion.update(
+      {
+        estado_programacion:
+          ESTADOS_PROGRAMACION.PAUSADA,
+      },
+      {
+        transaction,
+      },
+    );
 
-        const programacion =
-            await getProgramacionOrFail(
-                recorrido.id_programacion,
-                transaction,
-                true,
-            );
+    await createRecorridoEvent({
+      id_recorrido:
+        recorridoId,
+      id_usuario:
+        userId,
+      tipo_evento:
+        TIPOS_EVENTO_RECORRIDO.PAUSA,
+      fecha_evento:
+        eventDate,
+      latitud:
+        location.latitud,
+      longitud:
+        location.longitud,
+      precision_gps:
+        accuracy,
+      observacion:
+        observation,
+      clave_idempotencia:
+        idempotencyKey,
+      origen:
+        normalizeOrigin(origen),
+      ip,
+      user_agent,
+      transaction,
+    });
 
-        await recorrido.update(
-            {
-                estado_recorrido:
-                    ESTADOS_RECORRIDO.PAUSADO,
-            },
-            {
-                transaction,
-            },
-        );
+    const contextoAuditoria = {
+      clave_operacion: idempotencyKey,
 
-        await programacion.update(
-            {
-                estado_programacion:
-                    ESTADOS_PROGRAMACION.PAUSADA,
-            },
-            {
-                transaction,
-            },
-        );
+      fecha_dispositivo:
+        fecha_evento ? eventDate : null,
+    };
 
-        await createRecorridoEvent({
-            id_recorrido:
-                recorridoId,
-            id_usuario:
-                userId,
-            tipo_evento:
-                TIPOS_EVENTO_RECORRIDO.PAUSA,
-            fecha_evento:
-                eventDate,
-            latitud:
-                location.latitud,
-            longitud:
-                location.longitud,
-            precision_gps:
-                accuracy,
-            observacion:
-                observation,
-            clave_idempotencia:
-                idempotencyKey,
-            origen:
-                normalizeOrigin(origen),
-            ip,
-            user_agent,
-            transaction,
-        });
+    await auditarRecorrido(
+      recorrido,
+      transaction,
+      contextoAuditoria,
+    );
 
-        // Auditoria
-        await auditarRecorrido(
-            recorrido,
-            transaction,
-            {
-                clave_operacion: idempotencyKey,
-                fecha_dispositivo: eventDate,
-            },
-        );
+    await auditarProgramacion(
+      programacion,
+      transaction,
+      contextoAuditoria,
+    );
 
-        await transaction.commit();
+    await transaction.commit();
 
-        return getRecorridoDetail(
-            recorridoId,
-        );
-    } catch (error) {
-        if (!transaction.finished) {
-            await transaction.rollback();
-        }
-
-        throw error;
+    return getRecorridoDetail(
+      recorridoId,
+    );
+  } catch (error) {
+    if (!transaction.finished) {
+      await transaction.rollback();
     }
+
+    throw error;
+  }
 };
 
 module.exports = pausarRecorridoService;

@@ -4,9 +4,7 @@ const db = require('../../../../database/models');
 const AppError = require('../../../../utils/app-error');
 
 // Motor de notificaciones
-const {
-  enqueueNotification,
-} = require('../../../../jobs/notification-worker');
+const { enqueueNotification } = require('../../../../jobs/notification-worker');
 
 // Modelos
 const {
@@ -17,14 +15,15 @@ const {
 } = db;
 
 // Utils
-const recalculateProgrammingState = require(
-  '../../utils/programacion-personal.utils'
-);
+const recalculateProgrammingState = require('../../utils/programacion-personal.utils');
 
 const {
   validateId,
   registerHistory,
 } = require('../../utils/programacion-service.utils');
+
+// Auditoría
+const { prepararAuditoria } = require('../../../auditoria/utils/auditar-cambio.utils');
 
 // ==========================================================
 // SERVICE: RETIRAR PERSONAL DE LA PROGRAMACIÓN
@@ -59,12 +58,25 @@ const removeProgramacionPersonalService = async (
     'identificador del usuario',
   );
 
-  const removalReason =
-    observacion?.trim() ||
-    'Personal retirado de la programación.';
+  if (observacion !== null && typeof observacion !== 'string') {
+    throw new AppError(
+      'La observación debe ser un texto.',
+      400,
+      'INVALID_REMOVAL_OBSERVATION',
+    );
+  }
 
-  const transaction =
-    await sequelize.transaction();
+  const removalReason = observacion?.trim() || 'Personal retirado de la programación.';
+
+  if (removalReason.length > 1000) {
+    throw new AppError(
+      'El motivo de retiro no puede superar los 1000 caracteres.',
+      400,
+      'REMOVAL_REASON_TOO_LONG',
+    );
+  }
+
+  const transaction = await sequelize.transaction();
 
   try {
     // ------------------------------------------------------
@@ -107,21 +119,13 @@ const removeProgramacionPersonalService = async (
     // ------------------------------------------------------
     // 3. Obtener asignación + auditoria
     // ------------------------------------------------------
-    const auditar = prepararAuditoria('ASIGNACION', 'RETIRAR_PERSONAL', assignment);
-
     const assignment = await ProgramacionPersonal.findOne({
       where: {
-        id_programacion:
-          programmingId,
-
-        id_programacion_personal:
-          assignmentId,
+        id_programacion: programmingId,
+        id_programacion_personal: assignmentId,
       },
-
       transaction,
-
-      lock:
-        transaction.LOCK.UPDATE,
+      lock: transaction.LOCK.UPDATE,
     });
 
     if (!assignment) {
@@ -132,10 +136,7 @@ const removeProgramacionPersonalService = async (
       );
     }
 
-    if (
-      assignment.estado_asignacion ===
-      'RETIRADO'
-    ) {
+    if (assignment.estado_asignacion === 'RETIRADO') {
       throw new AppError(
         'El personal ya fue retirado.',
         409,
@@ -177,8 +178,7 @@ const removeProgramacionPersonalService = async (
     // 5. Conservar estado anterior
     // ------------------------------------------------------
 
-    const previousState =
-      programacion.estado_programacion;
+    const previousState = programacion.estado_programacion;
 
     const previousAssignmentData = {
       id_personal:
@@ -190,6 +190,22 @@ const removeProgramacionPersonalService = async (
       estado_asignacion:
         assignment.estado_asignacion,
     };
+
+    // ------------------------------------------------------
+    // CAPTURAR ESTADOS ANTERIORES PARA AUDITORÍA
+    // ------------------------------------------------------
+
+    const auditarAsignacion = prepararAuditoria(
+      'ASIGNACION',
+      'RETIRAR_PERSONAL',
+      assignment,
+    );
+
+    const auditarProgramacion = prepararAuditoria(
+      'PROGRAMACION',
+      'CAMBIAR_ESTADO_POR_RETIRO_PERSONAL',
+      programacion,
+    );
 
     // ------------------------------------------------------
     // 6. Retirar personal
@@ -347,8 +363,29 @@ const removeProgramacionPersonalService = async (
       });
     }
 
-    // Auditoria
-    await auditar(assignment, transaction);
+    // ------------------------------------------------------
+    // AUDITAR RETIRO DE LA ASIGNACIÓN
+    // ------------------------------------------------------
+    await auditarAsignacion(
+      assignment,
+      transaction,
+      {
+        motivo: removalReason,
+      },
+    );
+
+    // ------------------------------------------------------
+    // AUDITAR PROGRAMACIÓN SI CAMBIÓ SU ESTADO
+    // ------------------------------------------------------
+    if (previousState !== newState) {
+      await auditarProgramacion(
+        programacion,
+        transaction,
+        {
+          motivo: removalReason,
+        },
+      );
+    }
 
     // ------------------------------------------------------
     // 9. Confirmar retiro y aviso

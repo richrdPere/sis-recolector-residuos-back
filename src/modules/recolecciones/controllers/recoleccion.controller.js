@@ -35,8 +35,8 @@ const registerCollectionController = async (req, res, next) => {
       .json({
         success: true,
         message: data.duplicada
-          ? 'La recolección ya había sido registrada.'
-          : 'Recolección registrada correctamente.',
+          ? 'La decisión del punto ya había sido registrada.'
+          : 'Decisión del punto registrada correctamente.',
         data,
       });
   } catch (error) {

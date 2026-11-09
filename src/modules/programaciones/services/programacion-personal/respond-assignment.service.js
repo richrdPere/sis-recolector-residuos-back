@@ -22,6 +22,10 @@ const {
   registerHistory,
 } = require('../../utils/programacion-service.utils');
 
+// Auditoria
+const { prepararAuditoria } = require('../../../auditoria/utils/auditar-cambio.utils');
+
+
 // ==========================================================
 // SERVICE: RESPONDER ASIGNACIÓN
 // ==========================================================
@@ -172,7 +176,7 @@ const respondAssignmentService = async ({
     // ------------------------------------------------------
     // 7. Bloquear y revalidar asignación + Auditoria
     // ------------------------------------------------------
-    const auditar = prepararAuditoria('ASIGNACION', 'RESPONDER_ASIGNACION', assignment);
+
 
     const assignment = await ProgramacionPersonal.findOne({
       where: {
@@ -226,14 +230,12 @@ const respondAssignmentService = async ({
       );
     }
 
-    const previousProgrammingState =
-      programacion.estado_programacion;
+    const previousProgrammingState = programacion.estado_programacion;
+    const accepted = responseState === 'ACEPTADO';
+    const responseDate = new Date();
 
-    const accepted =
-      responseState === 'ACEPTADO';
-
-    const responseDate =
-      new Date();
+    // Auditar
+    const auditar = prepararAuditoria('ASIGNACION', 'RESPONDER_ASIGNACION', assignment);
 
     // ------------------------------------------------------
     // 10. Actualizar asignación

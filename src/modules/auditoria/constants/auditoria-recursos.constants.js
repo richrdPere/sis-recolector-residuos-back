@@ -71,6 +71,8 @@ const RECURSOS_AUDITORIA = {
       'es_principal',
       'estado_asignacion',
       'fecha_respuesta',
+      'observacion',
+      'deleted_at',
     ],
   },
 
@@ -78,16 +80,35 @@ const RECURSOS_AUDITORIA = {
     modulo: 'RECORRIDOS',
     entidad: 'RECORRIDO',
     id: 'id_recorrido',
+
     campos: [
       'id_programacion',
       'estado_recorrido',
+
       'id_usuario_inicio',
       'id_usuario_finalizacion',
+
       'fecha_hora_inicio',
       'fecha_hora_finalizacion',
+
+      'latitud_inicio',
+      'longitud_inicio',
+      'precision_inicio',
+
+      'latitud_finalizacion',
+      'longitud_finalizacion',
+      'precision_finalizacion',
+
       'kilometraje_inicio',
       'kilometraje_final',
+
+      'distancia_recorrida_metros',
       'duracion_segundos',
+
+      'observacion_inicio',
+      'observacion_finalizacion',
+
+      'motivo_cancelacion',
     ],
   },
 
@@ -95,16 +116,25 @@ const RECURSOS_AUDITORIA = {
     modulo: 'RECOLECCIONES',
     entidad: 'RECOLECCION_PUNTO',
     id: 'id_recoleccion',
+
     campos: [
       'id_recorrido',
       'id_ruta_punto',
       'id_usuario',
+
       'estado_recoleccion',
+      'resultado_atencion',
+      'motivo_omision',
+      'observacion',
+
       'fecha_dispositivo',
       'fecha_recepcion',
+
       'latitud',
       'longitud',
       'precision_gps',
+
+      'distancia_punto_metros',
       'dentro_radio_permitido',
     ],
   },

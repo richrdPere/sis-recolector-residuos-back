@@ -20,11 +20,14 @@ const {
   scheduleAppliesToDate,
 } = require('../validations/programacion.validation');
 
+const { construirFiltroMantenimiento } = require('./mantenimiento-disponibilidad.utils');
+
 const {
   Ruta,
   RutaVersion,
   RutaHorario,
   Vehiculo,
+  VehiculoMantenimiento,
   PersonalOperativo,
   ConductorPerfil,
   Usuario,
@@ -259,13 +262,17 @@ const validateVehicle = async (
       'identificador del vehículo',
     );
 
-  const vehicle =
-    await Vehiculo.findByPk(
-      vehicleId,
-      {
-        transaction,
-      },
-    );
+  const vehicle = await Vehiculo.findByPk(
+    vehicleId,
+    {
+      transaction,
+      ...(transaction
+        ? {
+          lock: transaction.LOCK.UPDATE,
+        }
+        : {}),
+    },
+  );
 
   if (!vehicle) {
     throw new AppError(
@@ -313,38 +320,104 @@ const assertVehicleAvailable = async ({
   excludeProgramacionId = null,
   transaction = null,
 }) => {
-  const where = {
+  const vehicleId = validateId(
     id_vehiculo,
+    'identificador del vehículo',
+  );
+
+  const ventana = {
+    fecha_programada,
+    hora_inicio_programada,
+    hora_fin_programada,
+  };
+
+  validateProgrammingWindow(ventana);
+
+  const opcionesBloqueo = transaction
+    ? {
+      lock: transaction.LOCK.UPDATE,
+    }
+    : {};
+
+  // ------------------------------------------------------
+  // 1. Comprobar mantenimientos incompatibles
+  // ------------------------------------------------------
+
+  const mantenimiento =
+    await VehiculoMantenimiento.findOne({
+      where: {
+        id_vehiculo: vehicleId,
+
+        ...construirFiltroMantenimiento(
+          ventana,
+        ),
+      },
+
+      attributes: [
+        'id_mantenimiento',
+        'estado_mantenimiento',
+      ],
+
+      transaction,
+      ...opcionesBloqueo,
+    });
+
+  if (mantenimiento) {
+    const mensaje =
+      mantenimiento.estado_mantenimiento ===
+        'EN_PROCESO'
+        ? (
+          'El vehículo tiene un mantenimiento en proceso. ' +
+          'Debe finalizarse antes de asignarlo.'
+        )
+        : (
+          'El vehículo tiene un mantenimiento programado ' +
+          'que coincide con el horario solicitado.'
+        );
+
+    throw new AppError(
+      `${mensaje} Mantenimiento: ` +
+      `${mantenimiento.id_mantenimiento}.`,
+      409,
+      'VEHICLE_MAINTENANCE_CONFLICT',
+    );
+  }
+
+  // ------------------------------------------------------
+  // 2. Comprobar otras programaciones incompatibles
+  // ------------------------------------------------------
+
+  const where = {
+    id_vehiculo: vehicleId,
     fecha_programada,
 
     estado_programacion: {
-      [Op.in]:
-        ESTADOS_CONFLICTO,
+      [Op.in]: ESTADOS_CONFLICTO,
     },
 
     hora_inicio_programada: {
-      [Op.lt]:
-        hora_fin_programada,
+      [Op.lt]: hora_fin_programada,
     },
 
     hora_fin_programada: {
-      [Op.gt]:
-        hora_inicio_programada,
+      [Op.gt]: hora_inicio_programada,
     },
   };
 
-  if (excludeProgramacionId) {
+  if (excludeProgramacionId !== null) {
     where.id_programacion = {
-      [Op.ne]:
+      [Op.ne]: validateId(
         excludeProgramacionId,
+        'identificador de la programación',
+      ),
     };
   }
 
-  const conflict =
-    await ProgramacionRuta.findOne({
-      where,
-      transaction,
-    });
+  const conflict = await ProgramacionRuta.findOne({
+    where,
+    transaction,
+    ...opcionesBloqueo,
+  });
 
   if (conflict) {
     throw new AppError(
@@ -354,6 +427,56 @@ const assertVehicleAvailable = async ({
     );
   }
 };
+
+// const assertVehicleAvailable = async ({
+//   id_vehiculo,
+//   fecha_programada,
+//   hora_inicio_programada,
+//   hora_fin_programada,
+//   excludeProgramacionId = null,
+//   transaction = null,
+// }) => {
+//   const where = {
+//     id_vehiculo,
+//     fecha_programada,
+
+//     estado_programacion: {
+//       [Op.in]:
+//         ESTADOS_CONFLICTO,
+//     },
+
+//     hora_inicio_programada: {
+//       [Op.lt]:
+//         hora_fin_programada,
+//     },
+
+//     hora_fin_programada: {
+//       [Op.gt]:
+//         hora_inicio_programada,
+//     },
+//   };
+
+//   if (excludeProgramacionId) {
+//     where.id_programacion = {
+//       [Op.ne]:
+//         excludeProgramacionId,
+//     };
+//   }
+
+//   const conflict =
+//     await ProgramacionRuta.findOne({
+//       where,
+//       transaction,
+//     });
+
+//   if (conflict) {
+//     throw new AppError(
+//       'El vehículo ya tiene otra programación en el horario indicado.',
+//       409,
+//       'VEHICLE_SCHEDULE_CONFLICT',
+//     );
+//   }
+// };
 
 /*
 |--------------------------------------------------------------------------

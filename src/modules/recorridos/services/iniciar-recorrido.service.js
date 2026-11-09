@@ -534,41 +534,33 @@ const iniciarRecorridoService = async ({
     });
 
 
-    // Auditoria
-    await auditarRecorrido(
-      recorrido,
-      transaction,
-      {
-        clave_operacion: idempotencyKey,
-        fecha_dispositivo: eventDate,
-      },
-    );
+    // ------------------------------------------------------
+    // AUDITORÍA: UNA LLAMADA POR ENTIDAD
+    // ------------------------------------------------------
 
-    // Auditoria
+    const contextoAuditoria = {
+      clave_operacion: idempotencyKey,
+      fecha_dispositivo: fecha_evento ? eventDate : null,
+    };
+
     await auditarRecorrido(
       recorrido,
       transaction,
-      {
-        clave_operacion: idempotencyKey,
-        fecha_dispositivo: eventDate,
-      },
+      contextoAuditoria,
     );
 
     await auditarProgramacion(
       programacion,
       transaction,
-      {
-        clave_operacion: idempotencyKey,
-      },
+      contextoAuditoria,
     );
 
     await auditarVehiculo(
       vehiculo,
       transaction,
-      {
-        clave_operacion: idempotencyKey,
-      },
+      contextoAuditoria,
     );
+
 
     // ------------------------------------------------------
     // 11. Confirmar recorrido y avisos

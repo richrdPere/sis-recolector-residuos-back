@@ -11,9 +11,7 @@ const {
     finalizarRecorridoController,
     cancelarRecorridoController,
     getMisRecorridosController,
-} = require(
-    '../controllers',
-);
+} = require('../controllers');
 
 // Middlewares
 const {
@@ -54,6 +52,11 @@ const ROLES_DETALLE = [
 
 // Autenticación
 router.use(verificarToken);
+
+router.use(
+    '/historial',
+    require('./historial.routes'),
+);
 
 const {
     resultadoFinalService,

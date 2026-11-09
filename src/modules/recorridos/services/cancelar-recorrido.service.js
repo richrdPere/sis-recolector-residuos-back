@@ -141,19 +141,33 @@ const cancelarRecorridoService = async ({
     // 3. Obtener programación y vehículo
     // ------------------------------------------------------
 
-    const programacion =
-      await getProgramacionOrFail(
-        recorrido.id_programacion,
-        transaction,
-        true,
-      );
+    const programacion = await getProgramacionOrFail(
+      recorrido.id_programacion,
+      transaction,
+      true,
+    );
 
-    const vehiculo =
-      await getVehiculoOrFail(
-        programacion.id_vehiculo,
-        transaction,
-        true,
-      );
+    const vehiculo = await getVehiculoOrFail(
+      programacion.id_vehiculo,
+      transaction,
+      true,
+    );
+
+    // ------------------------------------------------------
+    // AUDITORÍA DE ENTIDADES RELACIONADAS
+    // ------------------------------------------------------
+
+    const auditarProgramacion = prepararAuditoria(
+      'PROGRAMACION',
+      'CANCELAR_POR_RECORRIDO',
+      programacion,
+    );
+
+    const auditarVehiculo = prepararAuditoria(
+      'VEHICULO',
+      'LIBERAR_POR_CANCELACION_RECORRIDO',
+      vehiculo,
+    );
 
     // ------------------------------------------------------
     // 4. Cancelar recorrido
@@ -477,15 +491,30 @@ const cancelarRecorridoService = async ({
     });
 
     // Auditoria
+    const contextoAuditoria = {
+      clave_operacion: idempotencyKey,
+      fecha_dispositivo: fecha_evento ? eventDate : null,
+      motivo: normalizedReason,
+    };
+
     await auditarRecorrido(
       recorrido,
       transaction,
-      {
-        clave_operacion: idempotencyKey,
-        fecha_dispositivo: eventDate,
-        motivo: normalizedReason,
-      },
+      contextoAuditoria,
     );
+
+    await auditarProgramacion(
+      programacion,
+      transaction,
+      contextoAuditoria,
+    );
+
+    await auditarVehiculo(
+      vehiculo,
+      transaction,
+      contextoAuditoria,
+    );
+
 
     // ------------------------------------------------------
     // 11. Confirmar cancelación y avisos

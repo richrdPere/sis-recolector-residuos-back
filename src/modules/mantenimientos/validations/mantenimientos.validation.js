@@ -333,32 +333,33 @@ const validarDisponibilidad = async ({
     diaAnterior.getUTCDate() - 1,
   );
 
-  const programaciones =
-    await ProgramacionRuta.findAll({
-      where: {
-        id_vehiculo: idVehiculo,
+  const programaciones = await ProgramacionRuta.findAll({
+    where: {
+      id_vehiculo: idVehiculo,
 
-        estado_programacion: {
-          [Op.in]: ESTADOS_PROGRAMACION,
-        },
-
-        fecha_programada: {
-          [Op.between]: [
-            fechaLocalLima(diaAnterior),
-            fechaLocalLima(fin),
-          ],
-        },
+      estado_programacion: {
+        [Op.in]: ESTADOS_PROGRAMACION,
       },
 
-      attributes: [
-        'id_programacion',
-        'fecha_programada',
-        'hora_inicio_programada',
-        'hora_fin_programada',
-      ],
+      fecha_programada: {
+        [Op.between]: [
+          fechaLocalLima(diaAnterior),
+          fechaLocalLima(fin),
+        ],
+      },
+    },
 
-      transaction,
-    });
+    attributes: [
+      'id_programacion',
+      'fecha_programada',
+      'hora_inicio_programada',
+      'hora_fin_programada',
+    ],
+
+
+    transaction,
+    lock: transaction.LOCK.UPDATE,
+  });
 
   const idsConflicto = programaciones
     .filter((programacion) => {

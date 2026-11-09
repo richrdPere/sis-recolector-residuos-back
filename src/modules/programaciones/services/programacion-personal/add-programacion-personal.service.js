@@ -31,8 +31,6 @@ const {
 // Auditoria
 const { prepararAuditoria } = require('../../../auditoria/utils/auditar-cambio.utils');
 
-
-
 // ==========================================================
 // SERVICE: AGREGAR PERSONAL A LA PROGRAMACIÓN
 // ==========================================================
@@ -74,8 +72,25 @@ const addProgramacionPersonalService = async (
     .trim()
     .toUpperCase();
 
-  const transaction =
-    await sequelize.transaction();
+  if (observacion !== null && typeof observacion !== 'string') {
+    throw new AppError(
+      'La observación debe ser un texto.',
+      400,
+      'INVALID_ASSIGNMENT_OBSERVATION',
+    );
+  }
+
+  const normalizedObservation = observacion?.trim() || null;
+
+  if (normalizedObservation && normalizedObservation.length > 1000) {
+    throw new AppError(
+      'La observación no puede superar los 1000 caracteres.',
+      400,
+      'ASSIGNMENT_OBSERVATION_TOO_LONG',
+    );
+  }
+
+  const transaction = await sequelize.transaction();
 
   try {
     // ------------------------------------------------------
@@ -204,45 +219,50 @@ const addProgramacionPersonalService = async (
     // ------------------------------------------------------
     // 5. Crear o reactivar asignación + auditoria
     // ------------------------------------------------------
-    const auditar = prepararAuditoria('ASIGNACION', 'ASIGNAR_PERSONAL', assignment);
+    // ------------------------------------------------------
+    // 5. Crear o reactivar asignación
+    // ------------------------------------------------------
 
     let assignment = await ProgramacionPersonal.findOne({
       where: {
-        id_programacion:
-          programmingId,
-
-        id_personal:
-          personalId,
+        id_programacion: programmingId,
+        id_personal: personalId,
       },
 
       paranoid: false,
       transaction,
+      lock: transaction.LOCK.UPDATE,
     });
 
-    const isReassignment =
-      Boolean(assignment);
+    const isReassignment = Boolean(assignment);
+
+    if (
+      assignment &&
+      ![
+        'RETIRADO',
+        'RECHAZADO',
+      ].includes(assignment.estado_asignacion)
+    ) {
+      throw new AppError(
+        'El personal ya está asignado a esta programación.',
+        409,
+        'PERSONAL_ALREADY_ASSIGNED',
+      );
+    }
+
+    // Capturar ANTES de restaurar, actualizar o crear.
+    const auditarAsignacion = prepararAuditoria(
+      'ASIGNACION',
+
+      isReassignment
+        ? 'REASIGNAR_PERSONAL'
+        : 'ASIGNAR_PERSONAL',
+
+      assignment,
+    );
 
     if (assignment) {
-      if (
-        ![
-          'RETIRADO',
-          'RECHAZADO',
-        ].includes(
-          assignment.estado_asignacion,
-        )
-      ) {
-        throw new AppError(
-          'El personal ya está asignado a esta programación.',
-          409,
-          'PERSONAL_ALREADY_ASSIGNED',
-        );
-      }
-
-      if (
-        assignment.deleted_at &&
-        typeof assignment.restore ===
-        'function'
-      ) {
+      if (assignment.deleted_at && typeof assignment.restore === 'function') {
         await assignment.restore({
           transaction,
         });
@@ -250,96 +270,69 @@ const addProgramacionPersonalService = async (
 
       await assignment.update(
         {
-          funcion:
-            normalizedFunction,
-
+          funcion: normalizedFunction,
           es_principal,
 
-          estado_asignacion:
-            'ASIGNADO',
+          estado_asignacion: 'ASIGNADO',
+          fecha_respuesta: null,
 
-          fecha_respuesta:
-            null,
-
-          observacion:
-            observacion?.trim() || null,
+          observacion: normalizedObservation,
         },
         {
           transaction,
         },
       );
     } else {
-      assignment =
-        await ProgramacionPersonal.create(
-          {
-            id_programacion:
-              programmingId,
-
-            id_personal:
-              personalId,
-
-            funcion:
-              normalizedFunction,
-
-            es_principal,
-
-            estado_asignacion:
-              'ASIGNADO',
-
-            observacion:
-              observacion?.trim() || null,
-          },
-          {
-            transaction,
-          },
-        );
+      assignment = await ProgramacionPersonal.create(
+        {
+          id_programacion: programmingId,
+          id_personal: personalId,
+          funcion: normalizedFunction,
+          es_principal,
+          estado_asignacion: 'ASIGNADO',
+          fecha_respuesta: null,
+          observacion: normalizedObservation,
+        },
+        {
+          transaction,
+        },
+      );
     }
 
     // ------------------------------------------------------
     // 6. Recalcular estado
     // ------------------------------------------------------
 
-    const previousState =
-      programacion.estado_programacion;
+    const previousState = programacion.estado_programacion;
 
-    const newState =
-      await recalculateProgrammingState(
-        programacion,
-        transaction,
-      );
+    const auditarProgramacion = prepararAuditoria(
+      'PROGRAMACION',
+      'CAMBIAR_ESTADO_POR_ASIGNACION_PERSONAL',
+      programacion,
+    );
+
+    const newState = await recalculateProgrammingState(
+      programacion,
+      transaction,
+    );
 
     // ------------------------------------------------------
     // 7. Registrar historial
     // ------------------------------------------------------
 
     await registerHistory({
-      id_programacion:
-        programmingId,
-
-      id_usuario:
-        actorId,
-
-      tipo_evento:
-        'ASIGNACION_PERSONAL',
-
-      estado_anterior:
-        previousState,
-
-      estado_nuevo:
-        newState,
-
+      id_programacion: programmingId,
+      id_usuario: actorId,
+      tipo_evento: 'ASIGNACION_PERSONAL',
+      estado_anterior: previousState,
+      estado_nuevo: newState,
       datos_nuevos: {
-        id_personal:
-          personalId,
-
-        funcion:
-          normalizedFunction,
-
+        id_personal: personalId,
+        funcion: normalizedFunction,
         es_principal,
-
-        reasignacion:
-          isReassignment,
+        reasignacion: isReassignment,
       },
+      observacion: normalizedObservation,
 
       ip,
       user_agent,
@@ -349,9 +342,7 @@ const addProgramacionPersonalService = async (
     // ------------------------------------------------------
     // 8. Encolar aviso al personal agregado
     // ------------------------------------------------------
-
-    const assignmentEventId =
-      randomUUID();
+    const assignmentEventId = randomUUID();
 
     await enqueueNotification({
       notificacion: {
@@ -438,8 +429,29 @@ const addProgramacionPersonalService = async (
       transaction,
     });
 
-    // Auditoria
-    await auditar(assignment, transaction);
+    // ------------------------------------------------------
+    // AUDITAR ASIGNACIÓN NUEVA O REASIGNACIÓN
+    // ------------------------------------------------------
+    await auditarAsignacion(
+      assignment,
+      transaction,
+      {
+        motivo: normalizedObservation,
+      },
+    );
+
+    // ------------------------------------------------------
+    // AUDITAR PROGRAMACIÓN SI CAMBIÓ SU ESTADO
+    // ------------------------------------------------------
+    if (previousState !== newState) {
+      await auditarProgramacion(
+        programacion,
+        transaction,
+        {
+          motivo: normalizedObservation,
+        },
+      );
+    }
 
     // ------------------------------------------------------
     // 9. Confirmar asignación y aviso

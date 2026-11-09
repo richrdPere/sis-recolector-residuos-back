@@ -69,6 +69,47 @@ const comunes = {
   turno: 'p.turno',
 };
 
+// ==========================================================
+// ESTADO VIGENTE DE CADA PUNTO
+// Solo expresiones SQL internas del servidor.
+// ==========================================================
+
+const decisionAtencionSql = `
+  (
+    SELECT c.resultado_atencion
+    FROM recoleccion_puntos c
+    WHERE c.id_recorrido = r.id_recorrido
+      AND c.id_ruta_punto = pt.id_ruta_punto
+      AND c.estado_recoleccion = 'REGISTRADA'
+    ORDER BY c.id_recoleccion DESC
+    LIMIT 1
+  )
+`;
+
+const contarPuntosSql = (
+  condicion = '1 = 1',
+) => `
+  (
+    SELECT COUNT(*)
+    FROM ruta_puntos pt
+    WHERE pt.id_ruta_version = p.id_ruta_version
+      AND pt.tipo_punto = 'RECOLECCION'
+      AND pt.estado = 1
+      AND pt.deleted_at IS NULL
+      AND (${condicion})
+  )
+`;
+
+const totalPuntosSql = contarPuntosSql();
+
+const atendidosSql = contarPuntosSql(
+  `${decisionAtencionSql} = 'ATENDIDO'`,
+);
+
+const omitidosSql = contarPuntosSql(
+  `${decisionAtencionSql} = 'OMITIDO'`,
+);
+
 // Las expresiones SQL proceden exclusivamente de esta configuración.
 // Los valores recibidos del cliente se envían como parámetros.
 const configuraciones = {
@@ -192,6 +233,74 @@ const configuraciones = {
       'puntos_total',
       'puntos_atendidos',
     ].join(','),
+
+    // RECORRIDOS: {
+    //   select: `
+    //     r.id_recorrido,
+    //     ${identidad},
+    //     r.estado_recorrido AS estado,
+    //     r.fecha_hora_inicio AS fecha_inicio,
+    //     r.fecha_hora_finalizacion AS fecha_fin,
+    //     r.duracion_segundos,
+    //     r.distancia_recorrida_metros,
+    //     r.id_usuario_inicio,
+    //     r.id_usuario_finalizacion,
+
+    //     (
+    //       SELECT COUNT(*)
+    //       FROM ruta_puntos pt
+    //       WHERE pt.id_ruta_version = p.id_ruta_version
+    //         AND pt.tipo_punto = 'RECOLECCION'
+    //         AND pt.estado = 1
+    //         AND pt.deleted_at IS NULL
+    //     ) AS puntos_total,
+
+    //     (
+    //       SELECT COUNT(DISTINCT c.id_ruta_punto)
+    //       FROM recoleccion_puntos c
+
+    //       JOIN ruta_puntos pt
+    //         ON pt.id_ruta_punto = c.id_ruta_punto
+
+    //       WHERE c.id_recorrido = r.id_recorrido
+    //         AND c.estado_recoleccion = 'REGISTRADA'
+    //         AND pt.id_ruta_version = p.id_ruta_version
+    //         AND pt.tipo_punto = 'RECOLECCION'
+    //         AND pt.estado = 1
+    //         AND pt.deleted_at IS NULL
+    //     ) AS puntos_atendidos
+    //   `,
+
+    //   from: `recorridos r ${enlaces}`,
+    //   where: 'r.deleted_at IS NULL',
+    //   fecha: 'r.fecha_hora_inicio',
+
+    //   filtros: {
+    //     ...comunes,
+    //     id_recorrido: 'r.id_recorrido',
+    //     estado: 'r.estado_recorrido',
+    //     id_usuario: 'r.id_usuario_inicio',
+    //   },
+
+    //   columnas: [
+    //     'id_recorrido',
+    //     'id_programacion',
+    //     'id_ruta',
+    //     'ruta',
+    //     'id_zona',
+    //     'zona',
+    //     'id_vehiculo',
+    //     'placa',
+    //     'estado',
+    //     'fecha_inicio',
+    //     'fecha_fin',
+    //     'duracion_segundos',
+    //     'distancia_recorrida_metros',
+    //     'id_usuario_inicio',
+    //     'id_usuario_finalizacion',
+    //     'puntos_total',
+    //     'puntos_atendidos',
+    //   ].join(','),
 
     orden: 'fecha_inicio',
     base: 'Inicio real del recorrido',
@@ -463,26 +572,40 @@ const configuraciones = {
   },
 };
 
+const estadoAtencionSql = `
+  CASE
+    WHEN c.id_recoleccion IS NULL
+      THEN 'PENDIENTE'
+    ELSE c.resultado_atencion
+  END
+`;
+
 configuraciones.ATENCION_PUNTOS = {
   select: `
     r.id_recorrido,
     ${identidad},
+
     pt.id_ruta_punto,
     pt.nombre AS punto,
     pt.orden,
     pt.obligatorio,
 
-    CASE
-      WHEN c.id_recoleccion IS NULL THEN 'PENDIENTE'
-      ELSE 'ATENDIDO'
-    END AS estado,
+    ${estadoAtencionSql} AS estado,
 
     c.id_recoleccion,
     c.id_usuario,
+    u.username AS responsable,
+
     c.fecha_dispositivo,
     c.fecha_recepcion,
+
     c.latitud,
     c.longitud,
+    c.precision_gps,
+    c.distancia_punto_metros,
+    c.dentro_radio_permitido,
+
+    c.motivo_omision,
     c.observacion
   `,
 
@@ -497,10 +620,14 @@ configuraciones.ATENCION_PUNTOS = {
       ON c.id_recoleccion = (
         SELECT MAX(c2.id_recoleccion)
         FROM recoleccion_puntos c2
+
         WHERE c2.id_recorrido = r.id_recorrido
           AND c2.id_ruta_punto = pt.id_ruta_punto
           AND c2.estado_recoleccion = 'REGISTRADA'
       )
+
+    LEFT JOIN usuarios u
+      ON u.id_usuario = c.id_usuario
   `,
 
   where: `
@@ -514,7 +641,7 @@ configuraciones.ATENCION_PUNTOS = {
 
   base:
     'Inicio del recorrido; incluye puntos pendientes ' +
-    'sin fecha de atención',
+    'sin fecha de decisión',
 
   filtros: {
     ...comunes,
@@ -523,12 +650,7 @@ configuraciones.ATENCION_PUNTOS = {
     id_punto: 'pt.id_ruta_punto',
     id_usuario: 'c.id_usuario',
 
-    estado: `
-      CASE
-        WHEN c.id_recoleccion IS NULL THEN 'PENDIENTE'
-        ELSE 'ATENDIDO'
-      END
-    `,
+    estado: estadoAtencionSql,
   },
 
   columnas: [
@@ -547,15 +669,114 @@ configuraciones.ATENCION_PUNTOS = {
     'estado',
     'id_recoleccion',
     'id_usuario',
+    'responsable',
     'fecha_dispositivo',
     'fecha_recepcion',
     'latitud',
     'longitud',
+    'precision_gps',
+    'distancia_punto_metros',
+    'dentro_radio_permitido',
+    'motivo_omision',
     'observacion',
   ].join(','),
 
   orden: 'id_recorrido',
 };
+
+// configuraciones.ATENCION_PUNTOS = {
+//   select: `
+//     r.id_recorrido,
+//     ${identidad},
+//     pt.id_ruta_punto,
+//     pt.nombre AS punto,
+//     pt.orden,
+//     pt.obligatorio,
+
+//     CASE
+//       WHEN c.id_recoleccion IS NULL THEN 'PENDIENTE'
+//       ELSE 'ATENDIDO'
+//     END AS estado,
+
+//     c.id_recoleccion,
+//     c.id_usuario,
+//     c.fecha_dispositivo,
+//     c.fecha_recepcion,
+//     c.latitud,
+//     c.longitud,
+//     c.observacion
+//   `,
+
+//   from: `
+//     recorridos r
+//     ${enlaces}
+
+//     JOIN ruta_puntos pt
+//       ON pt.id_ruta_version = p.id_ruta_version
+
+//     LEFT JOIN recoleccion_puntos c
+//       ON c.id_recoleccion = (
+//         SELECT MAX(c2.id_recoleccion)
+//         FROM recoleccion_puntos c2
+//         WHERE c2.id_recorrido = r.id_recorrido
+//           AND c2.id_ruta_punto = pt.id_ruta_punto
+//           AND c2.estado_recoleccion = 'REGISTRADA'
+//       )
+//   `,
+
+//   where: `
+//     r.deleted_at IS NULL
+//     AND pt.deleted_at IS NULL
+//     AND pt.estado = 1
+//     AND pt.tipo_punto = 'RECOLECCION'
+//   `,
+
+//   fecha: 'r.fecha_hora_inicio',
+
+//   base:
+//     'Inicio del recorrido; incluye puntos pendientes ' +
+//     'sin fecha de atención',
+
+//   filtros: {
+//     ...comunes,
+
+//     id_recorrido: 'r.id_recorrido',
+//     id_punto: 'pt.id_ruta_punto',
+//     id_usuario: 'c.id_usuario',
+
+//     estado: `
+//       CASE
+//         WHEN c.id_recoleccion IS NULL THEN 'PENDIENTE'
+//         ELSE 'ATENDIDO'
+//       END
+//     `,
+//   },
+
+//   columnas: [
+//     'id_recorrido',
+//     'id_programacion',
+//     'id_ruta',
+//     'ruta',
+//     'id_zona',
+//     'zona',
+//     'id_vehiculo',
+//     'placa',
+//     'id_ruta_punto',
+//     'punto',
+//     'orden',
+//     'obligatorio',
+//     'estado',
+//     'id_recoleccion',
+//     'id_usuario',
+//     'fecha_dispositivo',
+//     'fecha_recepcion',
+//     'latitud',
+//     'longitud',
+//     'observacion',
+//   ].join(','),
+
+//   orden: 'id_recorrido',
+// };
 
 configuraciones.REPORTES_CIUDADANOS = {
   ...configuraciones.INCIDENCIAS,
@@ -603,6 +824,7 @@ const estados = {
 
   ATENCION_PUNTOS: [
     'ATENDIDO',
+    'OMITIDO',
     'PENDIENTE',
   ],
 

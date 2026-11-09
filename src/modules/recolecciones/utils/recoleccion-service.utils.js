@@ -52,15 +52,14 @@ const getOperationalContext = async ({
     );
   }
 
-  const programacion =
-    await ProgramacionRuta
-      .findByPk(
-        recorrido
-          .id_programacion,
-        {
-          transaction,
-        },
-      );
+  const programacion = await ProgramacionRuta
+    .findByPk(
+      recorrido
+        .id_programacion,
+      {
+        transaction,
+      },
+    );
 
   if (!programacion) {
     throw new AppError(
@@ -72,9 +71,7 @@ const getOperationalContext = async ({
 
   if (
     requireInProgress &&
-    programacion
-      .estado_programacion !==
-    'EN_CURSO'
+    programacion.estado_programacion !== 'EN_CURSO'
   ) {
     throw new AppError(
       'La programación no se encuentra en curso.',
@@ -83,15 +80,14 @@ const getOperationalContext = async ({
     );
   }
 
-  const personal =
-    await PersonalOperativo
-      .findOne({
-        where: {
-          id_usuario,
-        },
+  const personal = await PersonalOperativo
+    .findOne({
+      where: {
+        id_usuario,
+      },
 
-        transaction,
-      });
+      transaction,
+    });
 
   if (!personal) {
     throw new AppError(
@@ -101,35 +97,27 @@ const getOperationalContext = async ({
     );
   }
 
-  const asignacion =
-    await ProgramacionPersonal
-      .findOne({
-        where: {
-          id_programacion:
-            programacion
-              .id_programacion,
-
-          id_personal:
-            personal
-              .id_personal,
-
-          funcion: {
-            [Op.in]: [
-              'CONDUCTOR',
-              'RECOLECTOR',
-            ],
-          },
-
-          estado_asignacion: {
-            [Op.in]: [
-              'ACEPTADO',
-              'EN_SERVICIO',
-            ],
-          },
+  const asignacion = await ProgramacionPersonal
+    .findOne({
+      where: {
+        id_programacion: programacion.id_programacion,
+        id_personal: personal.id_personal,
+        funcion: {
+          [Op.in]: [
+            'CONDUCTOR',
+            'RECOLECTOR',
+          ],
         },
+        estado_asignacion: {
+          [Op.in]: [
+            'ACEPTADO',
+            'EN_SERVICIO',
+          ],
+        },
+      },
 
-        transaction,
-      });
+      transaction,
+    });
 
   if (!asignacion) {
     throw new AppError(

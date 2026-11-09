@@ -30,9 +30,10 @@ const {
   createRecorridoEvent,
   findIdempotentEvent,
   getRecorridoDetail,
-} = require(
-  '../utils/recorrido-service.utils',
-);
+} = require('../utils/recorrido-service.utils');
+
+// Auditoria
+const { prepararAuditoria } = require('../../auditoria/utils/auditar-cambio.utils');
 
 // Modelos
 const {
@@ -119,19 +120,9 @@ const finalizarRecorridoService = async ({
       true,
     );
 
-    // Auditoria
-    const auditarRecorrido = prepararAuditoria(
-      'RECORRIDO',
-      'FINALIZAR',
-      recorrido,
-    );
 
-    if (
-      ![
-        ESTADOS_RECORRIDO.EN_CURSO,
-        ESTADOS_RECORRIDO.PAUSADO,
-      ].includes(recorrido.estado_recorrido)
-    ) {
+
+    if (![ESTADOS_RECORRIDO.EN_CURSO, ESTADOS_RECORRIDO.PAUSADO,].includes(recorrido.estado_recorrido)) {
       throw new AppError(
         'Solo se puede finalizar un recorrido en curso.',
         409,
@@ -179,6 +170,29 @@ const finalizarRecorridoService = async ({
         true,
       );
 
+    // ------------------------------------------------------
+    // CAPTURAR ESTADOS ANTERIORES
+    // Antes de modificar cualquiera de las tres instancias.
+    // ------------------------------------------------------
+
+    const auditarRecorrido = prepararAuditoria(
+      'RECORRIDO',
+      'FINALIZAR',
+      recorrido,
+    );
+
+    const auditarProgramacion = prepararAuditoria(
+      'PROGRAMACION',
+      'FINALIZAR_POR_CIERRE_RECORRIDO',
+      programacion,
+    );
+
+    const auditarVehiculo = prepararAuditoria(
+      'VEHICULO',
+      'LIBERAR_POR_CIERRE_RECORRIDO',
+      vehiculo,
+    );
+
     const durationSeconds =
       Math.max(
         0,
@@ -195,33 +209,17 @@ const finalizarRecorridoService = async ({
 
     await recorrido.update(
       {
-        id_usuario_finalizacion:
-          userId,
-
-        estado_recorrido:
-          ESTADOS_RECORRIDO
-            .FINALIZADO,
-
-        fecha_hora_finalizacion:
-          eventDate,
-
-        latitud_finalizacion:
-          location.latitud,
-
-        longitud_finalizacion:
-          location.longitud,
-
+        id_usuario_finalizacion: userId,
+        estado_recorrido: ESTADOS_RECORRIDO.FINALIZADO,
+        fecha_hora_finalizacion: eventDate,
+        latitud_finalizacion: location.latitud,
+        longitud_finalizacion: location.longitud,
         precision_finalizacion:
           validatePrecision(
             precision_gps,
           ),
-
-        kilometraje_final:
-          finalMileage,
-
-        duracion_segundos:
-          durationSeconds,
-
+        kilometraje_final: finalMileage,
+        duracion_segundos: durationSeconds,
         observacion_finalizacion:
           validateObservation(
             observacion,
@@ -234,9 +232,7 @@ const finalizarRecorridoService = async ({
 
     await programacion.update(
       {
-        estado_programacion:
-          ESTADOS_PROGRAMACION
-            .FINALIZADA,
+        estado_programacion: ESTADOS_PROGRAMACION.FINALIZADA,
       },
       {
         transaction,
@@ -245,9 +241,7 @@ const finalizarRecorridoService = async ({
 
     await vehiculo.update(
       {
-        estado_operativo:
-          ESTADOS_VEHICULO
-            .DISPONIBLE,
+        estado_operativo: ESTADOS_VEHICULO.DISPONIBLE,
       },
       {
         transaction,
@@ -255,51 +249,67 @@ const finalizarRecorridoService = async ({
     );
 
     await createRecorridoEvent({
-      id_recorrido:
-        recorridoId,
-      id_usuario:
-        userId,
-      tipo_evento:
-        TIPOS_EVENTO_RECORRIDO
-          .FINALIZACION,
-      fecha_evento:
-        eventDate,
-      latitud:
-        location.latitud,
-      longitud:
-        location.longitud,
-      precision_gps:
-        validatePrecision(
-          precision_gps,
-        ),
-      observacion:
-        validateObservation(
-          observacion,
-        ),
-      clave_idempotencia:
-        idempotencyKey,
-      origen:
-        normalizeOrigin(origen),
+      id_recorrido: recorridoId,
+      id_usuario: userId,
+      tipo_evento: TIPOS_EVENTO_RECORRIDO.FINALIZACION,
+      fecha_evento: eventDate,
+      latitud: location.latitud,
+      longitud: location.longitud,
+      precision_gps: validatePrecision(
+        precision_gps,
+      ),
+      observacion: validateObservation(
+        observacion,
+      ),
+      clave_idempotencia: idempotencyKey,
+      origen: normalizeOrigin(origen),
+
       ip,
       user_agent,
       transaction,
     });
 
-      // Auditoria
+    // ------------------------------------------------------
+    // REGISTRAR AUDITORÍAS
+    // ------------------------------------------------------
+
+    const contextoAuditoria = {
+      clave_operacion: idempotencyKey,
+
+      // Si no llegó una fecha del cliente, eventDate fue
+      // determinada por el servidor: no etiquetarla como
+      // fecha del dispositivo.
+      fecha_dispositivo:
+        fecha_evento == null
+          ? null
+          : eventDate,
+    };
+
     await auditarRecorrido(
       recorrido,
       transaction,
-      {
-        clave_operacion: idempotencyKey,
-        fecha_dispositivo: eventDate,
-      },
+      contextoAuditoria,
     );
-    
+
+    await auditarProgramacion(
+      programacion,
+      transaction,
+      contextoAuditoria,
+    );
+
+    await auditarVehiculo(
+      vehiculo,
+      transaction,
+      contextoAuditoria,
+    );
+
+    // Confirmar únicamente después de guardar todo.
     await transaction.commit();
 
     return getRecorridoDetail(
       recorridoId,
     );
+
   } catch (error) {
     if (!transaction.finished) {
       await transaction.rollback();

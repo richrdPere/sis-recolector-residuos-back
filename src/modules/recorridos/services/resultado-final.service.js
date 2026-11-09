@@ -5,6 +5,9 @@ const AppError = require('../../../utils/app-error');
 
 const { validateId } = require('../validations/recorrido.validation');
 
+// Auditoría
+const { prepararAuditoria } = require('../../auditoria/utils/auditar-cambio.utils');
+
 const UNIDADES = {
   KG: ['MASA', 1],
   TONELADA: ['MASA', 1000],

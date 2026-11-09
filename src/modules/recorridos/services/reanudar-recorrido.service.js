@@ -31,17 +31,16 @@ const {
   createRecorridoEvent,
   findIdempotentEvent,
   getRecorridoDetail,
-} = require(
-  '../utils/recorrido-service.utils',
-);
+} = require('../utils/recorrido-service.utils');
+
+// Auditoría
+const { prepararAuditoria } = require('../../auditoria/utils/auditar-cambio.utils');
 
 // Modelos
-const {
-  sequelize,
-} = db;
+const { sequelize } = db;
 
 // =======================================================
-// Service: Pausar recorrido
+// Service: Reanudar recorrido
 // =======================================================
 const reanudarRecorridoService = async ({
   id_recorrido,
@@ -106,17 +105,8 @@ const reanudarRecorridoService = async ({
       true,
     );
 
-    // Auditoria
-    const auditarRecorrido = prepararAuditoria(
-      'RECORRIDO',
-      'REANUDAR',
-      recorrido,
-    );
 
-    if (
-      recorrido.estado_recorrido !==
-      ESTADOS_RECORRIDO.PAUSADO
-    ) {
+    if (recorrido.estado_recorrido !== ESTADOS_RECORRIDO.PAUSADO) {
       throw new AppError(
         'Solo se puede reanudar un recorrido pausado.',
         409,
@@ -125,12 +115,8 @@ const reanudarRecorridoService = async ({
     }
 
     await assertAssignedDriver({
-      id_programacion:
-        recorrido.id_programacion,
-
-      id_usuario:
-        userId,
-
+      id_programacion: recorrido.id_programacion,
+      id_usuario: userId,
       transaction,
     });
 
@@ -138,6 +124,22 @@ const reanudarRecorridoService = async ({
       recorrido.id_programacion,
       transaction,
       true,
+    );
+
+    // ------------------------------------------------------
+    // CAPTURAR ESTADOS ANTERIORES
+    // ------------------------------------------------------
+
+    const auditarRecorrido = prepararAuditoria(
+      'RECORRIDO',
+      'REANUDAR',
+      recorrido,
+    );
+
+    const auditarProgramacion = prepararAuditoria(
+      'PROGRAMACION',
+      'REANUDAR_POR_RECORRIDO',
+      programacion,
     );
 
     await recorrido.update(
@@ -192,13 +194,23 @@ const reanudarRecorridoService = async ({
     });
 
     // Auditoria
+    const contextoAuditoria = {
+      clave_operacion: idempotencyKey,
+
+      fecha_dispositivo:
+        fecha_evento ? eventDate : null,
+    };
+
     await auditarRecorrido(
       recorrido,
       transaction,
-      {
-        clave_operacion: idempotencyKey,
-        fecha_dispositivo: eventDate,
-      },
+      contextoAuditoria,
+    );
+
+    await auditarProgramacion(
+      programacion,
+      transaction,
+      contextoAuditoria,
     );
 
     await transaction.commit();
