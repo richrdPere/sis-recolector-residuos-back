@@ -16,9 +16,7 @@ const {
 } = db;
 
 // Validations
-const {
-  validarCrearIncidencia,
-} = require('../validations/incidencia.validations');
+const { validarCrearIncidencia } = require('../validations/incidencia.validations');
 
 // Utils
 const {
@@ -27,6 +25,9 @@ const {
   resolveIncidenciaContext,
   getIncidenciaDetail,
 } = require('../utils/incidencia-service.utils');
+
+// Auditoría
+const { prepararAuditoria } = require('../../auditoria/utils/auditar-cambio.utils');
 
 // ==========================================================
 // ROLES DESTINATARIOS
@@ -67,8 +68,7 @@ const createIncidenciaService = async (
   payload,
   metadata,
 ) => {
-  const data =
-    validarCrearIncidencia(payload);
+  const data = validarCrearIncidencia(payload);
 
   const actor =
     validateActor(metadata);
@@ -101,87 +101,78 @@ const createIncidenciaService = async (
       // 2. Crear incidencia
       // ----------------------------------------------------
 
-      const incidencia =
-        await Incidencia.create(
-          {
-            ...data,
-            ...contexto.ids,
+      const incidencia = await Incidencia.create(
+        {
+          ...data,
+          ...contexto.ids,
 
-            id_usuario_reporte:
-              actor.id_usuario,
+          id_usuario_reporte: actor.id_usuario,
 
-            id_responsable:
-              null,
+          id_responsable: null,
 
-            estado_incidencia:
-              'REPORTADA',
+          estado_incidencia: 'REPORTADA',
 
-            fecha_reporte:
-              new Date(),
+          fecha_reporte: new Date(),
 
-            fecha_resolucion:
-              null,
+          fecha_resolucion: null,
 
-            detalle_resolucion:
-              null,
+          detalle_resolucion: null,
 
-            estado:
-              true,
-          },
-          {
-            transaction,
-          },
-        );
+          estado: true,
+        },
+        {
+          transaction,
+        },
+      );
 
       // ----------------------------------------------------
       // 3. Obtener gestores activos
       // ----------------------------------------------------
 
-      const gestores =
-        await Usuario.findAll({
-          where: {
-            estado: true,
+      const gestores = await Usuario.findAll({
+        where: {
+          estado: true,
 
-            // Evitar autonotificación.
-            id_usuario: {
-              [Op.ne]: actor.id_usuario,
-            },
+          // Evitar autonotificación.
+          id_usuario: {
+            [Op.ne]: actor.id_usuario,
           },
+        },
 
-          attributes: [
-            'id_usuario',
-          ],
+        attributes: [
+          'id_usuario',
+        ],
 
-          include: [
-            {
-              model: Roles,
-              as: 'roles',
+        include: [
+          {
+            model: Roles,
+            as: 'roles',
 
+            attributes: [],
+
+            required: true,
+
+            where: {
+              estado: true,
+
+              nombre: {
+                [Op.in]:
+                  ROLES_GESTION_INCIDENCIAS,
+              },
+            },
+
+            through: {
               attributes: [],
-
-              required: true,
 
               where: {
                 estado: true,
-
-                nombre: {
-                  [Op.in]:
-                    ROLES_GESTION_INCIDENCIAS,
-                },
-              },
-
-              through: {
-                attributes: [],
-
-                where: {
-                  estado: true,
-                },
               },
             },
-          ],
+          },
+        ],
 
-          transaction,
-        });
+        transaction,
+      });
 
       const recipientIds = [
         ...new Set(
@@ -229,63 +220,46 @@ const createIncidenciaService = async (
             enviar_interna: true,
             enviar_push: true,
 
-            tipo_entidad:
-              'INCIDENCIA',
+            tipo_entidad: 'INCIDENCIA',
 
-            id_entidad:
-              incidencia.id_incidencia,
+            id_entidad: incidencia.id_incidencia,
 
             datos: {
-              id_incidencia:
-                incidencia.id_incidencia,
-
-              estado_incidencia:
-                incidencia.estado_incidencia,
-
-              prioridad_incidencia:
-                incidencia.prioridad,
-
-              id_usuario_reporte:
-                actor.id_usuario,
-
-              id_recorrido:
-                incidencia.id_recorrido,
-
-              id_zona:
-                incidencia.id_zona,
-
-              id_ruta:
-                incidencia.id_ruta,
+              id_incidencia: incidencia.id_incidencia,
+              estado_incidencia: incidencia.estado_incidencia,
+              prioridad_incidencia: incidencia.prioridad,
+              id_usuario_reporte: actor.id_usuario,
+              id_recorrido: incidencia.id_recorrido,
+              id_zona: incidencia.id_zona,
+              id_ruta: incidencia.id_ruta,
             },
 
-            clave_evento:
-              'INCIDENCIA_REPORTADA:' +
-              incidencia.id_incidencia,
-
-            origen:
-              'SISTEMA',
+            clave_evento: 'INCIDENCIA_REPORTADA:' + incidencia.id_incidencia,
+            origen: 'SISTEMA',
           },
 
           destino: {
-            tipo_destino:
-              'USUARIOS',
-
-            destinatarios:
-              recipientIds,
+            tipo_destino: 'USUARIOS',
+            destinatarios: recipientIds,
           },
 
-          id_usuario_creacion:
-            actor.id_usuario,
+          id_usuario_creacion: actor.id_usuario,
 
           transaction,
         });
       }
 
-      // Auditoria
-      await auditar(incidencia, transaction);
+      // ----------------------------------------------------
+      // 5. Registrar auditoría
+      // ----------------------------------------------------
+
+      await auditar(
+        incidencia,
+        transaction,
+      );
 
       // ----------------------------------------------------
-      // 5. Devolver detalle
+      // 6. Devolver detalle
       // ----------------------------------------------------
 
       return getIncidenciaDetail(
@@ -305,71 +279,3 @@ const createIncidenciaService = async (
 
 module.exports = createIncidenciaService;
 
-// const sequelize = require('../../../config/database');
-// const db = require('../../../database/models');
-
-// // Modelos
-// const { Incidencia } = db;
-
-// // Validations
-// const { validarCrearIncidencia } = require('../validations/incidencia.validations');
-
-// // Utils
-// const {
-//   validateActor,
-//   authorizeIncidencia,
-//   resolveIncidenciaContext,
-//   getIncidenciaDetail,
-// } = require('../utils/incidencia-service.utils');
-
-// // ==========================================================
-// // SERVICE: CREAR INCIDENCIA
-// // ==========================================================
-// const createIncidenciaService = async (
-//   payload,
-//   metadata,
-// ) => {
-//   const data = validarCrearIncidencia(payload);
-//   const actor = validateActor(metadata);
-
-//   return sequelize.transaction(
-//     async (transaction) => {
-//       const contexto = await resolveIncidenciaContext(
-//         data,
-//         transaction,
-//       );
-
-//       await authorizeIncidencia('crear', actor, {
-//         datos: data,
-//         contexto,
-//         transaction,
-//       });
-
-//       const incidencia = await Incidencia.create(
-//         {
-//           ...data,
-//           ...contexto.ids,
-
-//           id_usuario_reporte: actor.id_usuario,
-//           id_responsable: null,
-
-//           estado_incidencia: 'REPORTADA',
-//           fecha_reporte: new Date(),
-
-//           fecha_resolucion: null,
-//           detalle_resolucion: null,
-
-//           estado: true,
-//         },
-//         { transaction },
-//       );
-
-//       return getIncidenciaDetail(
-//         incidencia.id_incidencia,
-//         transaction,
-//       );
-//     },
-//   );
-// };
-
-// module.exports = createIncidenciaService;

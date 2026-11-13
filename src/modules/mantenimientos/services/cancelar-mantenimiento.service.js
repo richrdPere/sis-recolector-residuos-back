@@ -6,15 +6,18 @@ const {
   validarId,
   validarBody,
   texto,
-} = require("../utils/mantenimientos.utils");
+} = require('../utils/mantenimientos.utils');
 
-// Validation
+// Validaciones
 const {
   obtenerDetalle,
   validarActor,
   bloquearOrden,
   registrarHistorial,
-} = require("../validations/mantenimientos.validation");
+} = require('../validations/mantenimientos.validation');
+
+// Auditoría
+const { prepararAuditoria } = require('../../auditoria/utils/auditar-cambio.utils');
 
 // Modelos
 const { sequelize } = db;
@@ -32,7 +35,9 @@ const cancelarMantenimientoService = async ({
     'ID del mantenimiento',
   );
 
-  validarBody(body, ['motivo_cancelacion']);
+  validarBody(body, [
+    'motivo_cancelacion',
+  ]);
 
   const motivo = texto(
     body.motivo_cancelacion,
@@ -42,13 +47,21 @@ const cancelarMantenimientoService = async ({
 
   return sequelize.transaction(
     async (transaction) => {
+      // ----------------------------------------------------
+      // 1. VALIDAR ACTOR Y BLOQUEAR REGISTROS
+      // ----------------------------------------------------
       const actorId = await validarActor(
         usuarioId,
         transaction,
       );
 
-      const { mantenimiento } = await bloquearOrden(id, transaction);
+      const {
+        mantenimiento,
+      } = await bloquearOrden(id, transaction);
 
+      // ----------------------------------------------------
+      // 2. VALIDAR ESTADO
+      // ----------------------------------------------------
       if (mantenimiento.estado_mantenimiento !== 'PROGRAMADO') {
         error(
           'Solo se pueden cancelar mantenimientos programados.',
@@ -56,8 +69,21 @@ const cancelarMantenimientoService = async ({
         );
       }
 
+      // ----------------------------------------------------
+      // 3. CAPTURAR ESTADO ANTERIOR
+      // Debe realizarse antes de set() o update().
+      // ----------------------------------------------------
       const anterior = mantenimiento.toJSON();
 
+      const auditarMantenimiento = prepararAuditoria(
+        'MANTENIMIENTO',
+        'CANCELAR',
+        mantenimiento,
+      );
+
+      // ----------------------------------------------------
+      // 4. CANCELAR MANTENIMIENTO
+      // ----------------------------------------------------
       mantenimiento.set({
         estado_mantenimiento: 'CANCELADO',
         id_usuario_cancelacion: actorId,
@@ -65,11 +91,13 @@ const cancelarMantenimientoService = async ({
         fecha_cancelacion: new Date(),
       });
 
-      // Auditoria
-      const auditar = prepararAuditoria('MANTENIMIENTO', 'CANCELAR', mantenimiento);
+      await mantenimiento.save({
+        transaction,
+      });
 
-      await mantenimiento.save({ transaction });
-
+      // ----------------------------------------------------
+      // 5. REGISTRAR HISTORIAL
+      // ----------------------------------------------------
       await registrarHistorial({
         mantenimiento,
         usuarioId: actorId,
@@ -79,9 +107,23 @@ const cancelarMantenimientoService = async ({
         transaction,
       });
 
-      // Auditoria
-      await auditar(mantenimiento, transaction);
+      // ----------------------------------------------------
+      // 6. REGISTRAR AUDITORÍA
+      // ----------------------------------------------------
+      await auditarMantenimiento(
+        mantenimiento,
+        transaction,
+        {
+          // Auditoría admite hasta 1000 caracteres.
+          // El motivo completo se conserva en la orden
+          // y en su historial.
+          motivo: motivo.slice(0, 1000),
+        },
+      );
 
+      // ----------------------------------------------------
+      // 7. DEVOLVER DETALLE
+      // ----------------------------------------------------
       return obtenerDetalle(id, transaction);
     },
   );

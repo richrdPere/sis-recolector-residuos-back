@@ -86,7 +86,7 @@ const updateNotificationPreferencesService = async ({
 
       const data = {};
 
-      for (const field of BOOLEAN_FIELDS) {
+      for (const field of ALLOWED_BOOLEAN_FIELDS) {
         if (payload[field] === undefined) continue;
 
         if (typeof payload[field] !== 'boolean') {

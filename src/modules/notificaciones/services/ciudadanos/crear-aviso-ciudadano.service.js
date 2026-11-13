@@ -1,7 +1,5 @@
 const AppError = require('../../../../utils/app-error');
-const {
-	enqueueNotification,
-} = require('../../../../jobs/notification-worker');
+const { enqueueNotification } = require('../../../../jobs/notification-worker');
 
 const VIGENCIA_MINUTOS = {
 	INICIO_RUTA: 90,

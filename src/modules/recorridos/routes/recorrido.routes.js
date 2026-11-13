@@ -53,9 +53,7 @@ const ROLES_DETALLE = [
 // Autenticación
 router.use(verificarToken);
 
-router.use(
-    '/historial',
-    require('./historial.routes'),
+router.use('/historial', require('./historial.routes'),
 );
 
 const {

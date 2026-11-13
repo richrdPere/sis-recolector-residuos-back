@@ -6,6 +6,7 @@ const changeEstadoVehiculoService = require('./change-estado-vehiculo.service');
 const deleteVehiculoService = require('./delete-vehiculo.service');
 const getLastCodigoVehiculoService = require('./get-last-codigo-vehiculo.service');
 const getVehiculosSelectorService = require("./get-vehiculos-selector.service");
+const changeEstadoOperativoVehiculoService = require('./change-estado-operativo-vehiculo.service');
 
 module.exports = {
     changeEstadoVehiculoService,
@@ -16,4 +17,5 @@ module.exports = {
     updateVehiculoService,
     getLastCodigoVehiculoService,
     getVehiculosSelectorService,
+    changeEstadoOperativoVehiculoService,
 };

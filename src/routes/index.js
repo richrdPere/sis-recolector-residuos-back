@@ -25,7 +25,7 @@ const mantenimientosRoutes = require('../modules/mantenimientos/routes/mantenimi
 const incidenciasRoutes = require("../modules/incidencias/routes/incidencias.routes");
 const reportesRoutes = require("../modules/reportes/routes/reporte.routes");
 const auditoriaRoutes = require('../modules/auditoria/routes/auditoria.routes');
-
+const publicoRoutes = require("../modules/publico/routes/publico.routes");
 
 // Rutas
 router.use("/auth", authRoutes); // COMPLETE 
@@ -51,6 +51,7 @@ router.use("/mantenimientos", mantenimientosRoutes); // COMPLETE
 router.use('/incidencias', incidenciasRoutes); // COMPLETE
 router.use('/reportes', reportesRoutes); // COMPLETE
 router.use('/auditoria', auditoriaRoutes); // COMPLETE
+router.use('/publico', publicoRoutes);
 
 module.exports = router;
 

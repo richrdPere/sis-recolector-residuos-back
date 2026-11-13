@@ -43,7 +43,7 @@ router.post('/create',
     createProgramacionController,
 );
 
-router.put('/editar/:idProgramacion',
+router.put('/update/:idProgramacion',
     autorizarRoles(...ROLES_GESTION),
     updateProgramacionController,
 );

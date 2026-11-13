@@ -419,74 +419,43 @@ const cancelarRecorridoService = async ({
     // 10. Aviso ciudadano
     // ------------------------------------------------------
 
-    await enqueueNotification({
-      notificacion: {
-        tipo_notificacion:
-          'CANCELACION_RUTA',
-
-        titulo:
-          'Servicio de recolección interrumpido',
-
-        mensaje:
-          'El recorrido de recolección de tu ruta ' +
-          'fue cancelado. Consulta los avisos y ' +
-          'el estado del servicio en la aplicación.',
-
-        prioridad: 'ALTA',
-
-        enviar_interna: true,
-        enviar_push: true,
-
-        tipo_entidad: 'RECORRIDO',
-
-        id_entidad: recorridoId,
-
-        /*
-         * No publicar coordenadas, observaciones
-         * ni motivos operativos internos.
-         */
-        datos: {
-          id_recorrido: recorridoId,
-          id_programacion: programacion.id_programacion,
-          id_ruta: programacion.id_ruta,
-          estado_recorrido: ESTADOS_RECORRIDO.CANCELADO,
-          fecha_cancelacion: eventDate,
-        },
-        clave_evento: 'CANCELACION_RECORRIDO:CIUDADANOS:' + recorridoId,
-        origen: 'SISTEMA',
-      },
-
-      destino: {
-        tipo_destino: 'CIUDADANOS',
-        evento: 'CANCELACION',
-        id_ruta: programacion.id_ruta,
-      },
-
-      id_usuario_creacion: userId,
-
-      transaction,
-    });
-
-
+    // Una única creación.
+    // El helper aplica preferencias, canales, idempotencia
+    // y la vigencia correspondiente al evento CANCELACION.
     await crearAvisoCiudadano({
       evento: 'CANCELACION',
+
       idRuta: programacion.id_ruta,
+
       tipoEntidad: 'RECORRIDO',
       idEntidad: recorridoId,
-      claveEvento: `CANCELACION_RECORRIDO:CIUDADANOS:${recorridoId}`,
-      titulo: 'Servicio de recolección interrumpido',
+
+      claveEvento:
+        `CANCELACION_RECORRIDO:CIUDADANOS:${recorridoId}`,
+
+      titulo:
+        'Servicio de recolección interrumpido',
+
       mensaje:
         'El recorrido de recolección de tu ruta fue cancelado. ' +
-        'Consulta el estado del servicio en la aplicación.',
+        'Consulta los avisos y el estado del servicio ' +
+        'en la aplicación.',
+
       prioridad: 'ALTA',
+
+      // Solo información pública del servicio.
+      // No incluir motivos internos ni coordenadas exactas.
       datos: {
         id_recorrido: recorridoId,
         id_programacion: programacion.id_programacion,
         estado_recorrido: ESTADOS_RECORRIDO.CANCELADO,
         fecha_cancelacion: eventDate,
       },
+
       fechaEvento: eventDate,
+
       idUsuarioCreacion: userId,
+
       transaction,
     });
 

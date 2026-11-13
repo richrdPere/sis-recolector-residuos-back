@@ -8,21 +8,13 @@ const {
   validateId,
   validateResourceType,
   validateQrState,
-} = require(
-  '../validations/codigo-qr.validation',
-);
+} = require('../validations/codigo-qr.validation');
 
 // Utils
-const {
-  buildPublicQrUrl,
-} = require(
-  '../utils/codigo-qr-service.utils',
-);
+const { buildPublicQrUrl } = require('../utils/codigo-qr-service.utils');
 
 // Modelos
-const {
-  CodigoQr,
-} = db;
+const { CodigoQr } = db;
 
 // ===============================================
 // SERVICE: Obtener codigos QR

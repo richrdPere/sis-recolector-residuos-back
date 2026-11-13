@@ -4,9 +4,10 @@ const db = require('../../../database/models');
 const AppError = require('../../../utils/app-error');
 
 // Auditoría
-const {
-  prepararAuditoria,
-} = require('../../auditoria/utils/auditar-cambio.utils');
+const { prepararAuditoria } = require('../../auditoria/utils/auditar-cambio.utils');
+
+// Utils
+const { validarCambioOperativo } = require('../utils/estado-operativo.utils');
 
 // Modelos
 const {
@@ -318,6 +319,12 @@ const updateVehiculoService = async (
         );
       }
 
+      await validarCambioOperativo(
+        vehiculo,
+        payload.estado_operativo,
+        transaction,
+      );
+
       data.estado_operativo = payload.estado_operativo;
     }
 
@@ -328,7 +335,6 @@ const updateVehiculoService = async (
     for (const campo of [
       'color',
       'observacion',
-      'foto_url',
     ]) {
       const valor = payload[campo];
 

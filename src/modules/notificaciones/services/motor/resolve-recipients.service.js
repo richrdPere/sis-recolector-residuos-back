@@ -6,13 +6,37 @@ const db = require('../../../../database/models');
 const AppError = require('../../../../utils/app-error');
 
 // Utils
-const { validateId } = require('../../utils/motor-notification.utils');
+// const { validateId } = require('../../utils/motor-notification.utils');
 
 // Modelos
 const {
   Usuario,
   Ciudadano,
 } = db;
+
+// ==========================================================
+// VALIDAR IDENTIFICADORES
+// ==========================================================
+
+// No depende de motor-notification.utils para evitar
+// la dependencia circular durante la carga del módulo.
+function validateId(value) {
+  const text = String(value ?? '').trim();
+
+  if (
+    !/^[1-9]\d*$/.test(text) ||
+    BigInt(text) > 9223372036854775807n
+  ) {
+    throw new AppError(
+      'El identificador del destinatario o recurso no es válido.',
+      400,
+      'INVALID_NOTIFICATION_ID',
+    );
+  }
+
+  // Mantener como texto evita perder precisión con BIGINT.
+  return text;
+}
 
 // ==========================================================
 // EVENTOS CIUDADANOS ADMITIDOS
@@ -282,7 +306,7 @@ const resolveRecipientsService = async ({
 
     const ids = [
       ...new Set(
-        destinatarios.map(validateId),
+        destinatarios.map((id) => validateId(id)),
       ),
     ];
 

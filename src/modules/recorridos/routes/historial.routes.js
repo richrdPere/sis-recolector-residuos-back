@@ -1,87 +1,68 @@
 const express = require('express');
 const router = express.Router();
 
+// Controllers
+const {
+  getHistorialListadoController,
+  getHistorialDetalleController,
+  getHistorialTrazadoController,
+} = require('../controllers');
+
+// Middlewares
 const { autorizarRoles } = require('../../../middlewares/auth.middleware');
 
-const {
-  ejecutar,
-} = require(
-  '../../reportes/services/reporte-base.service',
-);
+// ==========================================================
+// ROLES
+// ==========================================================
 
-const {
-  detalleHistorialService,
-  trazadoHistorialService,
-} = require(
-  '../services/historial-recorrido.service',
-);
+// Acceso al listado administrativo.
+const ROLES_LISTADO = [
+  'SUPER_ADMIN',
+  'ADMIN',
+  'SUPERVISOR',
+];
 
-// El router padre ya ejecuta verificarToken.
-router.use(
-  autorizarRoles(
-    'SUPER_ADMIN',
-    'ADMIN',
-    'SUPERVISOR',
+// Acceso al detalle y trazado.
+// Los services validan qué recorridos puede consultar cada usuario.
+const ROLES_DETALLE = [
+  ...new Set([
+    ...ROLES_LISTADO,
     'OPERADOR',
     'CONDUCTOR',
     'RECOLECTOR',
-  ),
+  ]),
+];
+
+// ==========================================================
+// AUTORIZACIÓN GENERAL
+// El router padre ya ejecuta verificarToken.
+// ==========================================================
+router.use(
+  autorizarRoles(...ROLES_DETALLE),
 );
 
+// ==========================================================
+// CACHÉ
+// Aplicar también a respuestas de error de las consultas.
+// ==========================================================
 router.use((_req, res, next) => {
   res.set('Cache-Control', 'no-store');
   next();
 });
 
-const responder = service => async (req, res, next) => {
-  try {
-    const data = await service(
-      req.params.idRecorrido,
-      req.usuario,
-    );
+// ==========================================================
+// LISTADO
+// ==========================================================
+router.get('/', autorizarRoles(...ROLES_LISTADO), getHistorialListadoController);
 
-    return res.json({
-      success: true,
-      message: 'Historial consultado.',
-      data,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+// ==========================================================
+// TRAZADO GPS
+// ==========================================================
+router.get('/:idRecorrido/trazado', getHistorialTrazadoController);
 
-// Listado administrativo: reutiliza filtros y paginación
-// del reporte de recorridos que ya actualizamos.
-router.get(
-  '/',
-  autorizarRoles(
-    'SUPER_ADMIN',
-    'ADMIN',
-    'SUPERVISOR',
-  ),
-  async (req, res, next) => {
-    try {
-      const data = await ejecutar(
-        'RECORRIDOS',
-        {
-          query: req.query,
-          usuario: req.usuario,
-        },
-      );
-
-      return res.json({
-        success: true,
-        message: 'Recorridos consultados.',
-        data,
-      });
-    } catch (error) {
-      next(error);
-    }
-  },
-);
-
-router.get('/:idRecorrido/trazado', responder(trazadoHistorialService));
-
-router.get('/:idRecorrido', responder(detalleHistorialService));
+// ==========================================================
+// DETALLE
+// ==========================================================
+router.get('/:idRecorrido', getHistorialDetalleController);
 
 module.exports = router;

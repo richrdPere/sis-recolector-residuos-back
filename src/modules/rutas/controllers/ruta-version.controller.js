@@ -14,16 +14,14 @@ const {
 */
 const createRutaVersionController = async (req, res, next) => {
   try {
-    const data =
-      await createRutaVersionService(
-        req.params.idRuta,
-        req.body,
-      );
+    const data = await createRutaVersionService(
+      req.params.idRuta,
+      req.body,
+    );
 
     return res.status(201).json({
       success: true,
-      message:
-        'Versión de ruta registrada correctamente.',
+      message: 'Versión de ruta registrada correctamente.',
       data,
     });
   } catch (error) {

@@ -1,4 +1,5 @@
 const { Op } = require('sequelize');
+
 const db = require('../../../../database/models');
 const AppError = require('../../../../utils/app-error');
 
@@ -9,13 +10,19 @@ const {
   normalizeText,
 } = require('../../utils/rutas-service.utils');
 
-const getEditableVersion = require("../../utils/ruta-horario/ruta-punto.utils");
+const getEditableVersion = require('../../utils/ruta-horario/ruta-punto.utils');
+
+// Auditoría
+const { prepararAuditoria } = require('../../../auditoria/utils/auditar-cambio.utils');
 
 // Modelos
-const { RutaPunto } = db;
+const {
+  sequelize,
+  RutaPunto,
+} = db;
 
 // ===============================================
-// SERVICE: Crear ruta punto
+// SERVICE: CREAR PUNTO DE RUTA
 // ===============================================
 const createRutaPuntoService = async (
   idVersion,
@@ -23,40 +30,26 @@ const createRutaPuntoService = async (
     codigo,
     nombre,
     descripcion = null,
-    tipo_punto =
-    'RECOLECCION',
+    tipo_punto = 'RECOLECCION',
     latitud,
     longitud,
     orden,
-    radio_atencion_metros =
-    30,
-    tiempo_estimado_min =
-    null,
+    radio_atencion_metros = 30,
+    tiempo_estimado_min = null,
     obligatorio = true,
-  },
+  } = {},
 ) => {
-  const versionId =
-    validateId(
-      idVersion,
-      'identificador de la versión',
-    );
+  const versionId = validateId(idVersion, 'identificador de la versión');
 
-  await getEditableVersion(
-    versionId,
-  );
-
-  const normalizedCode =
-    normalizeCode(codigo);
-
-  const normalizedName =
-    normalizeText(nombre);
+  const normalizedCode = normalizeCode(codigo);
+  const normalizedName = normalizeText(nombre);
 
   if (
     !normalizedCode ||
     !normalizedName ||
-    latitud === undefined ||
-    longitud === undefined ||
-    orden === undefined
+    latitud == null ||
+    longitud == null ||
+    orden == null
   ) {
     throw new AppError(
       'Código, nombre, coordenadas y orden son obligatorios.',
@@ -65,66 +58,132 @@ const createRutaPuntoService = async (
     );
   }
 
-  const duplicate =
-    await RutaPunto.findOne({
-      where: {
-        id_ruta_version:
-          versionId,
+  // --------------------------------------------------------
+  // VALIDAR Y NORMALIZAR ORDEN
+  // --------------------------------------------------------
+  const tipoOrdenValido = typeof orden === 'number' || typeof orden === 'string';
 
-        estado: true,
+  const normalizedOrder = tipoOrdenValido
+    ? Number(orden)
+    : NaN;
 
-        [Op.or]: [
-          {
-            codigo:
-              normalizedCode,
-          },
-          {
-            orden:
-              Number(orden),
-          },
-        ],
-      },
-    });
-
-  if (duplicate) {
+  if (
+    !Number.isSafeInteger(normalizedOrder) ||
+    normalizedOrder < 1 ||
+    normalizedOrder > 4294967295
+  ) {
     throw new AppError(
-      duplicate.codigo ===
-        normalizedCode
-        ? 'El código del punto ya existe en la versión.'
-        : 'El orden del punto ya existe en la versión.',
-      409,
-      duplicate.codigo ===
-        normalizedCode
-        ? 'ROUTE_POINT_CODE_ALREADY_EXISTS'
-        : 'ROUTE_POINT_ORDER_ALREADY_EXISTS',
+      'El orden debe ser un entero positivo válido.',
+      400,
+      'INVALID_ROUTE_POINT_ORDER',
     );
   }
 
-  return RutaPunto.create({
-    id_ruta_version:
-      versionId,
+  if (
+    descripcion !== null &&
+    typeof descripcion !== 'string'
+  ) {
+    throw new AppError(
+      'La descripción debe ser una cadena de texto.',
+      400,
+      'INVALID_ROUTE_POINT_DESCRIPTION',
+    );
+  }
 
-    codigo:
-      normalizedCode,
+  // --------------------------------------------------------
+  // CREACIÓN Y AUDITORÍA EN LA MISMA TRANSACCIÓN
+  // --------------------------------------------------------
+  return sequelize.transaction(
+    async (transaction) => {
+      await getEditableVersion(
+        versionId,
+        transaction,
+      );
 
-    nombre:
-      normalizedName,
+      // ----------------------------------------------------
+      // COMPROBAR DUPLICADOS NO ELIMINADOS
+      // ----------------------------------------------------
+      const duplicate = await RutaPunto.findOne({
+        where: {
+          id_ruta_version: versionId,
 
-    descripcion:
-      descripcion?.trim() ||
-      null,
+          [Op.or]: [
+            {
+              codigo: normalizedCode,
+            },
+            {
+              orden: normalizedOrder,
+            },
+          ],
+        },
 
-    tipo_punto,
-    latitud,
-    longitud,
-    orden:
-      Number(orden),
+        transaction,
+      });
 
-    radio_atencion_metros,
-    tiempo_estimado_min,
-    obligatorio,
-    estado: true,
-  });
+      if (duplicate) {
+        const codigoDuplicado =
+          duplicate.codigo === normalizedCode;
+
+        throw new AppError(
+          codigoDuplicado
+            ? 'El código del punto ya existe en esta versión.'
+            : 'El orden del punto ya existe en esta versión.',
+          409,
+          codigoDuplicado
+            ? 'ROUTE_POINT_CODE_ALREADY_EXISTS'
+            : 'ROUTE_POINT_ORDER_ALREADY_EXISTS',
+        );
+      }
+
+      // ----------------------------------------------------
+      // PREPARAR AUDITORÍA ANTES DE CREAR
+      // ----------------------------------------------------
+      const auditarPunto = prepararAuditoria(
+        'PUNTO',
+        'CREAR',
+        null,
+      );
+
+      // ----------------------------------------------------
+      // CREAR PUNTO
+      // ----------------------------------------------------
+      const punto = await RutaPunto.create(
+        {
+          id_ruta_version: versionId,
+          codigo: normalizedCode,
+          nombre: normalizedName,
+          descripcion: descripcion?.trim() || null,
+
+          tipo_punto,
+          latitud,
+          longitud,
+          orden: normalizedOrder,
+
+          radio_atencion_metros,
+          tiempo_estimado_min,
+          obligatorio,
+          estado: true,
+        },
+        {
+          transaction,
+        },
+      );
+
+      // ----------------------------------------------------
+      // REGISTRAR AUDITORÍA
+      // ----------------------------------------------------
+      await auditarPunto(
+        punto,
+        transaction,
+        {
+          motivo:
+            `Creación de un punto en la versión #${versionId}.`,
+        },
+      );
+
+      return punto;
+    },
+  );
 };
 
 module.exports = createRutaPuntoService;

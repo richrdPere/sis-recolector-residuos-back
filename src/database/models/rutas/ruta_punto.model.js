@@ -222,10 +222,10 @@ const RutaPunto = sequelize.define('RutaPunto', {
         fields: [
           'id_ruta_version',
           'codigo',
+          'registro_vivo',
         ],
 
-        name:
-          'uk_ruta_punto_codigo',
+        name: 'uk_ruta_punto_codigo',
       },
       {
         unique: true,
@@ -233,10 +233,10 @@ const RutaPunto = sequelize.define('RutaPunto', {
         fields: [
           'id_ruta_version',
           'orden',
+          'registro_vivo',
         ],
 
-        name:
-          'uk_ruta_punto_orden',
+        name: 'uk_ruta_punto_orden',
       },
       {
         fields: [
@@ -244,8 +244,7 @@ const RutaPunto = sequelize.define('RutaPunto', {
           'tipo_punto',
         ],
 
-        name:
-          'idx_punto_version_tipo',
+        name: 'idx_punto_version_tipo',
       },
       {
         fields: [
@@ -253,8 +252,7 @@ const RutaPunto = sequelize.define('RutaPunto', {
           'longitud',
         ],
 
-        name:
-          'idx_punto_coordenadas',
+        name: 'idx_punto_coordenadas',
       },
     ],
   },

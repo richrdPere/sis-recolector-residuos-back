@@ -1,5 +1,3 @@
-// services/create-qr-code.service.js
-
 const db = require('../../../database/models');
 const AppError = require('../../../utils/app-error');
 
@@ -8,9 +6,7 @@ const {
   validateId,
   validateResourceType,
   validateRequiredText,
-} = require(
-  '../validations/codigo-qr.validation',
-);
+} = require('../validations/codigo-qr.validation');
 
 // Utils
 const {
@@ -18,22 +14,17 @@ const {
   generateAdministrativeCode,
   buildPublicQrUrl,
   validateResourceExists,
-} = require(
-  '../utils/codigo-qr-service.utils',
-);
+} = require('../utils/codigo-qr-service.utils');
 
-// Auditoria
+// Auditoría
 const { prepararAuditoria } = require('../../auditoria/utils/auditar-cambio.utils');
 
 // Modelos
-const {
-  CodigoQr,
-  sequelize,
-} = db;
+const { CodigoQr, sequelize } = db;
 
-// ===============================================
-// SERVICE: Crear codigo QR
-// ===============================================
+// ==========================================================
+// SERVICE: CREAR CÓDIGO QR
+// ==========================================================
 const createQrCodeService = async ({
   tipo_recurso,
   id_zona = null,
@@ -44,103 +35,84 @@ const createQrCodeService = async ({
   observacion = null,
   id_usuario_creacion,
 }) => {
-  const resourceType =
-    validateResourceType(
-      tipo_recurso,
-    );
+  const resourceType = validateResourceType(tipo_recurso);
 
-  const creatorId =
-    validateId(
-      id_usuario_creacion,
-      'identificador del usuario creador',
-    );
+  const creatorId = validateId(
+    id_usuario_creacion,
+    'identificador del usuario creador',
+  );
 
-  const normalizedTitle =
-    validateRequiredText(
-      titulo,
-      'título',
-      150,
-    );
+  const normalizedTitle = validateRequiredText(
+    titulo,
+    'título',
+    150,
+  );
 
-  const zoneId =
-    resourceType ===
-      'ZONA'
-      ? validateId(
-        id_zona,
-        'identificador de la zona',
-      )
-      : null;
+  const zoneId = resourceType === 'ZONA'
+    ? validateId(id_zona, 'identificador de la zona')
+    : null;
 
-  const routeId =
-    resourceType ===
-      'RUTA'
-      ? validateId(
-        id_ruta,
-        'identificador de la ruta',
-      )
-      : null;
+  const routeId = resourceType === 'RUTA'
+    ? validateId(id_ruta, 'identificador de la ruta')
+    : null;
+
+  // ========================================================
+  // VALIDAR EXPIRACIÓN
+  // ========================================================
+  let expirationDate = null;
 
   if (
-    fecha_expiracion &&
-    new Date(
-      fecha_expiracion,
-    ).getTime() <=
-    Date.now()
+    fecha_expiracion !== null &&
+    fecha_expiracion !== ''
   ) {
-    throw new AppError(
-      'La fecha de expiración debe ser futura.',
-      400,
-      'INVALID_QR_EXPIRATION',
-    );
+    if (typeof fecha_expiracion !== 'string') {
+      throw new AppError(
+        'La fecha de expiración no es válida.',
+        400,
+        'INVALID_QR_EXPIRATION',
+      );
+    }
+
+    expirationDate = new Date(fecha_expiracion);
+
+    if (
+      !Number.isFinite(expirationDate.getTime()) ||
+      expirationDate.getTime() <= Date.now()
+    ) {
+      throw new AppError(
+        'La fecha de expiración debe ser válida y futura.',
+        400,
+        'INVALID_QR_EXPIRATION',
+      );
+    }
   }
 
-  const transaction =
-    await sequelize.transaction();
+  // Validar la URL antes de modificar la base de datos.
+  const token = generatePublicToken();
+  const urlPublica = buildPublicQrUrl(token);
 
-  try {
+  return sequelize.transaction(async transaction => {
     await validateResourceExists({
-      tipoRecurso:
-        resourceType,
-
-      idZona:
-        zoneId,
-
-      idRuta:
-        routeId,
-
+      tipoRecurso: resourceType,
+      idZona: zoneId,
+      idRuta: routeId,
       transaction,
     });
 
-    const resourceWhere =
-      resourceType ===
-        'ZONA'
-        ? {
-          id_zona:
-            zoneId,
-        }
-        : {
-          id_ruta:
-            routeId,
-        };
+    const resourceWhere = resourceType === 'ZONA'
+      ? { id_zona: zoneId }
+      : { id_ruta: routeId };
 
-    const existingQr =
-      await CodigoQr.findOne({
-        where: {
-          tipo_recurso:
-            resourceType,
+    const existingQr = await CodigoQr.findOne({
+      where: {
+        ...resourceWhere,
+        tipo_recurso: resourceType,
+        estado_qr: 'ACTIVO',
+      },
 
-          estado_qr:
-            'ACTIVO',
-
-          ...resourceWhere,
-        },
-
-        transaction,
-
-        lock:
-          transaction
-            .LOCK.UPDATE,
-      });
+      transaction,
+      lock: transaction.LOCK.UPDATE,
+    });
 
     if (existingQr) {
       throw new AppError(
@@ -150,68 +122,266 @@ const createQrCodeService = async ({
       );
     }
 
-    // Auditoria
+    // ======================================================
+    // AUDITORÍA: EL REGISTRO TODAVÍA NO EXISTE
+    // ======================================================
     const auditarQr = prepararAuditoria(
       'QR',
       'CREAR',
+      null,
     );
-
-    const token = generatePublicToken();
 
     const codigoQr = await CodigoQr.create(
       {
-        codigo:
-          generateAdministrativeCode(
-            resourceType,
-          ),
+        codigo: generateAdministrativeCode(resourceType),
 
         token_publico: token,
-
         tipo_recurso: resourceType,
 
         id_zona: zoneId,
-
         id_ruta: routeId,
 
         titulo: normalizedTitle,
-
         descripcion: descripcion?.trim() || null,
 
         version: 1,
-
         estado_qr: 'ACTIVO',
 
         fecha_generacion: new Date(),
-
-        fecha_expiracion: fecha_expiracion || null,
+        fecha_expiracion: expirationDate,
 
         id_usuario_creacion: creatorId,
-
         observacion: observacion?.trim() || null,
       },
-      {
-        transaction,
-      },
+      { transaction },
     );
 
-    // Auditoria
-    await auditarQr(codigoQr, transaction);
-
-    await transaction.commit();
+    // Registrar la creación dentro de la misma transacción.
+    await auditarQr(
+      codigoQr,
+      transaction,
+    );
 
     return {
       codigo_qr: codigoQr,
-      url_publica: buildPublicQrUrl(token),
+      url_publica: urlPublica,
     };
-  } catch (error) {
-    if (
-      !transaction.finished
-    ) {
-      await transaction.rollback();
-    }
-
-    throw error;
-  }
+  });
 };
 
 module.exports = createQrCodeService;
+
+
+// // services/create-qr-code.service.js
+
+// const db = require('../../../database/models');
+// const AppError = require('../../../utils/app-error');
+
+// // Validations
+// const {
+//   validateId,
+//   validateResourceType,
+//   validateRequiredText,
+// } = require('../validations/codigo-qr.validation');
+
+// // Utils
+// const {
+//   generatePublicToken,
+//   generateAdministrativeCode,
+//   buildPublicQrUrl,
+//   validateResourceExists,
+// } = require('../utils/codigo-qr-service.utils');
+
+// // Auditoria
+// const { prepararAuditoria } = require('../../auditoria/utils/auditar-cambio.utils');
+
+// // Modelos
+// const {
+//   CodigoQr,
+//   sequelize,
+// } = db;
+
+// // ===============================================
+// // SERVICE: Crear codigo QR
+// // ===============================================
+// const createQrCodeService = async ({
+//   tipo_recurso,
+//   id_zona = null,
+//   id_ruta = null,
+//   titulo,
+//   descripcion = null,
+//   fecha_expiracion = null,
+//   observacion = null,
+//   id_usuario_creacion,
+// }) => {
+//   const resourceType =
+//     validateResourceType(
+//       tipo_recurso,
+//     );
+
+//   const creatorId =
+//     validateId(
+//       id_usuario_creacion,
+//       'identificador del usuario creador',
+//     );
+
+//   const normalizedTitle =
+//     validateRequiredText(
+//       titulo,
+//       'título',
+//       150,
+//     );
+
+//   const zoneId =
+//     resourceType ===
+//       'ZONA'
+//       ? validateId(
+//         id_zona,
+//         'identificador de la zona',
+//       )
+//       : null;
+
+//   const routeId =
+//     resourceType ===
+//       'RUTA'
+//       ? validateId(
+//         id_ruta,
+//         'identificador de la ruta',
+//       )
+//       : null;
+
+//   if (
+//     fecha_expiracion &&
+//     new Date(
+//       fecha_expiracion,
+//     ).getTime() <=
+//     Date.now()
+//   ) {
+//     throw new AppError(
+//       'La fecha de expiración debe ser futura.',
+//       400,
+//       'INVALID_QR_EXPIRATION',
+//     );
+//   }
+
+//   const transaction =
+//     await sequelize.transaction();
+
+//   try {
+//     await validateResourceExists({
+//       tipoRecurso:
+//         resourceType,
+
+//       idZona:
+//         zoneId,
+
+//       idRuta:
+//         routeId,
+
+//       transaction,
+//     });
+
+//     const resourceWhere =
+//       resourceType ===
+//         'ZONA'
+//         ? {
+//           id_zona:
+//             zoneId,
+//         }
+//         : {
+//           id_ruta:
+//             routeId,
+//         };
+
+//     const existingQr =
+//       await CodigoQr.findOne({
+//         where: {
+//           tipo_recurso:
+//             resourceType,
+
+//           estado_qr:
+//             'ACTIVO',
+
+//           ...resourceWhere,
+//         },
+
+//         transaction,
+
+//         lock:
+//           transaction
+//             .LOCK.UPDATE,
+//       });
+
+//     if (existingQr) {
+//       throw new AppError(
+//         'El recurso ya tiene un código QR activo.',
+//         409,
+//         'ACTIVE_QR_ALREADY_EXISTS',
+//       );
+//     }
+
+//     // Auditoria
+//     const auditarQr = prepararAuditoria(
+//       'QR',
+//       'CREAR',
+//     );
+
+//     const token = generatePublicToken();
+
+//     const codigoQr = await CodigoQr.create(
+//       {
+//         codigo:
+//           generateAdministrativeCode(
+//             resourceType,
+//           ),
+
+//         token_publico: token,
+
+//         tipo_recurso: resourceType,
+
+//         id_zona: zoneId,
+
+//         id_ruta: routeId,
+
+//         titulo: normalizedTitle,
+
+//         descripcion: descripcion?.trim() || null,
+
+//         version: 1,
+
+//         estado_qr: 'ACTIVO',
+
+//         fecha_generacion: new Date(),
+
+//         fecha_expiracion: fecha_expiracion || null,
+
+//         id_usuario_creacion: creatorId,
+
+//         observacion: observacion?.trim() || null,
+//       },
+//       {
+//         transaction,
+//       },
+//     );
+
+//     // Auditoria
+//     await auditarQr(codigoQr, transaction);
+
+//     await transaction.commit();
+
+//     return {
+//       codigo_qr: codigoQr,
+//       url_publica: buildPublicQrUrl(token),
+//     };
+//   } catch (error) {
+//     if (
+//       !transaction.finished
+//     ) {
+//       await transaction.rollback();
+//     }
+
+//     throw error;
+//   }
+// };
+
+// module.exports = createQrCodeService;

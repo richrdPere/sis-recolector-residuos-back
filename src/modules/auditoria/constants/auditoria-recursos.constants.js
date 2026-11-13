@@ -167,6 +167,7 @@ const RECURSOS_AUDITORIA = {
       'unidad_capacidad',
       'kilometraje',
       'estado_operativo',
+      'foto_url',
       'estado',
     ],
   },
@@ -179,11 +180,29 @@ const RECURSOS_AUDITORIA = {
       'id_vehiculo',
       'tipo_mantenimiento',
       'estado_mantenimiento',
+
+      'id_usuario_creacion',
+      'id_usuario_inicio',
+      'id_usuario_finalizacion',
+      'id_usuario_cancelacion',
+
       'fecha_inicio_programada',
       'fecha_fin_programada',
       'fecha_inicio_real',
       'fecha_fin_real',
       'fecha_cancelacion',
+
+      'motivo',
+      'diagnostico',
+      'trabajos_realizados',
+      'taller',
+      'responsable_tecnico',
+      'observacion',
+      'motivo_cancelacion',
+
+      'kilometraje_ingreso',
+      'kilometraje_salida',
+
       'costo_total',
       'vehiculo_operativo',
     ],

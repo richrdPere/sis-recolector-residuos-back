@@ -232,7 +232,18 @@ function serializarArchivo(archivo) {
     ? archivo.get({ plain: true })
     : { ...archivo };
 
-  // Los datos internos se utilizan desde el servicio de descarga.
+  const incidenciaId = encodeURIComponent(
+    String(resultado.id_incidencia),
+  );
+
+  const archivoId = encodeURIComponent(
+    String(resultado.id_incidencia_archivo),
+  );
+
+  resultado.contenido_url =
+    `/api/incidencias/${incidenciaId}` +
+    `/archivos/${archivoId}/contenido`;
+
   delete resultado.ruta_archivo;
   delete resultado.nombre_archivo;
   delete resultado.almacenamiento;

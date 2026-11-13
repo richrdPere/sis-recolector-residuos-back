@@ -38,6 +38,10 @@ const ROLES_CIUDADANO = [
 
 // Todas las rutas requieren autenticación
 router.use(verificarToken);
+
+// Consultas administrativas.
+router.use('/admin', require('./ciudadanos-admin.routes'));
+
 router.use(autorizarRoles(...ROLES_CIUDADANO),
 );
 

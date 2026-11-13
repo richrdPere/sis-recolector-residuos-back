@@ -42,8 +42,7 @@ const createRutaVersionService = async (
     );
   }
 
-  const transaction =
-    await sequelize.transaction();
+  const transaction = await sequelize.transaction();
 
   try {
     const ruta = await Ruta.findByPk(

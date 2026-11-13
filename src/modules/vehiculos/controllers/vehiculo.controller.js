@@ -1,13 +1,18 @@
 const {
-    createVehiculoService,
-    getVehiculosPaginadoService,
-    getVehiculoByIdService,
-    updateVehiculoService,
-    changeEstadoVehiculoService,
-    deleteVehiculoService,
-    getLastCodigoVehiculoService,
-    getVehiculosSelectorService,
+  createVehiculoService,
+  getVehiculosPaginadoService,
+  getVehiculoByIdService,
+  updateVehiculoService,
+  changeEstadoVehiculoService,
+  deleteVehiculoService,
+  getLastCodigoVehiculoService,
+  getVehiculosSelectorService,
+  changeEstadoOperativoVehiculoService,
 } = require('../services');
+
+const { cambiarFoto } = require('../services/vehiculo-foto.service');
+
+const { limpiarTemporal } = require('../../../middlewares/vehiculo-foto-upload.middleware');
 
 /*
 |--------------------------------------------------------------------------
@@ -15,17 +20,17 @@ const {
 |--------------------------------------------------------------------------
 */
 const createVehiculoController = async (req, res, next) => {
-    try {
-        const vehiculo = await createVehiculoService(req.body);
+  try {
+    const vehiculo = await createVehiculoService(req.body);
 
-        return res.status(201).json({
-            success: true,
-            message: 'Vehículo registrado correctamente.',
-            data: vehiculo,
-        });
-    } catch (error) {
-        next(error);
-    }
+    return res.status(201).json({
+      success: true,
+      message: 'Vehículo registrado correctamente.',
+      data: vehiculo,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 /*
 |--------------------------------------------------------------------------
@@ -33,26 +38,25 @@ const createVehiculoController = async (req, res, next) => {
 |--------------------------------------------------------------------------
 */
 const getVehiculosPaginadoController = async (req, res, next) => {
-    try {
-        const result =
-            await getVehiculosPaginadoService({
-                page: req.query.page,
-                limit: req.query.limit,
-                search: req.query.search,
-                estado: req.query.estado,
-                estado_operativo: req.query.estado_operativo,
-                tipo_vehiculo: req.query.tipo_vehiculo,
-            });
+  try {
+    const result = await getVehiculosPaginadoService({
+      page: req.query.page,
+      limit: req.query.limit,
+      search: req.query.search,
+      estado: req.query.estado,
+      estado_operativo: req.query.estado_operativo,
+      tipo_vehiculo: req.query.tipo_vehiculo,
+    });
 
-        return res.status(200).json({
-            success: true,
-            message: 'Vehículos obtenidos correctamente.',
-            data: result,
-            // pagination: result.pagination,
-        });
-    } catch (error) {
-        next(error);
-    }
+    return res.status(200).json({
+      success: true,
+      message: 'Vehículos obtenidos correctamente.',
+      data: result,
+      // pagination: result.pagination,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 /*
 |--------------------------------------------------------------------------
@@ -60,21 +64,21 @@ const getVehiculosPaginadoController = async (req, res, next) => {
 |--------------------------------------------------------------------------
 */
 const getVehiculoByIdController = async (req, res, next) => {
-    try {
-        const vehiculo =
-            await getVehiculoByIdService(
-                req.params.id,
-            );
+  try {
+    const vehiculo =
+      await getVehiculoByIdService(
+        req.params.id,
+      );
 
-        return res.status(200).json({
-            success: true,
-            message:
-                'Vehículo obtenido correctamente.',
-            data: vehiculo,
-        });
-    } catch (error) {
-        next(error);
-    }
+    return res.status(200).json({
+      success: true,
+      message:
+        'Vehículo obtenido correctamente.',
+      data: vehiculo,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 /*
 |--------------------------------------------------------------------------
@@ -82,22 +86,22 @@ const getVehiculoByIdController = async (req, res, next) => {
 |--------------------------------------------------------------------------
 */
 const updateVehiculoController = async (req, res, next) => {
-    try {
-        const vehiculo =
-            await updateVehiculoService(
-                req.params.id,
-                req.body,
-            );
+  try {
+    const vehiculo =
+      await updateVehiculoService(
+        req.params.id,
+        req.body,
+      );
 
-        return res.status(200).json({
-            success: true,
-            message:
-                'Vehículo actualizado correctamente.',
-            data: vehiculo,
-        });
-    } catch (error) {
-        next(error);
-    }
+    return res.status(200).json({
+      success: true,
+      message:
+        'Vehículo actualizado correctamente.',
+      data: vehiculo,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 /*
 |--------------------------------------------------------------------------
@@ -105,22 +109,22 @@ const updateVehiculoController = async (req, res, next) => {
 |--------------------------------------------------------------------------
 */
 const changeEstadoVehiculoController = async (req, res, next) => {
-    try {
-        const vehiculo =
-            await changeEstadoVehiculoService({
-                id_vehiculo: req.params.id,
-                estado: req.body.estado,
-            });
+  try {
+    const vehiculo =
+      await changeEstadoVehiculoService({
+        id_vehiculo: req.params.id,
+        estado: req.body.estado,
+      });
 
-        return res.status(200).json({
-            success: true,
-            message:
-                'Estado del vehículo actualizado correctamente.',
-            data: vehiculo,
-        });
-    } catch (error) {
-        next(error);
-    }
+    return res.status(200).json({
+      success: true,
+      message:
+        'Estado del vehículo actualizado correctamente.',
+      data: vehiculo,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 /*
 |--------------------------------------------------------------------------
@@ -128,17 +132,17 @@ const changeEstadoVehiculoController = async (req, res, next) => {
 |--------------------------------------------------------------------------
 */
 const deleteVehiculoController = async (req, res, next) => {
-    try {
-        const result = await deleteVehiculoService(req.params.id);
+  try {
+    const result = await deleteVehiculoService(req.params.id);
 
-        return res.status(200).json({
-            success: true,
-            message: 'Vehículo eliminado correctamente.',
-            data: result,
-        });
-    } catch (error) {
-        next(error);
-    }
+    return res.status(200).json({
+      success: true,
+      message: 'Vehículo eliminado correctamente.',
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 /*
 |--------------------------------------------------------------------------
@@ -146,17 +150,17 @@ const deleteVehiculoController = async (req, res, next) => {
 |--------------------------------------------------------------------------
 */
 const getLastCodigoVehiculoController = async (req, res, next) => {
-    try {
-        const codigo = await getLastCodigoVehiculoService();
+  try {
+    const codigo = await getLastCodigoVehiculoService();
 
-        return res.status(200).json({
-            success: true,
-            message: 'Código de vehículo obtenido correctamente.',
-            data: { codigo },
-        });
-    } catch (error) {
-        next(error);
-    }
+    return res.status(200).json({
+      success: true,
+      message: 'Código de vehículo obtenido correctamente.',
+      data: { codigo },
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 /*
 |--------------------------------------------------------------------------
@@ -164,26 +168,96 @@ const getLastCodigoVehiculoController = async (req, res, next) => {
 |--------------------------------------------------------------------------
 */
 const getVehiculosSelectorController = async (req, res, next) => {
-    try {
-        const data = await getVehiculosSelectorService({ search: req.query.search, });
+  try {
+    const data = await getVehiculosSelectorService({ search: req.query.search, });
 
-        return res.status(200).json({
-            success: true,
-            message: 'Selector de vehículos obtenido correctamente.',
-            data: data,
-        });
-    } catch (error) {
-        next(error);
-    }
+    return res.status(200).json({
+      success: true,
+      message: 'Selector de vehículos obtenido correctamente.',
+      data: data,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+/*
+|--------------------------------------------------------------------------
+| 9. Subir foto - vehiculo
+|--------------------------------------------------------------------------
+*/
+const subirFotoVehiculoController = async (req, res, next) => {
+  try {
+    const vehiculo = await cambiarFoto(
+      req.params.id,
+      req.file,
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: 'Fotografía guardada correctamente.',
+      data: vehiculo,
+    });
+  } catch (error) {
+    next(error);
+  } finally {
+    await limpiarTemporal(req);
+  }
+};
+/*
+|--------------------------------------------------------------------------
+| 10. Eliminar foto - vehiculo
+|--------------------------------------------------------------------------
+*/
+const eliminarFotoVehiculoController = async (req, res, next) => {
+  try {
+    const vehiculo = await cambiarFoto(
+      req.params.id,
+      null,
+      true,
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: 'Fotografía eliminada correctamente.',
+      data: vehiculo,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+/*
+|--------------------------------------------------------------------------
+| 11. Cambiar estado operativo
+|--------------------------------------------------------------------------
+*/
+const changeEstadoOperativoVehiculoController = async (req, res, next) => {
+  try {
+    const vehiculo = await changeEstadoOperativoVehiculoService(
+      req.params.id,
+      req.body,
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: 'Estado operativo del vehículo actualizado correctamente.',
+      data: vehiculo,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
+
 module.exports = {
-    createVehiculoController,
-    getVehiculosPaginadoController,
-    getVehiculoByIdController,
-    updateVehiculoController,
-    changeEstadoVehiculoController,
-    deleteVehiculoController,
-    getLastCodigoVehiculoController,
-    getVehiculosSelectorController,
+  createVehiculoController,
+  getVehiculosPaginadoController,
+  getVehiculoByIdController,
+  updateVehiculoController,
+  changeEstadoVehiculoController,
+  deleteVehiculoController,
+  getLastCodigoVehiculoController,
+  getVehiculosSelectorController,
+  subirFotoVehiculoController,
+  eliminarFotoVehiculoController,
+  changeEstadoOperativoVehiculoController,
 };

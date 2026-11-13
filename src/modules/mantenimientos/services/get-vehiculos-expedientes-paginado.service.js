@@ -1,10 +1,7 @@
 const { Op, fn, col, literal } = require('sequelize');
 
 // Ajusta esta ruta a tu índice de modelos.
-const {
-  Vehiculo,
-  VehiculoMantenimiento,
-} = require('../../../database/models');
+const { Vehiculo, VehiculoMantenimiento } = require('../../../database/models');
 
 // *********************************************************
 // CONSTANTES
@@ -466,7 +463,7 @@ const getVehiculosExpedientesPaginadoService = async (
       has_next_page: page < totalPages,
       has_previous_page: page > 1 && totalPages > 0,
     },
-    
+
   };
 };
 

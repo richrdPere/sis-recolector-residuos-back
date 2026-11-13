@@ -8,22 +8,22 @@ const {
   validarId,
   validarBody,
   prepararDatos,
-} = require("../utils/mantenimientos.utils");
+} = require('../utils/mantenimientos.utils');
 
-// Validation
+// Validaciones
 const {
   obtenerDetalle,
   validarActor,
   bloquearOrden,
   registrarHistorial,
   validarSinOperacionActiva,
-} = require("../validations/mantenimientos.validation");
+} = require('../validations/mantenimientos.validation');
+
+// Auditoría
+const { prepararAuditoria } = require('../../auditoria/utils/auditar-cambio.utils');
 
 // Modelos
-const {
-  sequelize,
-  VehiculoMantenimiento,
-} = db;
+const { sequelize, VehiculoMantenimiento, } = db;
 
 // *********************************************************
 // SERVICE: FINALIZAR MANTENIMIENTO
@@ -38,50 +38,82 @@ const finalizarMantenimientoService = async ({
     'ID del mantenimiento',
   );
 
-  validarBody(body, CAMPOS_FINALIZACION);
+  validarBody(
+    body,
+    CAMPOS_FINALIZACION,
+  );
 
   const datos = prepararDatos(body);
 
-  if (typeof datos.vehiculo_operativo !== 'boolean') {
-    error('Debe indicar si el vehículo quedó operativo.');
+  if (
+    typeof datos.vehiculo_operativo !== 'boolean'
+  ) {
+    error(
+      'Debe indicar si el vehículo quedó operativo.',
+    );
   }
 
   if (!datos.trabajos_realizados) {
-    error('Debe registrar los trabajos realizados.');
+    error(
+      'Debe registrar los trabajos realizados.',
+    );
   }
 
   return sequelize.transaction(
     async (transaction) => {
+      // ----------------------------------------------------
+      // 1. VALIDAR ACTOR Y BLOQUEAR REGISTROS
+      // ----------------------------------------------------
       const actorId = await validarActor(
         usuarioId,
         transaction,
       );
 
-      const { mantenimiento, vehiculo } = await bloquearOrden(id, transaction);
+      const {
+        mantenimiento,
+        vehiculo,
+      } = await bloquearOrden(
+        id,
+        transaction,
+      );
 
-      if (mantenimiento.estado_mantenimiento !== 'EN_PROCESO') {
+      // ----------------------------------------------------
+      // 2. VALIDAR ESTADOS
+      // ----------------------------------------------------
+      if (
+        mantenimiento.estado_mantenimiento !==
+        'EN_PROCESO'
+      ) {
         error(
           'Solo se puede finalizar una intervención en proceso.',
           409,
         );
       }
 
-      if (vehiculo.estado_operativo !== 'EN_MANTENIMIENTO') {
+      if (
+        vehiculo.estado_operativo !==
+        'EN_MANTENIMIENTO'
+      ) {
         error(
           'El vehículo ya no figura en mantenimiento. Revise su estado antes de finalizar.',
           409,
         );
       }
 
-      const otraIntervencion = await VehiculoMantenimiento.findOne({
-        where: {
-          id_vehiculo: vehiculo.id_vehiculo,
-          id_mantenimiento: { [Op.ne]: id },
-          estado_mantenimiento: 'EN_PROCESO',
-        },
+      const otraIntervencion =
+        await VehiculoMantenimiento.findOne({
+          where: {
+            id_vehiculo: vehiculo.id_vehiculo,
 
-        transaction,
-      });
+            id_mantenimiento: {
+              [Op.ne]: id,
+            },
+
+            estado_mantenimiento: 'EN_PROCESO',
+          },
+
+          transaction,
+        });
 
       if (otraIntervencion) {
         error(
@@ -95,52 +127,45 @@ const finalizarMantenimientoService = async ({
         transaction,
       );
 
-      // Después de bloquearlo, antes de cambiarlo.
-      const auditarVehiculo = prepararAuditoria(
-        'VEHICULO',
-        'CAMBIAR_ESTADO_POR_MANTENIMIENTO',
-        vehiculo,
-      );
-
+      // ----------------------------------------------------
+      // 3. VALIDAR KILOMETRAJE
+      // ----------------------------------------------------
       const ahora = new Date();
 
-      const kilometrajeSalida = datos.kilometraje_salida ?? mantenimiento.kilometraje_ingreso;
+      const kilometrajeSalida =
+        datos.kilometraje_salida ??
+        mantenimiento.kilometraje_ingreso;
 
       const minimo = Math.max(
         Number(vehiculo.kilometraje),
         Number(mantenimiento.kilometraje_ingreso),
       );
 
-      if (Number(kilometrajeSalida) < minimo) {
+      if (
+        Number(kilometrajeSalida) < minimo
+      ) {
         error(
           'El kilometraje de salida no puede ser menor al de ingreso ni al registrado en el vehículo.',
         );
       }
 
-      const anterior = mantenimiento.toJSON();
-
-      mantenimiento.set({
-        ...datos,
-
-        kilometraje_salida: kilometrajeSalida,
-        estado_mantenimiento: 'FINALIZADO',
-        id_usuario_finalizacion: actorId,
-        fecha_fin_real: ahora,
-      });
-
-      // Auditoria
-      const auditar = prepararAuditoria('MANTENIMIENTO', 'FINALIZAR', mantenimiento);
-
-      await mantenimiento.save({ transaction });
-
+      // ----------------------------------------------------
+      // 4. DETERMINAR EL ESTADO FINAL DEL VEHÍCULO
+      // ----------------------------------------------------
       let nuevoEstado = 'FUERA_DE_SERVICIO';
 
-      if (datos.vehiculo_operativo && vehiculo.estado) {
+      if (
+        datos.vehiculo_operativo &&
+        vehiculo.estado
+      ) {
         const otraOrdenVigente =
           await VehiculoMantenimiento.findOne({
             where: {
               id_vehiculo: vehiculo.id_vehiculo,
-              id_mantenimiento: { [Op.ne]: id },
+
+              id_mantenimiento: {
+                [Op.ne]: id,
+              },
 
               estado_mantenimiento: 'PROGRAMADO',
 
@@ -156,21 +181,60 @@ const finalizarMantenimientoService = async ({
             transaction,
           });
 
-        // No habilita una unidad cuyo siguiente
-        // mantenimiento ya está dentro de su intervalo.
         nuevoEstado = otraOrdenVigente
           ? 'EN_MANTENIMIENTO'
           : 'DISPONIBLE';
       }
 
+      // ----------------------------------------------------
+      // 5. CAPTURAR ESTADOS ANTES DE MODIFICARLOS
+      // ----------------------------------------------------
+      const anterior = mantenimiento.toJSON();
+
+      const auditarMantenimiento = prepararAuditoria(
+        'MANTENIMIENTO',
+        'FINALIZAR',
+        mantenimiento,
+      );
+
+      const auditarVehiculo = prepararAuditoria(
+        'VEHICULO',
+        'CAMBIAR_ESTADO_POR_MANTENIMIENTO',
+        vehiculo,
+      );
+
+      // ----------------------------------------------------
+      // 6. FINALIZAR MANTENIMIENTO
+      // ----------------------------------------------------
+      mantenimiento.set({
+        ...datos,
+
+        kilometraje_salida: kilometrajeSalida,
+        estado_mantenimiento: 'FINALIZADO',
+        id_usuario_finalizacion: actorId,
+        fecha_fin_real: ahora,
+      });
+
+      await mantenimiento.save({
+        transaction,
+      });
+
+      // ----------------------------------------------------
+      // 7. ACTUALIZAR VEHÍCULO
+      // ----------------------------------------------------
       await vehiculo.update(
         {
           estado_operativo: nuevoEstado,
           kilometraje: kilometrajeSalida,
         },
-        { transaction },
+        {
+          transaction,
+        },
       );
 
+      // ----------------------------------------------------
+      // 8. REGISTRAR HISTORIAL DE LA ORDEN
+      // ----------------------------------------------------
       await registrarHistorial({
         mantenimiento,
         usuarioId: actorId,
@@ -179,12 +243,34 @@ const finalizarMantenimientoService = async ({
         transaction,
       });
 
-      // Auditoria
-      await auditar(mantenimiento, transaction);
+      // ----------------------------------------------------
+      // 9. REGISTRAR AUDITORÍA GENERAL
+      // ----------------------------------------------------
+      await auditarMantenimiento(
+        mantenimiento,
+        transaction,
+        {
+          motivo:
+            'Finalización de la intervención de mantenimiento.',
+        },
+      );
 
-      await auditarVehiculo(vehiculo, transaction);
+      await auditarVehiculo(
+        vehiculo,
+        transaction,
+        {
+          motivo:
+            `Finalización del mantenimiento #${mantenimiento.id_mantenimiento}.`,
+        },
+      );
 
-      return obtenerDetalle(id, transaction);
+      // ----------------------------------------------------
+      // 10. DEVOLVER DETALLE
+      // ----------------------------------------------------
+      return obtenerDetalle(
+        id,
+        transaction,
+      );
     },
   );
 };

@@ -18,6 +18,9 @@ const {
   validarSinOperacionActiva,
 } = require("../validations/mantenimientos.validation");
 
+// Auditoría
+const { prepararAuditoria } = require('../../auditoria/utils/auditar-cambio.utils');
+
 // Modelos
 const { sequelize } = db;
 

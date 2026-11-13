@@ -5,6 +5,9 @@ const crypto = require('crypto');
 
 const AppError = require('../utils/app-error');
 
+// Config
+const { privateUploadsRoot, incidenciasRoot } = require('../config/uploads');
+
 // Validations
 const { validarId } = require('../modules/incidencias/validations/incidencia.validations',);
 
@@ -25,15 +28,15 @@ const {
 const MAX_ARCHIVOS = 10;
 const MAX_BYTES = 5 * 1024 * 1024;
 
-const uploadsRoot = path.join(
-  process.cwd(),
-  'uploads',
-);
+// const uploadsRoot = path.join(
+//   process.cwd(),
+//   'uploads',
+// );
 
-const incidenciasRoot = path.join(
-  uploadsRoot,
-  'incidencias',
-);
+// const incidenciasRoot = path.join(
+//   uploadsRoot,
+//   'incidencias',
+// );
 
 const tiposPermitidos = {
   'image/jpeg': {
@@ -453,7 +456,7 @@ const uploadIncidenciaEvidence = async (req, res, next) => {
       // Ruta relativa a uploads, compatible con las
       // validaciones actuales del service.
       const rutaRelativa = path
-        .relative(uploadsRoot, archivo.path)
+        .relative(privateUploadsRoot, archivo.path)
         .split(path.sep)
         .join('/');
 

@@ -8,18 +8,18 @@ const {
   validarBody,
   validarIntervalo,
   prepararDatos,
-} = require("../utils/mantenimientos.utils");
+} = require('../utils/mantenimientos.utils');
 
-// Validation
+// Validaciones
 const {
   obtenerDetalle,
   validarActor,
   bloquearOrden,
   registrarHistorial,
   validarDisponibilidad,
-} = require("../validations/mantenimientos.validation");
+} = require('../validations/mantenimientos.validation');
 
-// Auditoria
+// Auditoría
 const { prepararAuditoria } = require('../../auditoria/utils/auditar-cambio.utils');
 
 // Modelos
@@ -28,7 +28,6 @@ const { sequelize } = db;
 // *********************************************************
 // SERVICE: ACTUALIZAR MANTENIMIENTO
 // *********************************************************
-
 const updateMantenimientoService = async ({
   idMantenimiento,
   usuarioId,
@@ -39,24 +38,40 @@ const updateMantenimientoService = async ({
     'ID del mantenimiento',
   );
 
-  validarBody(body, CAMPOS_ACTUALIZACION);
+  validarBody(
+    body,
+    CAMPOS_ACTUALIZACION,
+  );
 
   if (!Object.keys(body).length) {
-    error('Debe proporcionar al menos un campo.');
+    error(
+      'Debe proporcionar al menos un campo.',
+    );
   }
 
   const datos = prepararDatos(body);
 
   return sequelize.transaction(
     async (transaction) => {
+      // ----------------------------------------------------
+      // 1. VALIDAR ACTOR Y BLOQUEAR REGISTROS
+      // ----------------------------------------------------
       const actorId = await validarActor(
         usuarioId,
         transaction,
       );
 
-      const { mantenimiento, vehiculo } =
-        await bloquearOrden(id, transaction);
+      const {
+        mantenimiento,
+        vehiculo,
+      } = await bloquearOrden(
+        id,
+        transaction,
+      );
 
+      // ----------------------------------------------------
+      // 2. VALIDAR ESTADO
+      // ----------------------------------------------------
       if (
         !['PROGRAMADO', 'EN_PROCESO'].includes(
           mantenimiento.estado_mantenimiento,
@@ -68,22 +83,26 @@ const updateMantenimientoService = async ({
         );
       }
 
-      if (mantenimiento.estado_mantenimiento === 'EN_PROCESO') {
+      const enProceso =
+        mantenimiento.estado_mantenimiento ===
+        'EN_PROCESO';
+
+      if (enProceso) {
         const restringidos = [
           'tipo_mantenimiento',
           'fecha_inicio_programada',
           'motivo',
         ];
 
-        if (
-          restringidos.some(
-            (campo) =>
-              Object.prototype.hasOwnProperty.call(
-                datos,
-                campo,
-              ),
-          )
-        ) {
+        const incluyeRestringidos = restringidos.some(
+          (campo) =>
+            Object.prototype.hasOwnProperty.call(
+              datos,
+              campo,
+            ),
+        );
+
+        if (incluyeRestringidos) {
           error(
             'No puede modificar el tipo, motivo o inicio programado de una intervención iniciada.',
             409,
@@ -91,24 +110,43 @@ const updateMantenimientoService = async ({
         }
       }
 
+      // ----------------------------------------------------
+      // 3. CAPTURAR ESTADO ANTERIOR
+      // Siempre antes de set(), update() o save().
+      // ----------------------------------------------------
       const anterior = mantenimiento.toJSON();
 
+      const auditarMantenimiento = prepararAuditoria(
+        'MANTENIMIENTO',
+        'ACTUALIZAR',
+        mantenimiento,
+      );
+
+      // Aplicar en memoria para validar los valores finales.
       mantenimiento.set(datos);
 
-      // Auditoria
-      const auditar = prepararAuditoria('MANTENIMIENTO', 'ACTUALIZAR', mantenimiento);
+      // ----------------------------------------------------
+      // 4. VALIDAR FECHAS
+      // ----------------------------------------------------
+      const inicio = new Date(mantenimiento.fecha_inicio_programada);
 
-      const inicio = new Date(
-        mantenimiento.fecha_inicio_programada,
+      const fin = new Date(mantenimiento.fecha_fin_programada);
+
+      if (!Number.isFinite(inicio.getTime()) || !Number.isFinite(fin.getTime())) {
+        error(
+          'Las fechas programadas del mantenimiento no son válidas.',
+        );
+      }
+
+      validarIntervalo(
+        inicio,
+        fin,
       );
 
-      const fin = new Date(
-        mantenimiento.fecha_fin_programada,
-      );
-
-      validarIntervalo(inicio, fin);
-
-      if (mantenimiento.estado_mantenimiento === 'PROGRAMADO') {
+      // ----------------------------------------------------
+      // 5. VALIDAR DISPONIBILIDAD
+      // ----------------------------------------------------
+      if (!enProceso) {
         await validarDisponibilidad({
           idVehiculo: vehiculo.id_vehiculo,
           inicio,
@@ -116,26 +154,65 @@ const updateMantenimientoService = async ({
           excluirId: id,
           transaction,
         });
-      } else if (datos.fecha_fin_programada) {
-        if (fin <= new Date()) {
+      } else if (
+        Object.prototype.hasOwnProperty.call(
+          datos,
+          'fecha_fin_programada',
+        )
+      ) {
+        const ahora = new Date();
+
+        if (fin.getTime() <= ahora.getTime()) {
           error(
             'La nueva fecha prevista de salida debe ser futura.',
           );
         }
 
+        const inicioReal = mantenimiento.fecha_inicio_real == null
+          ? null
+          : new Date(
+            mantenimiento.fecha_inicio_real,
+          );
+
+        if (
+          !inicioReal ||
+          !Number.isFinite(inicioReal.getTime())
+        ) {
+          error(
+            'La intervención no tiene una fecha de inicio real válida.',
+            409,
+          );
+        }
+
         await validarDisponibilidad({
           idVehiculo: vehiculo.id_vehiculo,
-          inicio: new Date(
-            mantenimiento.fecha_inicio_real,
-          ),
+          inicio: inicioReal,
           fin,
           excluirId: id,
           transaction,
         });
       }
 
-      await mantenimiento.save({ transaction });
+      // ----------------------------------------------------
+      // 6. OMITIR ESCRITURAS SI NO HAY CAMBIOS
+      // ----------------------------------------------------
+      if (!mantenimiento.changed()) {
+        return obtenerDetalle(
+          id,
+          transaction,
+        );
+      }
 
+      // ----------------------------------------------------
+      // 7. GUARDAR CAMBIOS
+      // ----------------------------------------------------
+      await mantenimiento.save({
+        transaction,
+      });
+
+      // ----------------------------------------------------
+      // 8. REGISTRAR HISTORIAL
+      // ----------------------------------------------------
       await registrarHistorial({
         mantenimiento,
         usuarioId: actorId,
@@ -144,13 +221,27 @@ const updateMantenimientoService = async ({
         transaction,
       });
 
-      // Auditoria
-      await auditar(mantenimiento, transaction);
+      // ----------------------------------------------------
+      // 9. REGISTRAR AUDITORÍA
+      // ----------------------------------------------------
+      await auditarMantenimiento(
+        mantenimiento,
+        transaction,
+        {
+          motivo:
+            'Actualización de la información del mantenimiento.',
+        },
+      );
 
-      return obtenerDetalle(id, transaction);
+      // ----------------------------------------------------
+      // 10. DEVOLVER DETALLE
+      // ----------------------------------------------------
+      return obtenerDetalle(
+        id,
+        transaction,
+      );
     },
   );
 };
-
 
 module.exports = updateMantenimientoService;

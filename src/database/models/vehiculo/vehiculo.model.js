@@ -22,10 +22,7 @@ const Vehiculo = sequelize.define('Vehiculo', {
         .trim()
         .toUpperCase();
 
-      this.setDataValue(
-        'codigo',
-        normalized,
-      );
+      this.setDataValue('codigo', normalized);
     },
 
     validate: {
@@ -57,10 +54,7 @@ const Vehiculo = sequelize.define('Vehiculo', {
         .toUpperCase()
         .replace(/\s+/g, '');
 
-      this.setDataValue(
-        'placa',
-        normalized,
-      );
+      this.setDataValue('placa', normalized);
     },
 
     validate: {
@@ -194,10 +188,8 @@ const Vehiculo = sequelize.define('Vehiculo', {
   tipo_vehiculo: {
     type: DataTypes.ENUM(
       'CAMION_COMPACTADOR',
-      'CAMION_BARANDA',
       'CAMION_VOLQUETE',
       'MOTOFURGON',
-      'OTRO',
     ),
     allowNull: false,
     defaultValue: 'CAMION_COMPACTADOR',
@@ -241,20 +233,13 @@ const Vehiculo = sequelize.define('Vehiculo', {
   */
 
   kilometraje: {
-    type: DataTypes.DECIMAL(
-      12,
-      2,
-    ),
-
+    type: DataTypes.DECIMAL(12, 2),
     allowNull: false,
-
     defaultValue: 0,
-
     validate: {
       isDecimal: {
         msg: 'El kilometraje debe ser un número decimal.',
       },
-
       min: {
         args: [0],
         msg: 'El kilometraje no puede ser negativo.',

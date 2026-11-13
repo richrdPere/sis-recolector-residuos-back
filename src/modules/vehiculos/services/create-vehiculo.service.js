@@ -55,7 +55,6 @@ const createVehiculoService = async ({
   kilometraje = 0,
   estado_operativo = 'DISPONIBLE',
   observacion = null,
-  foto_url = null,
   estado = true,
 }) => {
 
@@ -218,7 +217,7 @@ const createVehiculoService = async ({
         kilometraje: kilometrajeActual,
         estado_operativo,
         observacion: observacion?.trim() || null,
-        foto_url: foto_url?.trim() || null,
+        foto_url: null,
         estado: Boolean(estado),
       },
       {

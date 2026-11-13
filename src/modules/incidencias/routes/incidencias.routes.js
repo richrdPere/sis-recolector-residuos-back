@@ -17,6 +17,8 @@ const {
   deleteIncidenciaArchivoController,
 } = require('../controllers/incidencias.controller');
 
+const incidenciaArchivoContenidoController = require('../controllers/incidencia-archivo-contenido.controller');
+
 const publicarAvisoIncidencia = require('../services/publicar-aviso-incidencia.service');
 
 // MIDDLEWARES
@@ -67,8 +69,7 @@ const ROLES_GESTION = [
   'SUPERVISOR',
 ];
 
-router.post(
-  '/:id/aviso-publico',
+router.post('/:id/aviso-publico',
   autorizarRoles(...ROLES_GESTION),
   async (req, res, next) => {
     try {
@@ -88,6 +89,11 @@ router.post(
       return next(error);
     }
   },
+);
+
+router.get('/:id/archivos/:idArchivo/contenido',
+  autorizarRoles(...ROLES_CONSULTA),
+  incidenciaArchivoContenidoController,
 );
 
 // *********************************************************

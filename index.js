@@ -13,6 +13,16 @@ const {
   stopNotificationWorker,
 } = require('./src/jobs/notification-worker');
 
+// PORT Y HOST
+const port = Number(
+  process.env.PORT || 3000,
+);
+
+const host = process.env.NODE_ENV === 'production'
+  ? '127.0.0.1'
+  : '0.0.0.0';
+
+
 async function start() {
   await app.initialize();
   const server = http.createServer(app);
@@ -124,10 +134,20 @@ async function start() {
       );
     }
   );
+  
   server.listen(
-    process.env.PORT || 3000,
-    () => console.log('Backend y Socket.IO iniciados.')
+    port,
+    host,
+    () => {
+      console.log(
+        `Backend y Socket.IO iniciados en http://${host}:${port}`,
+      );
+    },
   );
+  // server.listen(
+  //   process.env.PORT || 3000,
+  //   () => console.log('Backend y Socket.IO iniciados.')
+  // );
 }
 
 start().catch(

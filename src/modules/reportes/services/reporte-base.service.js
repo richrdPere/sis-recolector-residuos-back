@@ -1138,9 +1138,7 @@ const construir = (
     `${c.fecha} < :fin`,
   ];
 
-  for (
-    const [campo, columna] of Object.entries(c.filtros)
-  ) {
+  for (const [campo, columna] of Object.entries(c.filtros)) {
     if (filtros[campo] === undefined) continue;
 
     params[campo] = filtros[campo];
@@ -1213,10 +1211,7 @@ const ejecutar = async (
       );
     }
 
-    if (
-      formato &&
-      total > LIMITES[formato]
-    ) {
+    if (formato && total > LIMITES[formato]) {
       throw new AppError(
         `La exportación ${formato} admite hasta ` +
         `${LIMITES[formato]} filas. ` +

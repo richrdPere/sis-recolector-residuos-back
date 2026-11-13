@@ -2,9 +2,7 @@ const db = require('../../../database/models');
 const AppError = require('../../../utils/app-error');
 
 // Motor de notificaciones
-const {
-  enqueueNotification,
-} = require('../../../jobs/notification-worker');
+const { enqueueNotification } = require('../../../jobs/notification-worker');
 
 // Constants
 const {
@@ -444,73 +442,73 @@ const iniciarRecorridoService = async ({
     // 10. Aviso ciudadano por inicio de ruta
     // ------------------------------------------------------
 
-    await enqueueNotification({
-      notificacion: {
-        tipo_notificacion:
-          'INICIO_RUTA',
+    // await enqueueNotification({
+    //   notificacion: {
+    //     tipo_notificacion:
+    //       'INICIO_RUTA',
 
-        titulo:
-          'La recolección ha comenzado',
+    //     titulo:
+    //       'La recolección ha comenzado',
 
-        mensaje:
-          'El vehículo recolector inició el recorrido ' +
-          'de tu ruta. Consulta el mapa para conocer ' +
-          'el avance del servicio.',
+    //     mensaje:
+    //       'El vehículo recolector inició el recorrido ' +
+    //       'de tu ruta. Consulta el mapa para conocer ' +
+    //       'el avance del servicio.',
 
-        prioridad:
-          'NORMAL',
+    //     prioridad:
+    //       'NORMAL',
 
-        enviar_interna: true,
-        enviar_push: true,
+    //     enviar_interna: true,
+    //     enviar_push: true,
 
-        tipo_entidad:
-          'RECORRIDO',
+    //     tipo_entidad:
+    //       'RECORRIDO',
 
-        id_entidad:
-          recorrido.id_recorrido,
+    //     id_entidad:
+    //       recorrido.id_recorrido,
 
-        /*
-         * No incluir coordenadas exactas ni
-         * observaciones operativas en el aviso ciudadano.
-         */
-        datos: {
-          id_recorrido:
-            recorrido.id_recorrido,
+    //     /*
+    //      * No incluir coordenadas exactas ni
+    //      * observaciones operativas en el aviso ciudadano.
+    //      */
+    //     datos: {
+    //       id_recorrido:
+    //         recorrido.id_recorrido,
 
-          id_programacion:
-            programmingId,
+    //       id_programacion:
+    //         programmingId,
 
-          id_ruta:
-            programacion.id_ruta,
+    //       id_ruta:
+    //         programacion.id_ruta,
 
-          fecha_hora_inicio:
-            eventDate,
-        },
+    //       fecha_hora_inicio:
+    //         eventDate,
+    //     },
 
-        clave_evento:
-          'INICIO_RECORRIDO:CIUDADANOS:' +
-          recorrido.id_recorrido,
+    //     clave_evento:
+    //       'INICIO_RECORRIDO:CIUDADANOS:' +
+    //       recorrido.id_recorrido,
 
-        origen:
-          'SISTEMA',
-      },
+    //     origen:
+    //       'SISTEMA',
+    //   },
 
-      destino: {
-        tipo_destino:
-          'CIUDADANOS',
+    //   destino: {
+    //     tipo_destino:
+    //       'CIUDADANOS',
 
-        evento:
-          'INICIO_RUTA',
+    //     evento:
+    //       'INICIO_RUTA',
 
-        id_ruta:
-          programacion.id_ruta,
-      },
+    //     id_ruta:
+    //       programacion.id_ruta,
+    //   },
 
-      id_usuario_creacion:
-        userId,
+    //   id_usuario_creacion:
+    //     userId,
 
-      transaction,
-    });
+    //   transaction,
+    // });
 
 
     await crearAvisoCiudadano({
