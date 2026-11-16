@@ -31,16 +31,15 @@ const hasRetryableDestination = async (
   notificationId,
   maxIntentos,
 ) => {
-  const recipients =
-    await NotificacionUsuario.findAll({
-      where: {
-        id_notificacion: notificationId,
-      },
-      attributes: [
-        'id_notificacion_usuario',
-        'id_usuario',
-      ],
-    });
+  const recipients = await NotificacionUsuario.findAll({
+    where: {
+      id_notificacion: notificationId,
+    },
+    attributes: [
+      'id_notificacion_usuario',
+      'id_usuario',
+    ],
+  });
 
   if (!recipients.length) return false;
 
@@ -77,8 +76,7 @@ const hasRetryableDestination = async (
     where: {
       id_notificacion_usuario: {
         [Op.in]: recipients.map(
-          (recipient) =>
-            recipient.id_notificacion_usuario,
+          (recipient) => recipient.id_notificacion_usuario,
         ),
       },
     },
@@ -92,15 +90,13 @@ const hasRetryableDestination = async (
   const successful = new Set();
 
   for (const attempt of attempts) {
-    const key =
-      `${attempt.id_notificacion_usuario}:` +
-      attempt.id_dispositivo;
+    const key = `${attempt.id_notificacion_usuario}:` + attempt.id_dispositivo;
 
     if (!latest.has(key)) {
       latest.set(key, attempt);
     }
 
-    if (attempt.estado_envio === 'ENVIADO') {
+    if (attempt.estado_envio === 'ENVIADO' || attempt.fecha_recepcion_app) {
       successful.add(key);
     }
   }
@@ -117,13 +113,9 @@ const hasRetryableDestination = async (
       continue;
     }
 
-    const recipient = recipientByUser.get(
-      String(device.id_usuario),
-    );
+    const recipient = recipientByUser.get(String(device.id_usuario));
 
-    const key =
-      `${recipient.id_notificacion_usuario}:` +
-      device.id_dispositivo;
+    const key = `${recipient.id_notificacion_usuario}:` + device.id_dispositivo;
 
     if (successful.has(key)) continue;
 
@@ -316,10 +308,29 @@ const processPendingNotificationsService = async ({
           'NOTIFICATION_DISPATCH_ERROR',
       });
 
+      // console.error(
+      //   '[notificaciones:pendientes]',
+      //   notificationId,
+      //   error.name,
+      // );
+      const dbError =
+        error.original ||
+        error.parent ||
+        error;
+
       console.error(
         '[notificaciones:pendientes]',
-        notificationId,
-        error.name,
+        {
+          id_notificacion: notificationId,
+          nombre: error.name,
+
+          codigo: dbError.code || error.code,
+          numero: dbError.errno,
+
+          mensaje:
+            dbError.sqlMessage ||
+            error.message,
+        },
       );
     }
   }

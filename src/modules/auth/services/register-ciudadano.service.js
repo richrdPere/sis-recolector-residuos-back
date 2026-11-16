@@ -98,6 +98,7 @@ const registerCiudadanoService = async ({
   email,
   username,
   password,
+  password_confirmation,
 }) => {
   const nombresNormalizados = validarTexto({
     value: nombres,
@@ -214,6 +215,37 @@ const registerCiudadanoService = async ({
     );
   }
 
+  if (!password.trim()) {
+    throw new AppError(
+      'La contraseña no puede contener únicamente espacios.',
+      400,
+      'INVALID_PASSWORD',
+    );
+  }
+
+  // if (password === documento) {
+  //   throw new AppError(
+  //     'La contraseña debe ser diferente de tu número de documento.',
+  //     400,
+  //     'PASSWORD_EQUALS_DOCUMENT',
+  //   );
+  // }
+
+  // Opcional para conservar compatibilidad con clientes anteriores.
+  // La app actualizada enviará siempre la confirmación.
+  if (
+    password_confirmation !== undefined &&
+    (
+      typeof password_confirmation !== 'string' ||
+      password_confirmation !== password
+    )
+  ) {
+    throw new AppError(
+      'La confirmación de contraseña no coincide.',
+      400,
+      'PASSWORD_CONFIRMATION_MISMATCH',
+    );
+  }
   const celularNormalizado = validarTexto({
     value: celular,
     campo: 'celular',

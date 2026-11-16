@@ -100,8 +100,13 @@ const getCollectionByIdController = async (req, res, next) => {
 */
 const getRouteCollectionPointsController = async (req, res, next) => {
   try {
+    const incluirReferencias = req.query.incluir_referencias === 'true';
+
     const data = await getRouteCollectionPointsService(
       req.params.idRecorrido,
+      {
+        incluirReferencias,
+      },
     );
 
     return res
@@ -111,6 +116,7 @@ const getRouteCollectionPointsController = async (req, res, next) => {
         message: data.length
           ? 'Puntos del recorrido obtenidos correctamente.'
           : 'El recorrido no tiene puntos configurados.',
+        incluye_referencias: incluirReferencias,
         data,
       });
   } catch (error) {

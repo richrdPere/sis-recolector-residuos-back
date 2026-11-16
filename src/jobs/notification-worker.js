@@ -10,7 +10,7 @@ const AppError = require('../utils/app-error');
 
 // Services
 const processPendingNotificationsService = require('../modules/notificaciones/services/motor/process-pending-notifications.service');
-const resolveRecipientsService = require('../modules/notificaciones/services/motor/resolve-recipients.service');
+const resolveRecipientsBatches = require('../modules/notificaciones/services/motor/resolve-recipients-batches.service');
 const createNotificationService = require('../modules/notificaciones/services/notificaciones-internas/create-notification.service');
 
 // ==========================================================
@@ -102,6 +102,22 @@ function runNotificationWorkerOnce() {
         errores: 0,
       },
     };
+
+    // Recuperar trabajos abandonados antes de recorrer la cola.
+    const recoverProcessingNotifications = require(
+      '../modules/notificaciones/services/motor/recover-processing-notifications.service'
+    );
+
+    summary.recuperacion =
+      await recoverProcessingNotifications({
+        limit: config.limit,
+      });
+
+    // Revisar desde el inicio para incluir los trabajos
+    // recuperados que tengan un identificador anterior.
+    if (summary.recuperacion.recuperadas > 0) {
+      cursor = null;
+    }
 
     // ------------------------------------------------------
     // Generar recordatorios de próximas programaciones
@@ -196,6 +212,8 @@ async function tick() {
 
     if (
       result.procesadas ||
+      result.recuperacion?.recuperadas ||
+      result.recuperacion?.canceladas ||
       result.errores
     ) {
       console.log(
@@ -377,19 +395,29 @@ async function stopNotificationWorker() {
 async function enqueueNotification({
   notificacion,
   destino,
+
   id_usuario_creacion = null,
+
   transaction: externalTransaction = null,
+
+  tamanoLote = 200,
 } = {}) {
   if (
     !notificacion ||
     !destino ||
-    typeof notificacion.clave_evento !==
-    'string' ||
+    typeof notificacion.clave_evento !== 'string' ||
     !notificacion.clave_evento.trim() ||
-    notificacion.clave_evento.length > 150
+    notificacion.clave_evento.length > 150 ||
+    !Number.isInteger(tamanoLote) ||
+    tamanoLote < 1 ||
+    tamanoLote > 1000 ||
+    (
+      externalTransaction &&
+      externalTransaction.finished
+    )
   ) {
     throw new AppError(
-      'Debe proporcionar notificacion, destino y una clave_evento de hasta 150 caracteres.',
+      'Datos de encolado, lote o transacción no válidos.',
       400,
       'INVALID_ENQUEUE_REQUEST',
     );
@@ -398,128 +426,287 @@ async function enqueueNotification({
   const baseKey =
     notificacion.clave_evento.trim();
 
-  const execute = async (transaction) => {
-    // ------------------------------------------------------
-    // 1. Resolver destinatarios, preferencias y fechas
-    // ------------------------------------------------------
-
-    const resolved =
-      await resolveRecipientsService({
-        ...destino,
-
-        enviar_interna:
-          notificacion.enviar_interna ??
-          true,
-
-        enviar_push:
-          notificacion.enviar_push ??
-          true,
-
-        fecha_programada:
-          notificacion.fecha_programada ??
-          null,
-
-        fecha_expiracion:
-          notificacion.fecha_expiracion ??
-          null,
-
-        transaction,
-      });
-
+  const execute = async transaction => {
     const summary = {
       creadas: 0,
       duplicadas: 0,
-      excluidos: resolved.excluidos,
-      total_destinatarios:
-        resolved.total_destinatarios,
+      excluidos: 0,
+      total_destinatarios: 0,
+
+      lotes: 0,
+
+      // El detalle se limita para no acumular
+      // todos los avisos masivos en memoria.
       notificaciones: [],
+
+      notificaciones_truncadas: false,
     };
 
-    // ------------------------------------------------------
-    // 2. Crear los avisos
-    // ------------------------------------------------------
+    const options = {
+      ...destino,
 
-    for (const group of resolved.grupos) {
-      for (
-        const userId of group.destinatarios
-      ) {
-        /*
-         * Una notificación por usuario permite conservar
-         * una clave estable aunque cambie el grupo de
-         * canales o el orden de los destinatarios.
-         */
-        const eventKey =
-          'MOTOR:' +
-          createHash('sha256')
-            .update(
-              JSON.stringify([
-                baseKey,
-                String(userId),
-              ]),
-            )
-            .digest('hex');
+      enviar_interna:
+        notificacion.enviar_interna ?? true,
 
-        const result = await createNotificationService(
-          {
-            ...notificacion,
+      enviar_push:
+        notificacion.enviar_push ?? true,
 
-            enviar_interna:
-              group.enviar_interna,
+      fecha_programada:
+        notificacion.fecha_programada ?? null,
 
-            enviar_push:
-              group.enviar_push,
+      fecha_expiracion:
+        notificacion.fecha_expiracion ?? null,
 
-            fecha_programada:
-              group.fecha_programada,
+      transaction,
+    };
 
-            destinatarios: [
-              userId,
-            ],
+    // El generador entrega un lote a la vez.
+    // No acumularlos con Promise.all ni en un arreglo.
+    for await (
+      const resolved of resolveRecipientsBatches(
+        options,
+        {
+          tamanoLote,
+        },
+      )
+    ) {
+      summary.lotes++;
 
-            clave_evento:
-              eventKey,
-          },
-          {
-            id_usuario_creacion,
-            transaction,
-          },
-        );
+      summary.excluidos +=
+        resolved.excluidos;
 
-        if (result.creada) {
-          summary.creadas++;
-        } else {
-          summary.duplicadas++;
+      summary.total_destinatarios +=
+        resolved.total_destinatarios;
+
+      for (const group of resolved.grupos) {
+        for (const userId of group.destinatarios) {
+          // Mantener exactamente la clave existente:
+          // no depende del número ni tamaño del lote.
+          const eventKey =
+            'MOTOR:' +
+            createHash('sha256')
+              .update(
+                JSON.stringify([
+                  baseKey,
+                  String(userId),
+                ]),
+              )
+              .digest('hex');
+
+          const result =
+            await createNotificationService(
+              {
+                ...notificacion,
+
+                enviar_interna:
+                  group.enviar_interna,
+
+                enviar_push:
+                  group.enviar_push,
+
+                fecha_programada:
+                  group.fecha_programada,
+
+                destinatarios: [
+                  userId,
+                ],
+
+                clave_evento:
+                  eventKey,
+              },
+              {
+                id_usuario_creacion,
+                transaction,
+              },
+            );
+
+          if (result.creada) {
+            summary.creadas++;
+          } else {
+            summary.duplicadas++;
+          }
+
+          if (
+            summary.notificaciones.length < 200
+          ) {
+            summary.notificaciones.push({
+              id_notificacion: String(
+                result.notificacion.id_notificacion,
+              ),
+
+              creada:
+                result.creada,
+
+              duplicada:
+                result.duplicada,
+            });
+          } else {
+            summary.notificaciones_truncadas = true;
+          }
         }
-
-        summary.notificaciones.push({
-          id_notificacion: String(
-            result.notificacion
-              .id_notificacion,
-          ),
-
-          creada: result.creada,
-          duplicada: result.duplicada,
-        });
       }
     }
 
     return summary;
   };
 
+  // Los avisos forman parte de la operación de negocio:
+  // no confirmar una transacción recibida del llamador.
   if (externalTransaction) {
     return execute(externalTransaction);
   }
 
+  // Sin transacción externa, confirmar el evento completo
+  // o revertirlo si falla cualquiera de sus lotes.
   return db.sequelize.transaction(execute);
 }
 
 // ==========================================================
 // EXPORTACIONES
 // ==========================================================
-
 module.exports = {
   startNotificationWorker,
   stopNotificationWorker,
   runNotificationWorkerOnce,
   enqueueNotification,
 };
+
+// async function enqueueNotification({
+//   notificacion,
+//   destino,
+//   id_usuario_creacion = null,
+//   transaction: externalTransaction = null,
+// } = {}) {
+//   if (
+//     !notificacion ||
+//     !destino ||
+//     typeof notificacion.clave_evento !==
+//     'string' ||
+//     !notificacion.clave_evento.trim() ||
+//     notificacion.clave_evento.length > 150
+//   ) {
+//     throw new AppError(
+//       'Debe proporcionar notificacion, destino y una clave_evento de hasta 150 caracteres.',
+//       400,
+//       'INVALID_ENQUEUE_REQUEST',
+//     );
+//   }
+
+//   const baseKey =
+//     notificacion.clave_evento.trim();
+
+//   const execute = async (transaction) => {
+//     // ------------------------------------------------------
+//     // 1. Resolver destinatarios, preferencias y fechas
+//     // ------------------------------------------------------
+
+//     const resolved =
+//       await resolveRecipientsService({
+//         ...destino,
+
+//         enviar_interna:
+//           notificacion.enviar_interna ??
+//           true,
+
+//         enviar_push:
+//           notificacion.enviar_push ??
+//           true,
+
+//         fecha_programada:
+//           notificacion.fecha_programada ??
+//           null,
+
+//         fecha_expiracion:
+//           notificacion.fecha_expiracion ??
+//           null,
+
+//         transaction,
+//       });
+
+//     const summary = {
+//       creadas: 0,
+//       duplicadas: 0,
+//       excluidos: resolved.excluidos,
+//       total_destinatarios:
+//         resolved.total_destinatarios,
+//       notificaciones: [],
+//     };
+
+//     // ------------------------------------------------------
+//     // 2. Crear los avisos
+//     // ------------------------------------------------------
+
+//     for (const group of resolved.grupos) {
+//       for (
+//         const userId of group.destinatarios
+//       ) {
+//         /*
+//          * Una notificación por usuario permite conservar
+//          * una clave estable aunque cambie el grupo de
+//          * canales o el orden de los destinatarios.
+//          */
+//         const eventKey =
+//           'MOTOR:' +
+//           createHash('sha256')
+//             .update(
+//               JSON.stringify([
+//                 baseKey,
+//                 String(userId),
+//               ]),
+//             )
+//             .digest('hex');
+
+//         const result = await createNotificationService(
+//           {
+//             ...notificacion,
+
+//             enviar_interna:
+//               group.enviar_interna,
+
+//             enviar_push:
+//               group.enviar_push,
+
+//             fecha_programada:
+//               group.fecha_programada,
+
+//             destinatarios: [
+//               userId,
+//             ],
+
+//             clave_evento:
+//               eventKey,
+//           },
+//           {
+//             id_usuario_creacion,
+//             transaction,
+//           },
+//         );
+
+//         if (result.creada) {
+//           summary.creadas++;
+//         } else {
+//           summary.duplicadas++;
+//         }
+
+//         summary.notificaciones.push({
+//           id_notificacion: String(
+//             result.notificacion
+//               .id_notificacion,
+//           ),
+
+//           creada: result.creada,
+//           duplicada: result.duplicada,
+//         });
+//       }
+//     }
+
+//     return summary;
+//   };
+
+//   if (externalTransaction) {
+//     return execute(externalTransaction);
+//   }
+
+//   return db.sequelize.transaction(execute);
+// }
+

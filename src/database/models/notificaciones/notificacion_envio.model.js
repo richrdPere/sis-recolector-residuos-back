@@ -95,6 +95,23 @@ const NotificacionEnvio = sequelize.define('NotificacionEnvio', {
     allowNull: true,
   },
 
+  // Se guarda únicamente el hash de la clave enviada al dispositivo.
+  hash_confirmacion: {
+    type: DataTypes.CHAR(64),
+    allowNull: true,
+  },
+
+  // Fecha en que el servidor recibió la confirmación de la app.
+  fecha_recepcion_app: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
+
+  contexto_recepcion: {
+    type: DataTypes.STRING(20),
+    allowNull: true,
+  },
+
   /*
   |--------------------------------------------------------------------------
   | Fechas

@@ -77,6 +77,13 @@ const NotificacionUsuario = sequelize.define('NotificacionUsuario', {
     defaultValue: 'PENDIENTE',
   },
 
+  // Reserva de publicación del evento interno.
+  // La notificación permanece disponible en la bandeja REST.
+  fecha_publicacion_interna: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
+
   fecha_ultimo_envio: {
     type: DataTypes.DATE,
     allowNull: true,

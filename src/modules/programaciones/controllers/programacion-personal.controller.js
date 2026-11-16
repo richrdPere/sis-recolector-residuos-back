@@ -79,6 +79,10 @@ const getMisAsignacionesController = async (req, res, next) => {
       id_usuario: idUsuario,
       page: req.query.page,
       limit: req.query.limit,
+
+      search: req.query.search,
+      solo_anteriores: req.query.solo_anteriores,
+
       estado_asignacion: req.query.estado_asignacion,
       estado_programacion: req.query.estado_programacion,
       fecha_desde: req.query.fecha_desde,

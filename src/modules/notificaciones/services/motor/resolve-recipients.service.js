@@ -21,6 +21,15 @@ const {
 // No depende de motor-notification.utils para evitar
 // la dependencia circular durante la carga del módulo.
 function validateId(value) {
+
+  if (typeof value === 'number' && !Number.isSafeInteger(value)) {
+    throw new AppError(
+      'Use texto para identificadores BIGINT.',
+      400,
+      'INVALID_NOTIFICATION_ID',
+    );
+  }
+
   const text = String(value ?? '').trim();
 
   if (
@@ -187,6 +196,10 @@ const resolveRecipientsService = async ({
   fecha_servicio = null,
   transaction = null,
   maxDestinatarios = 1000,
+  despues_de_ciudadano = null,
+  hasta_ciudadano = null,
+
+  fecha_referencia = null,
 
   // Nuevo: permite generar recordatorios por lotes.
   id_ciudadano = null,
@@ -209,7 +222,13 @@ const resolveRecipientsService = async ({
     );
   }
 
-  const now = new Date();
+  // Todos los lotes de un evento comparten la misma referencia.
+  const now = parseDate(
+    fecha_referencia,
+    'fecha_referencia',
+  ) || new Date();
+
+  let nextCitizenCursor = null;
 
   const programmedDate = parseDate(
     fecha_programada,
@@ -415,53 +434,204 @@ const resolveRecipientsService = async ({
         validateId(id_zona);
     }
 
-    const citizens = await Ciudadano.findAll({
-      where: {
-        estado_ciudadano: 'ACTIVO',
-        acepta_tratamiento_datos: true,
+    const citizenWhere = {
+      estado_ciudadano: 'ACTIVO',
+      acepta_tratamiento_datos: true,
 
-        ...(id_ciudadano == null
-          ? {}
-          : {
-            id_ciudadano: validateId(
-              id_ciudadano,
-            ),
-          }),
+      ...(id_ciudadano == null
+        ? {}
+        : {
+          id_ciudadano:
+            validateId(id_ciudadano),
+        }),
+    };
+
+    const citizenIncludes = [
+      {
+        association: 'usuario',
+        required: true,
+
+        attributes: [
+          'id_usuario',
+        ],
+
+        where: {
+          estado: true,
+        },
       },
+      {
+        association: 'domicilios',
+        required: true,
 
-      include: [
-        {
-          association: 'usuario',
-          required: true,
-          attributes: ['id_usuario'],
-          where: {
-            estado: true,
-          },
+        attributes: [
+          'id_domicilio',
+        ],
+
+        where: addressWhere,
+      },
+      {
+        association: 'preferencias_notificacion',
+        required: true,
+
+        where: {
+          estado_preferencia: 'ACTIVA',
+          notificaciones_habilitadas: true,
+          [preferenceField]: true,
         },
-        {
-          association: 'domicilios',
-          required: true,
-          attributes: ['id_domicilio'],
-          where: addressWhere,
-        },
-        {
-          association: 'preferencias_notificacion',
-          required: true,
-          where: {
-            estado_preferencia: 'ACTIVA',
-            notificaciones_habilitadas: true,
-            [preferenceField]: true,
-          },
-        },
+      },
+    ];
+
+    const range = {};
+
+    if (despues_de_ciudadano != null) {
+      range[Op.gt] = validateId(
+        despues_de_ciudadano,
+      );
+    }
+
+    if (hasta_ciudadano != null) {
+      // Cero representa una selección inicialmente vacía.
+      range[Op.lte] =
+        String(hasta_ciudadano) === '0'
+          ? '0'
+          : validateId(hasta_ciudadano);
+    }
+
+    const pageWhere = {
+      [Op.and]: [
+        citizenWhere,
+
+        ...(
+          Reflect.ownKeys(range).length
+            ? [
+              {
+                id_ciudadano: range,
+              },
+            ]
+            : []
+        ),
+      ],
+    };
+
+    // Primero seleccionar identificadores únicos.
+    // Varios domicilios no deben duplicar al ciudadano
+    // ni consumir varias posiciones dentro del lote.
+    const keys = await Ciudadano.findAll({
+      where: pageWhere,
+
+      attributes: [
+        'id_ciudadano',
+      ],
+
+      include: citizenIncludes.map(
+        item => ({
+          ...item,
+          attributes: [],
+        }),
+      ),
+
+      group: [
+        'Ciudadano.id_ciudadano',
       ],
 
       order: [
         ['id_ciudadano', 'ASC'],
       ],
 
+      subQuery: false,
+      raw: true,
+
+      // Una fila adicional permite saber si existe otro lote.
       limit: maxDestinatarios + 1,
+
       transaction,
     });
+
+    const selected = keys
+      .slice(0, maxDestinatarios)
+      .map(
+        item =>
+          validateId(item.id_ciudadano),
+      );
+
+    if (keys.length > maxDestinatarios) {
+      nextCitizenCursor =
+        selected[selected.length - 1];
+    }
+
+    // Recuperar preferencias y asociaciones únicamente
+    // para los ciudadanos seleccionados en este lote.
+    const citizens = selected.length
+      ? await Ciudadano.findAll({
+        where: {
+          [Op.and]: [
+            citizenWhere,
+
+            {
+              id_ciudadano: {
+                [Op.in]: selected,
+              },
+            },
+          ],
+        },
+
+        include: citizenIncludes,
+
+        order: [
+          ['id_ciudadano', 'ASC'],
+        ],
+
+        transaction,
+      })
+      : [];
+
+    // const citizens = await Ciudadano.findAll({
+    //   where: {
+    //     estado_ciudadano: 'ACTIVO',
+    //     acepta_tratamiento_datos: true,
+
+    //     ...(id_ciudadano == null
+    //       ? {}
+    //       : {
+    //         id_ciudadano: validateId(
+    //           id_ciudadano,
+    //         ),
+    //       }),
+    //   },
+
+    //   include: [
+    //     {
+    //       association: 'usuario',
+    //       required: true,
+    //       attributes: ['id_usuario'],
+    //       where: {
+    //         estado: true,
+    //       },
+    //     },
+    //     {
+    //       association: 'domicilios',
+    //       required: true,
+    //       attributes: ['id_domicilio'],
+    //       where: addressWhere,
+    //     },
+    //     {
+    //       association: 'preferencias_notificacion',
+    //       required: true,
+    //       where: {
+    //         estado_preferencia: 'ACTIVA',
+    //         notificaciones_habilitadas: true,
+    //         [preferenceField]: true,
+    //       },
+    //     },
+    //   ],
+
+    //   order: [
+    //     ['id_ciudadano', 'ASC'],
+    //   ],
+
+    //   limit: maxDestinatarios + 1,
+    //   transaction,
+    // });
 
     if (citizens.length > maxDestinatarios) {
       throw new AppError(
@@ -555,6 +725,8 @@ const resolveRecipientsService = async ({
     ).size,
 
     excluidos: excluded,
+
+    siguiente_cursor_ciudadano: nextCitizenCursor,
   };
 };
 

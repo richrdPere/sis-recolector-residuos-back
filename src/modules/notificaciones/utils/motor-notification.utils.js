@@ -23,6 +23,10 @@ const {
   NotificacionEnvio,
 } = db;
 
+const { randomUUID, randomBytes, createHash } = require('node:crypto');
+
+const LEASE_MS = 5 * 60 * 1000;
+
 // ==========================================================
 // ERRORES FCM
 // ==========================================================
@@ -99,11 +103,10 @@ function validateId(value) {
 async function claimNotification(id, reintentar) {
   return sequelize.transaction(
     async (transaction) => {
-      const notification =
-        await Notificacion.findByPk(id, {
-          transaction,
-          lock: transaction.LOCK.UPDATE,
-        });
+      const notification = await Notificacion.findByPk(id, {
+        transaction,
+        lock: transaction.LOCK.UPDATE,
+      });
 
       if (!notification) {
         throw new AppError(
@@ -220,6 +223,12 @@ async function claimNotification(id, reintentar) {
       await notification.update(
         {
           estado_notificacion: 'PROCESANDO',
+
+          token_procesamiento: randomUUID(),
+
+          procesamiento_hasta: new Date(
+            Date.now() + LEASE_MS,
+          ),
         },
         {
           transaction,
@@ -240,16 +249,52 @@ async function claimNotification(id, reintentar) {
 // VERIFICAR SI PUEDE CONTINUAR
 // ==========================================================
 
-async function canContinue(id) {
-  const notification =
-    await Notificacion.findByPk(id);
-
-  return (
+function ownsLease(notification, token) {
+  return Boolean(
     notification &&
-    notification.estado_notificacion ===
-    'PROCESANDO' &&
-    !isExpired(notification) &&
-    !isFuture(notification)
+    token &&
+    notification.estado_notificacion === 'PROCESANDO' &&
+    notification.token_procesamiento === token &&
+    new Date(
+      notification.procesamiento_hasta,
+    ).getTime() > Date.now()
+  );
+}
+
+async function canContinue(id, token) {
+  return sequelize.transaction(
+    async transaction => {
+      const notification =
+        await Notificacion.findByPk(
+          id,
+          {
+            transaction,
+            lock: transaction.LOCK.UPDATE,
+          },
+        );
+
+      if (
+        !ownsLease(notification, token) ||
+        isExpired(notification) ||
+        isFuture(notification)
+      ) {
+        return false;
+      }
+
+      await notification.update(
+        {
+          procesamiento_hasta: new Date(
+            Date.now() + LEASE_MS,
+          ),
+        },
+        {
+          transaction,
+          hooks: false,
+        },
+      );
+
+      return true;
+    },
   );
 }
 
@@ -393,9 +438,7 @@ async function sendRecipientPush(
 ) {
 
   // Cargar el servicio cuando los módulos ya terminaron de inicializarse.
-  const registerDeliveryResultService = require(
-    '../services/motor/register-delivery-result.service',
-  );
+  const registerDeliveryResultService = require('../services/motor/register-delivery-result.service');
 
   if (!notification.enviar_push) {
     await recipient.update(
@@ -477,20 +520,18 @@ async function sendRecipientPush(
   // 2. Consultar historial
   // --------------------------------------------------------
 
-  const history =
-    await NotificacionEnvio.findAll({
-      where: {
-        id_notificacion_usuario:
-          recipient.id_notificacion_usuario,
-      },
+  const history = await NotificacionEnvio.findAll({
+    where: {
+      id_notificacion_usuario: recipient.id_notificacion_usuario,
+    },
 
-      order: [
-        [
-          'numero_intento',
-          'DESC',
-        ],
+    order: [
+      [
+        'numero_intento',
+        'DESC',
       ],
-    });
+    ],
+  });
 
   const latestAttempts = new Map();
   const successfulDevices = new Set();
@@ -510,8 +551,8 @@ async function sendRecipientPush(
     }
 
     if (
-      attempt.estado_envio ===
-      'ENVIADO'
+      attempt.estado_envio === 'ENVIADO' ||
+      attempt.fecha_recepcion_app
     ) {
       successfulDevices.add(
         deviceKey,
@@ -534,8 +575,7 @@ async function sendRecipientPush(
       device.id_dispositivo,
     );
 
-    const previous =
-      latestAttempts.get(deviceKey);
+    const previous = latestAttempts.get(deviceKey);
 
     if (
       successfulDevices.has(deviceKey)
@@ -624,6 +664,7 @@ async function sendRecipientPush(
     if (
       !await canContinue(
         notification.id_notificacion,
+        notification.token_procesamiento,
       )
     ) {
       pendientes +=
@@ -637,34 +678,69 @@ async function sendRecipientPush(
       offset + 500,
     );
 
+    // Una clave independiente por dispositivo e intento.
+    const pruebas = batch.map(
+      () => randomBytes(32).toString('hex'),
+    );
+
+
     /*
      * Se registra el intento antes de contactar a FCM.
      * Si el proceso se interrumpe, queda constancia.
      */
     const attempts = await sequelize.transaction(
-      async (transaction) => {
+      async transaction => {
+        // La recuperación y la creación de intentos utilizan
+        // el mismo bloqueo de la notificación.
+        const current = await Notificacion.findByPk(
+          notification.id_notificacion,
+          {
+            transaction,
+            lock: transaction.LOCK.UPDATE,
+          },
+        );
+
+        if (
+          !ownsLease(
+            current,
+            notification.token_procesamiento,
+          ) ||
+          isExpired(current) ||
+          isFuture(current)
+        ) {
+          return null;
+        }
+
+        await current.update(
+          {
+            procesamiento_hasta: new Date(
+              Date.now() + LEASE_MS,
+            ),
+          },
+          {
+            transaction,
+            hooks: false,
+          },
+        );
+
         const result = [];
 
-        for (const item of batch) {
+        for (const [index, item] of batch.entries()) {
           const attempt =
             await NotificacionEnvio.create(
               {
-                id_notificacion_usuario:
-                  recipient.id_notificacion_usuario,
-
-                id_dispositivo:
-                  item.device.id_dispositivo,
+                id_notificacion_usuario: recipient.id_notificacion_usuario,
+                id_dispositivo: item.device.id_dispositivo,
 
                 proveedor: 'FCM',
+                numero_intento: item.numero,
+                estado_envio: 'PROCESANDO',
 
-                numero_intento:
-                  item.numero,
+                hash_confirmacion: createHash('sha256')
+                  .update(pruebas[index])
+                  .digest('hex'),
 
-                estado_envio:
-                  'PROCESANDO',
-
-                fecha_intento:
-                  new Date(),
+                fecha_intento: new Date(),
               },
               {
                 transaction,
@@ -678,6 +754,58 @@ async function sendRecipientPush(
       },
     );
 
+    if (!attempts) {
+      pendientes += queue.length - offset;
+      break;
+    }
+
+    // Comprobar nuevamente antes de contactar a Firebase.
+    if (
+      !await canContinue(
+        notification.id_notificacion,
+        notification.token_procesamiento,
+      )
+    ) {
+      pendientes += queue.length - offset;
+      break;
+    }
+    // const attempts = await sequelize.transaction(
+    //   async (transaction) => {
+    //     const result = [];
+
+    //     for (const item of batch) {
+    //       const attempt =
+    //         await NotificacionEnvio.create(
+    //           {
+    //             id_notificacion_usuario:
+    //               recipient.id_notificacion_usuario,
+
+    //             id_dispositivo:
+    //               item.device.id_dispositivo,
+
+    //             proveedor: 'FCM',
+
+    //             numero_intento:
+    //               item.numero,
+
+    //             estado_envio:
+    //               'PROCESANDO',
+
+    //             fecha_intento:
+    //               new Date(),
+    //           },
+    //           {
+    //             transaction,
+    //           },
+    //         );
+
+    //       result.push(attempt);
+    //     }
+
+    //     return result;
+    //   },
+    // );
+
     attemptedThisRun = true;
 
     const startedAt = Date.now();
@@ -685,31 +813,67 @@ async function sendRecipientPush(
     let responses;
 
     try {
-      const payload =
-        buildPushPayload({
-          notification,
-          recipient,
+      // Reutilizar título, mensaje y configuración actual,
+      // retirando "tokens" porque cada mensaje tendrá un token.
+      const {
+        tokens: _tokens,
+        ...payload
+      } = buildPushPayload({
+        notification,
+        recipient,
 
-          tokens: batch.map(
-            (item) =>
-              item.device.token_push,
-          ),
+        tokens: [],
 
-          channelId:
-            options.channelId,
+        channelId: options.channelId,
+        urlWeb: options.urlWeb,
+      });
 
-          urlWeb:
-            options.urlWeb,
-        });
+      const messages = batch.map(
+        (item, index) => ({
+          ...payload,
+
+          token: item.device.token_push,
+
+          data: {
+            ...payload.data,
+
+            id_usuario: String(
+              recipient.id_usuario,
+            ),
+
+            id_envio: String(
+              attempts[index].id_envio,
+            ),
+
+            prueba_recepcion: pruebas[index],
+          },
+        }),
+      );
 
       const response =
-        await getFirebaseMessaging()
-          .sendEachForMulticast(
-            payload,
-          );
+        await getFirebaseMessaging().sendEach(messages);
 
-      responses =
-        response.responses;
+      responses = response.responses;
+
+      // const payload = buildPushPayload({
+      //   notification,
+      //   recipient,
+
+      //   tokens: batch.map(
+      //     (item) =>
+      //       item.device.token_push,
+      //   ),
+
+      //   channelId: options.channelId,
+      //   urlWeb: options.urlWeb,
+      // });
+
+      // const response = await getFirebaseMessaging()
+      //   .sendEachForMulticast(
+      //     payload,
+      //   );
+
+      // responses = response.responses;
     } catch (error) {
       /*
        * Conservar el código original permite
@@ -736,11 +900,7 @@ async function sendRecipientPush(
     // ------------------------------------------------------
     // 5. Registrar resultados
     // ------------------------------------------------------
-    for (
-      let index = 0;
-      index < batch.length;
-      index++
-    ) {
+    for (let index = 0; index < batch.length; index++) {
       const delivery = await registerDeliveryResultService({
         id_envio: attempts[index].id_envio,
         resultado: responses[index],
@@ -754,190 +914,126 @@ async function sendRecipientPush(
         lastError = delivery.mensaje_error;
 
         if (
-          delivery.reintentable &&
-          batch[index].numero <
-          options.maxIntentos
+          delivery.incierto ||
+          (
+            delivery.reintentable &&
+            batch[index].numero < options.maxIntentos
+          )
         ) {
           pendientes++;
         }
+
+        // if (
+        //   delivery.reintentable &&
+        //   batch[index].numero <
+        //   options.maxIntentos
+        // ) {
+        //   pendientes++;
+        // }
       }
     }
-    // for (let index = 0; index < batch.length; index++) {
-
-    //   const result = responses[index];
-
-    //   const errorCode = result.error?.code || 'FCM_UNKNOWN_ERROR';
-
-    //   const errorMessage = cut(
-    //     result.error?.message ||
-    //     'FCM rechazó el envío.',
-    //     1000,
-    //   );
-
-    //   const invalidToken =
-    //     !result.success &&
-    //     INVALID_TOKEN_CODES.has(
-    //       errorCode,
-    //     );
-
-    //   await sequelize.transaction(
-    //     async (transaction) => {
-    //       const deliveryState =
-    //         result.success
-    //           ? 'ENVIADO'
-    //           : invalidToken
-    //             ? 'TOKEN_INVALIDO'
-    //             : 'FALLIDO';
-
-    //       await attempts[index].update(
-    //         {
-    //           estado_envio:
-    //             deliveryState,
-
-    //           id_mensaje_proveedor:
-    //             result.messageId ||
-    //             null,
-
-    //           codigo_error:
-    //             result.success
-    //               ? null
-    //               : cut(
-    //                 errorCode,
-    //                 150,
-    //               ),
-
-    //           mensaje_error:
-    //             result.success
-    //               ? null
-    //               : errorMessage,
-
-    //           fecha_envio:
-    //             result.success
-    //               ? new Date()
-    //               : null,
-
-    //           duracion_ms:
-    //             Date.now() -
-    //             startedAt,
-    //         },
-    //         {
-    //           transaction,
-    //         },
-    //       );
-
-    //       if (invalidToken) {
-    //         /*
-    //          * Condicionar al token utilizado evita
-    //          * revocar uno renovado durante el envío.
-    //          */
-    //         await UsuarioDispositivo.update(
-    //           {
-    //             token_push: null,
-
-    //             estado_dispositivo:
-    //               'REVOCADO',
-
-    //             fecha_desactivacion:
-    //               new Date(),
-
-    //             motivo_desactivacion:
-    //               cut(
-    //                 errorMessage,
-    //                 500,
-    //               ),
-    //           },
-    //           {
-    //             where: {
-    //               id_dispositivo:
-    //                 batch[index]
-    //                   .device
-    //                   .id_dispositivo,
-
-    //               token_push:
-    //                 batch[index]
-    //                   .device
-    //                   .token_push,
-    //             },
-
-    //             transaction,
-    //           },
-    //         );
-    //       }
-    //     },
-    //   );
-
-    //   if (result.success) {
-    //     enviados++;
-    //   } else {
-    //     lastError =
-    //       errorMessage;
-
-    //     if (
-    //       TRANSIENT_CODES.has(
-    //         errorCode,
-    //       ) &&
-    //       batch[index].numero <
-    //       options.maxIntentos
-    //     ) {
-    //       pendientes++;
-    //     }
-    //   }
-    // }
   }
 
   // --------------------------------------------------------
   // 6. Actualizar resumen del destinatario
   // --------------------------------------------------------
 
-  const fallidos =
-    enabledDevices.length -
-    enviados;
+  const fallidos = enabledDevices.length - enviados;
 
-  const pushState =
-    fallidos === 0
-      ? 'ENVIADO'
-      : enviados > 0
-        ? 'PARCIAL'
-        : pendientes > 0
-          ? 'PENDIENTE'
-          : 'FALLIDO';
+  const pushState = fallidos === 0
+    ? 'ENVIADO'
+    : enviados > 0
+      ? 'PARCIAL'
+      : pendientes > 0
+        ? 'PENDIENTE'
+        : 'FALLIDO';
 
-  await recipient.update(
-    {
-      estado_push:
-        pushState,
+  await sequelize.transaction(
+    async transaction => {
+      const current =
+        await Notificacion.findByPk(
+          notification.id_notificacion,
+          {
+            transaction,
+            lock: transaction.LOCK.UPDATE,
+          },
+        );
 
-      /*
-       * Cuenta ejecuciones que realizaron al menos
-       * un intento. El intento por dispositivo se
-       * conserva en NotificacionEnvio.numero_intento.
-       */
-      cantidad_intentos:
-        Number(
-          recipient.cantidad_intentos ||
-          0,
-        ) +
-        (
-          attemptedThisRun
-            ? 1
-            : 0
-        ),
+      // Una ejecución antigua no puede sobrescribir
+      // el resumen de la ejecución que recuperó el trabajo.
+      if (
+        !ownsLease(
+          current,
+          notification.token_procesamiento,
+        )
+      ) {
+        return;
+      }
 
-      fecha_ultimo_envio:
-        enviados > 0
-          ? new Date()
-          : recipient.fecha_ultimo_envio,
+      await recipient.update(
+        {
+          estado_push: pushState,
 
-      ultimo_error:
-        fallidos
-          ? lastError ||
-          'Hay dispositivos pendientes de envío.'
-          : null,
-    },
-    {
-      hooks: false,
+          cantidad_intentos:
+            Number(
+              recipient.cantidad_intentos || 0,
+            ) +
+            (attemptedThisRun ? 1 : 0),
+
+          fecha_ultimo_envio:
+            enviados > 0
+              ? new Date()
+              : recipient.fecha_ultimo_envio,
+
+          ultimo_error:
+            fallidos
+              ? lastError ||
+              'Hay dispositivos pendientes de envío.'
+              : null,
+        },
+        {
+          transaction,
+          hooks: false,
+        },
+      );
     },
   );
+  // await recipient.update(
+  //   {
+  //     estado_push:
+  //       pushState,
+
+  //     /*
+  //      * Cuenta ejecuciones que realizaron al menos
+  //      * un intento. El intento por dispositivo se
+  //      * conserva en NotificacionEnvio.numero_intento.
+  //      */
+  //     cantidad_intentos:
+  //       Number(
+  //         recipient.cantidad_intentos ||
+  //         0,
+  //       ) +
+  //       (
+  //         attemptedThisRun
+  //           ? 1
+  //           : 0
+  //       ),
+
+  //     fecha_ultimo_envio:
+  //       enviados > 0
+  //         ? new Date()
+  //         : recipient.fecha_ultimo_envio,
+
+  //     ultimo_error:
+  //       fallidos
+  //         ? lastError ||
+  //         'Hay dispositivos pendientes de envío.'
+  //         : null,
+  //   },
+  //   {
+  //     hooks: false,
+  //   },
+  // );
 
   return {
     enviados,
@@ -960,4 +1056,5 @@ module.exports = {
   canContinue,
   buildPushPayload,
   sendRecipientPush,
+  ownsLease,
 };

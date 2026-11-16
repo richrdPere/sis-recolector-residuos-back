@@ -70,15 +70,26 @@ const registerDeliveryResultService = async ({
       1000,
     );
 
-  const tokenInvalido =
-    !exitoso &&
-    INVALID_TOKEN_CODES.has(codigoError);
+  const tokenInvalido = !exitoso && INVALID_TOKEN_CODES.has(codigoError);
 
-  const estadoEnvio = exitoso
-    ? 'ENVIADO'
-    : tokenInvalido
-      ? 'TOKEN_INVALIDO'
-      : 'FALLIDO';
+  // Estos errores no confirman que Firebase haya
+  // rechazado el mensaje antes de aceptarlo.
+  const incierto =
+    !exitoso &&
+    new Set([
+      'app/network-error',
+      'app/network-timeout',
+      'messaging/unknown-error',
+      'FCM_UNKNOWN_ERROR',
+    ]).has(codigoError);
+
+  const estadoEnvio = incierto
+    ? 'PROCESANDO'
+    : exitoso
+      ? 'ENVIADO'
+      : tokenInvalido
+        ? 'TOKEN_INVALIDO'
+        : 'FALLIDO';
 
   const messageId = exitoso
     ? resultado.messageId || null
@@ -136,7 +147,9 @@ const registerDeliveryResultService = async ({
       token_invalido: tokenInvalido,
       reintentable:
         !exitoso &&
+        !incierto &&
         TRANSIENT_CODES.has(codigoError),
+      incierto,
       estado_envio: estadoEnvio,
       codigo_error: codigoError,
       mensaje_error: mensajeError,

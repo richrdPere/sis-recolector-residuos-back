@@ -263,6 +263,18 @@ const Notificacion = sequelize.define('Notificacion', {
       'SISTEMA',
   },
 
+  // Identifica a la ejecución propietaria del trabajo.
+  token_procesamiento: {
+    type: DataTypes.UUID,
+    allowNull: true,
+  },
+
+  // La reserva vence si el worker deja de renovarla.
+  procesamiento_hasta: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
+
   fecha_procesamiento: {
     type:
       DataTypes.DATE,

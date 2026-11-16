@@ -1,4 +1,6 @@
 const db = require('../../../database/models');
+const { Op } = require('sequelize');
+
 const AppError = require('../../../utils/app-error');
 
 // Validations
@@ -14,6 +16,8 @@ const {
   assertRecorridoAllowsTracking,
   updateLastLocation,
 } = require('../utils/tracking-service.utils');
+
+const { GPS, evaluarCalidadGps } = require('../utils/calidad-gps.utils');
 
 // Modelos
 const {
@@ -111,11 +115,49 @@ const registerLocationService = async (
     // 4. REGISTRAR POSICIÓN HISTÓRICA
     // Las posiciones simuladas quedan para auditoría,
     // pero no reemplazan la última ubicación válida.
-    const isValid = !location.es_ubicacion_simulada;
+    // Buscar la muestra válida anterior por fecha de captura.
+    // Esto también permite evaluar posiciones sincronizadas
+    // después de operar sin conexión.
+    const previousPosition =
+      await RecorridoPosicion.findOne({
+        where: {
+          id_recorrido: recorridoId,
 
-    const invalidReason = location.es_ubicacion_simulada
-      ? 'La ubicación fue reportada como simulada por el dispositivo.'
-      : null;
+          es_valida: true,
+
+          precision_gps: {
+            [Op.gt]: 0,
+            [Op.lte]: GPS.precisionMaxima,
+          },
+
+          fecha_dispositivo: {
+            [Op.lt]: location.fecha_dispositivo,
+          },
+        },
+
+        attributes: [
+          'latitud',
+          'longitud',
+          'precision_gps',
+          'fecha_dispositivo',
+        ],
+
+        order: [
+          ['fecha_dispositivo', 'DESC'],
+          ['id_posicion', 'DESC'],
+        ],
+
+        transaction,
+      });
+
+    const quality = evaluarCalidadGps(
+      location,
+      previousPosition,
+    );
+
+    const isValid = quality.es_valida;
+
+    const invalidReason = quality.motivo_invalidez;
 
     const posicion = await RecorridoPosicion.create(
       {
@@ -133,7 +175,7 @@ const registerLocationService = async (
         transaction,
       },
     );
-    
+
 
     // 5. ACTUALIZAR ÚLTIMA UBICACIÓN
     const {

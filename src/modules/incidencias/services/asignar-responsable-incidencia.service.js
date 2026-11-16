@@ -5,9 +5,7 @@ const sequelize = require('../../../config/database');
 const db = require('../../../database/models');
 
 // Motor de notificaciones
-const {
-  enqueueNotification,
-} = require('../../../jobs/notification-worker');
+const { enqueueNotification } = require('../../../jobs/notification-worker');
 
 // Modelos
 const { Usuario } = db;
@@ -17,6 +15,9 @@ const {
   validarId,
   validarAsignarResponsable,
 } = require('../validations/incidencia.validations');
+
+// Auditoría
+const { prepararAuditoria } = require('../../auditoria/utils/auditar-cambio.utils');
 
 // Utils
 const {
@@ -60,8 +61,7 @@ const asignarResponsableIncidenciaService = async (
         true,
       );
 
-      // Auditoria
-      const auditar = prepararAuditoria('INCIDENCIA', 'ASIGNAR_RESPONSABLE', incidencia);
+
 
       // ----------------------------------------------------
       // 2. Validar nuevo responsable
@@ -101,16 +101,25 @@ const asignarResponsableIncidenciaService = async (
         );
       }
 
+      // Capturar el estado ANTES de modificar la instancia.
+      const auditar = prepararAuditoria(
+        'INCIDENCIA',
+        'ASIGNAR_RESPONSABLE',
+        incidencia,
+        {
+          usuario: actor,
+        },
+      );
+
       // ----------------------------------------------------
       // 3. Conservar responsable anterior
       // ----------------------------------------------------
 
-      const previousResponsibleId =
-        incidencia.id_responsable == null
-          ? null
-          : String(
-            incidencia.id_responsable,
-          );
+      const previousResponsibleId = incidencia.id_responsable == null
+        ? null
+        : String(
+          incidencia.id_responsable,
+        );
 
       // ----------------------------------------------------
       // 4. Actualizar incidencia

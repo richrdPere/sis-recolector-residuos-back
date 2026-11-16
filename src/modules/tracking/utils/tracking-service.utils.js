@@ -10,6 +10,9 @@ const {
   RecorridoUltimaUbicacion,
 } = db;
 
+// Utils
+const { aptaParaMonitoreo } = require('./calidad-gps.utils');
+
 // ===============================================
 // Obtener recorrido
 // ===============================================
@@ -161,7 +164,7 @@ const updateLastLocation = async ({
   | pero no reemplaza la última ubicación válida.
   */
 
-  if (posicion.es_valida === false) {
+  if (!aptaParaMonitoreo(posicion)) {
     return {
       updated: false,
       lastLocation: currentLastLocation,

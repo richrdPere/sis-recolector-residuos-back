@@ -82,12 +82,10 @@ const combineDateAndTime = (date, time) => {
     : result;
 };
 
-const getLocationTimestamp = (location) => (
+const getLocationTimestamp = location => (
+  location?.fecha_dispositivo ||
   location?.fecha_posicion ||
   location?.fecha_ubicacion ||
-  location?.fecha_recepcion ||
-  location?.updated_at ||
-  location?.created_at ||
   null
 );
 
@@ -95,18 +93,22 @@ const getGpsStatus = (
   location,
   referenceDate = new Date(),
 ) => {
-  if (!location) {
-    return {
-      estado: 'SIN_DATOS',
-      segundos_sin_actualizar: null,
-      fecha_ultima_posicion: null,
-    };
-  }
+  const timestamp =
+    getLocationTimestamp(location);
 
-  const timestamp = getLocationTimestamp(location);
-  const elapsed = secondsBetween(timestamp, referenceDate);
+  const capturedAt = timestamp
+    ? new Date(timestamp).getTime()
+    : NaN;
 
-  if (elapsed === null) {
+  const now =
+    new Date(referenceDate).getTime();
+
+  if (
+    !location ||
+    !Number.isFinite(capturedAt) ||
+    !Number.isFinite(now) ||
+    capturedAt > now + 5000
+  ) {
     return {
       estado: 'SIN_DATOS',
       segundos_sin_actualizar: null,
@@ -114,11 +116,20 @@ const getGpsStatus = (
     };
   }
 
+  const elapsed = Math.max(
+    0,
+    Math.floor(
+      (now - capturedAt) / 1000,
+    ),
+  );
+
   let estado = 'DESCONECTADO';
 
   if (elapsed <= DEFAULT_GPS_ONLINE_SECONDS) {
     estado = 'EN_LINEA';
-  } else if (elapsed <= DEFAULT_GPS_DELAYED_SECONDS) {
+  } else if (
+    elapsed <= DEFAULT_GPS_DELAYED_SECONDS
+  ) {
     estado = 'DEMORADO';
   }
 
