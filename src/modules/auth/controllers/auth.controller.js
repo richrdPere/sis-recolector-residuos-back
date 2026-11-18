@@ -262,6 +262,7 @@ const registerCiudadanoController = async (req, res, next) => {
       email: body.email,
       username: body.username,
       password: body.password,
+      password_confirmation: body.password_confirmation,
     });
 
     return res.status(201).json({

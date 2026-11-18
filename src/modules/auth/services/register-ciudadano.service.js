@@ -30,11 +30,7 @@ const validarTexto = ({
   max,
   obligatorio = true,
 }) => {
-  if (
-    value === undefined ||
-    value === null ||
-    value === ''
-  ) {
+  if (value === undefined || value === null || value === '') {
     if (obligatorio) {
       throw new AppError(
         `El campo ${campo} es obligatorio.`,

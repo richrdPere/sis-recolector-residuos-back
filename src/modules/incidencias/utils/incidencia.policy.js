@@ -1,5 +1,6 @@
 "use strict";
 
+const AppError = require('../../../utils/app-error');
 /*
 Esta política inicial permite a SUPER_ADMIN, ADMIN y SUPERVISOR gestionar incidencias. Los demás usuarios consultan sus propios reportes.
 
@@ -148,7 +149,11 @@ function crearPoliticaIncidencias({
 
         // Verificar al usuario que recibirá la incidencia.
         if (typeof esResponsableElegible !== "function") {
-          return false;
+          throw new AppError(
+            'No está configurada la validación del responsable.',
+            500,
+            'INCIDENCIA_ROLES_CONFIGURATION_ERROR',
+          );
         }
 
         const elegible = await esResponsableElegible({
@@ -157,6 +162,16 @@ function crearPoliticaIncidencias({
           incidencia,
           transaction,
         });
+
+        if (elegible !== true) {
+          throw new AppError(
+            'El usuario seleccionado no puede ser responsable. ' +
+            'Debe tener un rol activo SUPER_ADMIN, ADMIN, ' +
+            'SUPERVISOR u OPERADOR.',
+            422,
+            'RESPONSABLE_NO_ELEGIBLE',
+          );
+        }
 
         return elegible === true;
       }

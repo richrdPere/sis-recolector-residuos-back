@@ -6,6 +6,7 @@ const AppError = require('../../../../utils/app-error');
 // Services
 const getProgramacionByIdService = require('./get-programacion-by-id.service');
 const crearAvisoCiudadano = require('../../../notificaciones/services/ciudadanos/crear-aviso-ciudadano.service');
+const cancelarRecorridosPorProgramacion = require('../../../recorridos/utils/cancelar-recorridos-por-programacion');
 
 // Motor de notificaciones
 const { enqueueNotification } = require('../../../../jobs/notification-worker');
@@ -94,19 +95,37 @@ const cancelProgramacionService = async (
       );
     }
 
-    if (
-      [
-        'FINALIZADA',
-        'CANCELADA',
-      ].includes(
-        programacion.estado_programacion,
-      )
-    ) {
+    if (programacion.estado_programacion === 'FINALIZADA') {
       throw new AppError(
-        'La programación no puede cancelarse.',
+        'Una programación finalizada no puede cancelarse.',
         409,
         'PROGRAMMING_CANNOT_BE_CANCELLED',
       );
+    }
+
+    // Reparar una cancelación anterior que dejó recorridos abiertos.
+    // Se conserva la fecha y el motivo originales de la programación.
+    if (programacion.estado_programacion === 'CANCELADA') {
+      await cancelarRecorridosPorProgramacion({
+        programacion,
+        idUsuario: actorId,
+
+        motivo:
+          programacion.motivo_cancelacion ||
+          reason,
+
+        // Fecha real de cierre del recorrido durante la reparación.
+        fecha: new Date(),
+
+        ip,
+        userAgent: user_agent,
+        transaction,
+      });
+
+      await transaction.commit();
+
+      // No volver a generar historial ni avisos de la programación.
+      return await getProgramacionByIdService(id);
     }
 
     const previousState = programacion.estado_programacion;
@@ -194,19 +213,25 @@ const cancelProgramacionService = async (
 
     await programacion.update(
       {
-        estado_programacion:
-          'CANCELADA',
-
-        motivo_cancelacion:
-          reason,
-
-        fecha_cancelacion:
-          cancellationDate,
+        estado_programacion: 'CANCELADA',
+        motivo_cancelacion: reason,
+        fecha_cancelacion: cancellationDate,
       },
       {
         transaction,
       },
     );
+
+    // Cerrar los recorridos antes de confirmar la cancelación.
+    await cancelarRecorridosPorProgramacion({
+      programacion,
+      idUsuario: actorId,
+      motivo: reason,
+      fecha: cancellationDate,
+      ip,
+      userAgent: user_agent,
+      transaction,
+    });
 
     // ------------------------------------------------------
     // Capturar las asignaciones que serán retiradas
