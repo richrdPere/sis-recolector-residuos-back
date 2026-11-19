@@ -25,6 +25,11 @@ const db = require('./database/models');
 
 const app = express();
 
+// Nginx se conecta al backend desde el mismo servidor.
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 'loopback');
+}
+
 // ==========================================================
 // DOCUMENTACIÓN REST/API
 // ==========================================================
