@@ -3,10 +3,7 @@ const {
   registrarAlertaPublicaService,
 } = require('../services/registrar-alerta-publica.service');
 
-const getConfiguracionAlertasController = (
-  _req,
-  res,
-) => {
+const getConfiguracionAlertasController = (_req, res) => {
   return res.status(200).json({
     success: true,
     message: 'Configuración de registro obtenida.',
@@ -14,20 +11,14 @@ const getConfiguracionAlertasController = (
   });
 };
 
-const registrarAlertaPublicaController = async (
-  req,
-  res,
-  next,
-) => {
+const registrarAlertaPublicaController = async (req, res, next) => {
   try {
-    const data =
-      await registrarAlertaPublicaService(
-        req.body,
-      );
+    const data = await registrarAlertaPublicaService(
+      req.body,
+    );
 
     return res.status(200).json({
       success: true,
-
       message:
         'Registro guardado. Falta vincular el navegador ' +
         'para recibir notificaciones.',

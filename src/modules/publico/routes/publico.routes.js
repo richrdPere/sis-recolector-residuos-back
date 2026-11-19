@@ -16,6 +16,11 @@ const {
   registrarAlertaPublicaController,
 } = require('../controllers/alerta-publica.controller');
 
+const {
+  getMapaPublicoController
+} = require("../controllers/get-mapa-publico.controller");
+
+
 // ==========================================================
 // MIDDLEWARES
 // ==========================================================
@@ -45,6 +50,8 @@ router.use(
 // ==========================================================
 // RUTAS PÚBLICAS
 // ==========================================================
+router.get('/mapa', getMapaPublicoController);
+
 router.get(
   '/zonas',
   getZonasPublicasController,

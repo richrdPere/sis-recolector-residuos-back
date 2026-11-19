@@ -2,9 +2,7 @@ const { Op } = require('sequelize');
 const db = require('../../../database/models');
 const AppError = require('../../../utils/app-error');
 
-const {
-  validateId,
-} = require('../validations/codigo-qr.validation');
+const { validateId } = require('../validations/codigo-qr.validation');
 
 const {
   getPeruDateOnly,
@@ -70,16 +68,13 @@ function publicarUbicacion(
     process.env.PUBLIC_LOCATION_MAX_AGE_SECONDS,
   );
 
-  const maxEdad =
-    Number.isFinite(configurado) &&
-      configurado >= 15
-      ? configurado
-      : 120;
+  const maxEdad = Number.isFinite(configurado) && configurado >= 15
+    ? configurado
+    : 120;
 
-  const fechaInvalida =
-    ![captura, recepcion, inicio].every(
-      Number.isFinite,
-    ) ||
+  const fechaInvalida = ![captura, recepcion, inicio].every(
+    Number.isFinite,
+  ) ||
     ultima.fecha_dispositivo == null ||
     ultima.fecha_recepcion == null ||
     captura < inicio ||
@@ -486,3 +481,5 @@ module.exports = async function getPublicRouteData({
     ),
   };
 };
+
+module.exports.publicarUbicacion = publicarUbicacion;
