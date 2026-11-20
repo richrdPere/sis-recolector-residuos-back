@@ -211,15 +211,20 @@ async function tick() {
     const result = await runNotificationWorkerOnce();
 
     if (
+      process.env.PROXIMIDAD_DEBUG === 'true' ||
       result.procesadas ||
       result.recuperacion?.recuperadas ||
       result.recuperacion?.canceladas ||
       result.errores
     ) {
-      console.log(
-        '[notification-worker]',
-        result,
-      );
+      console.log('[notification-worker]', {
+        fecha: new Date().toISOString(),
+        proximidad: result.proximidad,
+        revisadas: result.revisadas,
+        procesadas: result.procesadas,
+        omitidas: result.omitidas,
+        errores: result.errores,
+      });
     }
   } catch (error) {
     console.error(

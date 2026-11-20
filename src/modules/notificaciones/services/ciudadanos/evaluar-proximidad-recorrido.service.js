@@ -7,7 +7,13 @@ const crearAvisoCiudadano = require(
 
 const RADIO_METROS = 300;
 const PRECISION_MAXIMA_METROS = 50;
-const ANTIGUEDAD_MAXIMA_MS = 60_000;
+
+// La posición actual debe ser reciente.
+const ANTIGUEDAD_MAXIMA_MS = 45_000;
+
+// La muestra anterior tiene una ventana independiente.
+const ANTIGUEDAD_ANTERIOR_MS = 120_000;
+
 const DESFASE_FUTURO_MAXIMO_MS = 5_000;
 
 const radianes = (grados) => grados * Math.PI / 180;
@@ -19,7 +25,7 @@ const distanciaMetros = (origen, destino) => {
   const deltaLongitud = radianes(
     Number(destino.longitud) - Number(origen.longitud),
   );
-
+  0
   const a = Math.sin(deltaLatitud / 2) ** 2
     + Math.cos(latOrigen) * Math.cos(latDestino)
     * Math.sin(deltaLongitud / 2) ** 2;
@@ -29,7 +35,11 @@ const distanciaMetros = (origen, destino) => {
   );
 };
 
-const posicionUtilizable = (posicion, ahora, inicioRecorrido) => {
+const posicionUtilizable = (
+  posicion,
+  ahora,
+  inicioRecorrido,
+  antiguedadMaxima = ANTIGUEDAD_MAXIMA_MS) => {
   if (
     !posicion ||
     !posicion.es_valida ||
@@ -47,14 +57,25 @@ const posicionUtilizable = (posicion, ahora, inicioRecorrido) => {
   const recepcion = new Date(posicion.fecha_recepcion).getTime();
 
   return Number.isFinite(precision)
-    && precision >= 0
+    && precision > 0
     && precision <= PRECISION_MAXIMA_METROS
     && captura >= inicioRecorrido
-    && captura >= ahora - ANTIGUEDAD_MAXIMA_MS
+    && captura >= ahora - antiguedadMaxima
     && captura <= ahora + DESFASE_FUTURO_MAXIMO_MS
-    && recepcion >= ahora - ANTIGUEDAD_MAXIMA_MS
+    && recepcion >= ahora - antiguedadMaxima
     && recepcion <= ahora
     && captura <= recepcion + DESFASE_FUTURO_MAXIMO_MS;
+};
+
+const diagnosticarProximidad = (motivo, datos = {}) => {
+  if (process.env.PROXIMIDAD_DEBUG !== 'true') {
+    return;
+  }
+
+  console.log('[proximidad:evaluacion]', {
+    motivo,
+    ...datos,
+  });
 };
 
 const evaluarRecorrido = async (idRecorrido) => {
@@ -91,13 +112,45 @@ const evaluarRecorrido = async (idRecorrido) => {
       transaction,
     });
 
+    // Evaluacion del recorrido
+    const actualUtilizable = posicionUtilizable(
+      actual,
+      ahora,
+      inicioRecorrido,
+    );
+
+    const anteriorUtilizable = posicionUtilizable(
+      anterior,
+      ahora,
+      inicioRecorrido,
+      ANTIGUEDAD_ANTERIOR_MS,
+    );
+
+    const coincideUltima =
+      actual != null &&
+      String(actual.id_posicion) ===
+      String(ultimaUbicacion.id_posicion);
+
+    const fechasCrecientes =
+      actual != null &&
+      anterior != null &&
+      new Date(actual.fecha_dispositivo).getTime() >
+      new Date(anterior.fecha_dispositivo).getTime();
+
     if (
-      !posicionUtilizable(actual, ahora, inicioRecorrido) ||
-      !posicionUtilizable(anterior, ahora, inicioRecorrido) ||
-      String(actual.id_posicion) !== String(ultimaUbicacion.id_posicion) ||
-      new Date(actual.fecha_dispositivo).getTime() <=
-      new Date(anterior.fecha_dispositivo).getTime()
+      !actualUtilizable ||
+      !anteriorUtilizable ||
+      !coincideUltima ||
+      !fechasCrecientes
     ) {
+      diagnosticarProximidad('POSICIONES_NO_APTAS', {
+        id_recorrido: String(idRecorrido),
+        actual_utilizable: actualUtilizable,
+        anterior_utilizable: anteriorUtilizable,
+        coincide_ultima: coincideUltima,
+        fechas_crecientes: fechasCrecientes,
+      });
+
       return 0;
     }
 
@@ -135,6 +188,12 @@ const evaluarRecorrido = async (idRecorrido) => {
       attributes: ['id_domicilio', 'latitud', 'longitud'],
       order: [['id_domicilio', 'ASC']],
       transaction,
+    });
+
+    diagnosticarProximidad('DOMICILIOS_CANDIDATOS', {
+      id_recorrido: String(idRecorrido),
+      id_ruta: String(programacion.id_ruta),
+      candidatos: domicilios.length,
     });
 
     let creadas = 0;
@@ -176,6 +235,16 @@ const evaluarRecorrido = async (idRecorrido) => {
       });
 
       creadas += resultado.creadas;
+
+      diagnosticarProximidad('RESULTADO_ENCOLADO', {
+        id_recorrido: String(idRecorrido),
+        id_domicilio: String(domicilio.id_domicilio),
+        creadas: resultado.creadas ?? 0,
+        duplicadas: resultado.duplicadas ?? 0,
+        excluidos: resultado.excluidos ?? 0,
+        destinatarios: resultado.total_destinatarios ?? 0,
+        omitida: resultado.omitida ?? null,
+      });
     }
 
     return creadas;
@@ -210,6 +279,7 @@ const evaluarProximidadRecorridos = async () => {
         '[proximidad:recorrido]',
         String(recorrido.id_recorrido),
         error.code || error.name,
+        error.message,
       );
     }
   }
