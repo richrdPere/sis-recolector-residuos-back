@@ -105,32 +105,28 @@ const getMyNotificationsService = async ({
     [Op.and]: [
       {
         [Op.or]: [
-          {
-            fecha_programada:
-              null,
-          },
+          { fecha_programada: null },
           {
             fecha_programada: {
-              [Op.lte]:
-                now,
+              [Op.lte]: now,
             },
           },
         ],
       },
-      {
-        [Op.or]: [
-          {
-            fecha_expiracion:
-              null,
-          },
-          {
-            fecha_expiracion: {
-              [Op.gt]:
-                now,
-            },
-          },
-        ],
-      },
+      // {
+      //   [Op.or]: [
+      //     {
+      //       fecha_expiracion:
+      //         null,
+      //     },
+      //     {
+      //       fecha_expiracion: {
+      //         [Op.gt]:
+      //           now,
+      //       },
+      //     },
+      //   ],
+      // },
     ],
   };
 

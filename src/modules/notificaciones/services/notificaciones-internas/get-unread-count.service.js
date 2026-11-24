@@ -69,20 +69,20 @@ const getUnreadCountService = async (idUsuario) => {
                     },
                   ],
                 },
-                {
-                  [Op.or]: [
-                    {
-                      fecha_expiracion:
-                        null,
-                    },
-                    {
-                      fecha_expiracion: {
-                        [Op.gt]:
-                          now,
-                      },
-                    },
-                  ],
-                },
+                // {
+                //   [Op.or]: [
+                //     {
+                //       fecha_expiracion:
+                //         null,
+                //     },
+                //     {
+                //       fecha_expiracion: {
+                //         [Op.gt]:
+                //           now,
+                //       },
+                //     },
+                //   ],
+                // },
               ],
             },
           },

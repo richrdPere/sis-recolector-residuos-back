@@ -7,15 +7,9 @@ const {
   getApp,
   getApps,
   initializeApp,
-} = require(
-  'firebase-admin/app',
-);
+} = require('firebase-admin/app');
 
-const {
-  getMessaging,
-} = require(
-  'firebase-admin/messaging',
-);
+const { getMessaging } = require('firebase-admin/messaging');
 
 /*
 |--------------------------------------------------------------------------

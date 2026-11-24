@@ -110,7 +110,8 @@ const sendPushNotificationService = async ({
 
       notification: {
         channelId:
-          'alertas',
+          process.env.FCM_ANDROID_CHANNEL_ID?.trim()
+          || 'recoleccion_alertas',
 
         sound:
           'default',
