@@ -44,7 +44,7 @@ const sendPushNotificationService = async ({
   titulo,
   mensaje,
   data = {},
-  url = '/',
+  url = null,
   imagen_url = null,
 }) => {
   if (
@@ -75,24 +75,41 @@ const sendPushNotificationService = async ({
     );
   }
 
-  const messaging =
-    getFirebaseMessaging();
+  if (url !== null) {
+    let enlace;
+
+    try {
+      enlace = new URL(url);
+    } catch {
+      throw new AppError(
+        'El enlace push debe ser una URL HTTPS absoluta.',
+        400,
+        'INVALID_PUSH_URL',
+      );
+    }
+
+    if (enlace.protocol !== 'https:') {
+      throw new AppError(
+        'El enlace push debe utilizar HTTPS.',
+        400,
+        'INVALID_PUSH_URL',
+      );
+    }
+  }
+
+  const messaging = getFirebaseMessaging();
 
   const payload = {
-    token:
-      token.trim(),
+    token: token.trim(),
 
     notification: {
-      title:
-        titulo.trim(),
+      title: titulo.trim(),
 
-      body:
-        mensaje.trim(),
+      body: mensaje.trim(),
 
       ...(imagen_url
         ? {
-          imageUrl:
-            imagen_url,
+          imageUrl: imagen_url,
         }
         : {}),
     },
@@ -134,12 +151,8 @@ const sendPushNotificationService = async ({
       },
 
       notification: {
-        icon:
-          '/icons/icon-192x192.png',
-
-        badge:
-          '/icons/badge-72x72.png',
-
+        icon: '/icons/icon-192x192.png',
+        badge: '/icons/badge-72x72.png',
         ...(imagen_url
           ? {
             image:
@@ -148,9 +161,16 @@ const sendPushNotificationService = async ({
           : {}),
       },
 
-      fcmOptions: {
-        link: url,
-      },
+      ...(url
+        ? {
+          fcmOptions: {
+            link: url,
+          },
+        }
+        : {}),
+      // fcmOptions: {
+      //   link: url,
+      // },
     },
   };
 

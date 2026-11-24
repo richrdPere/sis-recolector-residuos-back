@@ -28,22 +28,14 @@ const markAllNotificationsReadService = async (idUsuario) => {
         await NotificacionUsuario
             .update(
                 {
-                    leida:
-                        true,
-
-                    fecha_leida:
-                        new Date(),
+                    leida: true,
+                    fecha_leida: new Date(),
                 },
                 {
                     where: {
-                        id_usuario:
-                            userId,
-
-                        leida:
-                            false,
-
-                        archivada:
-                            false,
+                        id_usuario: userId,
+                        leida: false,
+                        archivada: false,
                     },
                 },
             );
