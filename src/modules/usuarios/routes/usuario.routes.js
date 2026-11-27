@@ -24,6 +24,8 @@ const {
   autorizarRoles,
 } = require("../../../middlewares/auth.middleware");
 
+const protegerGestionUsuarios = require('../../../middlewares/gestion-usuarios.middleware');
+
 // *********************************************************
 // AUTENTICACIÓN
 // *********************************************************
@@ -73,31 +75,36 @@ router.get("/:idUsuario/roles",
 
 // POST /usuarios/create
 router.post("/create",
-  autorizarRoles(...ROLES_CONSULTA),
+  // autorizarRoles(...ROLES_CONSULTA),
+  protegerGestionUsuarios,
   createUsuarioController
 );
 
 // PUT /usuarios/update/:id_usuario
 router.put("/update/:id_usuario",
-  autorizarRoles(...ROLES_CONSULTA),
+  // autorizarRoles(...ROLES_CONSULTA),
+  protegerGestionUsuarios,
   updateUsuarioController
 );
 
 // PATCH /usuarios/estado/:id_usuario
 router.patch("/estado/:id_usuario",
-  autorizarRoles(...ROLES_CONSULTA),
+  // autorizarRoles(...ROLES_CONSULTA),
+  protegerGestionUsuarios,
   changeEstadoUsuarioController
 );
 
 // PATCH /usuarios/reset-password/:id_usuario
 router.patch("/reset-password/:id_usuario",
-  autorizarRoles(...ROLES_CONSULTA),
+  // autorizarRoles(...ROLES_CONSULTA),
+  protegerGestionUsuarios,
   resetPasswordUsuarioController
 );
 
 // DELETE /usuarios/delete/:id_usuario
 router.delete("/delete/:id_usuario",
-  autorizarRoles(...ROLES_CONSULTA),
+  // autorizarRoles(...ROLES_CONSULTA),
+  protegerGestionUsuarios,
   deleteUsuarioController
 );
 

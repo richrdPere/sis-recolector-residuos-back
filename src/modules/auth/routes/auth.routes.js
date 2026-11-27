@@ -18,6 +18,7 @@ const updateAuthProfileService = require('../services/update-auth-profile.servic
 
 // Middleware
 const { verificarToken } = require("../../../middlewares/auth.middleware");
+const protegerGestionUsuarios = require('../../../middlewares/gestion-usuarios.middleware',);
 
 // ROUTES
 
@@ -31,7 +32,7 @@ router.get('/me', verificarToken, getAuthProfileController);
 router.post('/logout', verificarToken, logoutController);
 router.post('/logout-all', verificarToken, logoutAllController);
 router.patch('/change-password', verificarToken, changePasswordController);
-router.post('/users', verificarToken, createUsuarioController);
+router.post('/users', verificarToken, protegerGestionUsuarios, createUsuarioController);
 router.patch('/me', verificarToken, async (req, res, next) => {
     try {
         const data = await updateAuthProfileService({

@@ -11,13 +11,17 @@ const AppError = require('../../../utils/app-error');
 // como evidencia del consentimiento registrado.
 // Si cambia su contenido, actualiza también la versión.
 const CONSENTIMIENTO = Object.freeze({
-  version: 'AVISOS-WEB-1.0',
+  version: 'AVISOS-WEB-1.1',
 
   texto:
-    'Autorizo a la Municipalidad Provincial de Calca a guardar mi nombre, ' +
-    'celular, sector, ruta y preferencias para gestionar mis avisos de ' +
-    'recolección. El registro es voluntario. El celular no queda verificado ' +
-    'y este registro no habilita mensajes SMS ni WhatsApp.',
+    'Autorizo a la Municipalidad Provincial de Calca a guardar ' +
+    'mi nombre, celular, sector, ruta y preferencias para gestionar ' +
+    'mis avisos de recolección. Si autorizo las notificaciones del ' +
+    'navegador, también se guardará su identificador de envío para ' +
+    'recibir los avisos seleccionados. El registro es voluntario ' +
+    'y puedo desactivar estos avisos desde esta página. El celular ' +
+    'no queda verificado y este registro no habilita mensajes SMS ' +
+    'ni WhatsApp.',
 });
 
 const sha256 = valor =>
@@ -162,7 +166,9 @@ const registrarAlertaPublicaService = async payload => {
     return {
       id_suscripcion: registro.id_suscripcion,
       estado: registro.estado,
-      requiere_dispositivo: true,
+      requiere_dispositivo:
+        registro.estado !== 'ACTIVA' ||
+        !registro.token_push,
     };
   };
 

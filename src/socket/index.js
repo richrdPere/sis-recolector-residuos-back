@@ -2,6 +2,7 @@ const { Server } = require('socket.io');
 const jwtAuth = require('./middleware/socket-auth');
 const { refreshIdentity } = require('./services/identity.service');
 const { pruneRooms } = require('./services/delivery.service');
+const { installPublicMap } = require('./services/public-map.service');
 
 const registerHandlers = require('./socket-manager');
 const registerPublic = require('./handlers/ciudadano.handler');
@@ -52,9 +53,9 @@ function initSocket(server) {
     const expire = () => {
       const remaining = user.exp * 1000 - Date.now();
       if (remaining <= 0) {
-        socket.emit(E.AUTH_ERROR, { 
-          code: 'ACCESS_TOKEN_EXPIRED', 
-          message: 'Renueve el token por REST y vuelva a conectar.' 
+        socket.emit(E.AUTH_ERROR, {
+          code: 'ACCESS_TOKEN_EXPIRED',
+          message: 'Renueve el token por REST y vuelva a conectar.'
         });
         socket.disconnect(true); return;
       }
@@ -67,6 +68,7 @@ function initSocket(server) {
   io.of('/publico').on('connection', (socket) => registerPublic(io, socket));
 
   const uninstall = install(io);
+  const uninstallPublicMap = installPublicMap(io);
 
   let busy = false;
 
@@ -90,7 +92,10 @@ function initSocket(server) {
   interval.unref?.();
   server.once('close', () => {
     clearInterval(interval);
+
+    uninstallPublicMap();
     uninstall();
+
     io = undefined;
   }
   );

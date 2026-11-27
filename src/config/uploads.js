@@ -42,7 +42,14 @@ if (privadoDentroDelPublico) {
   );
 }
 
+// Recolecciones
+const recoleccionesRoot = path.join(
+  privateUploadsRoot,
+  'recolecciones',
+);
+
 module.exports = {
+  recoleccionesRoot,
   uploadsRoot,
   privateUploadsRoot,
   incidenciasRoot,

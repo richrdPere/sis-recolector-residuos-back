@@ -1,7 +1,5 @@
 const express = require('express');
-
 const { rateLimit } = require('express-rate-limit');
-
 const router = express.Router();
 
 // Controllers
@@ -20,6 +18,8 @@ const {
   getMapaPublicoController
 } = require("../controllers/get-mapa-publico.controller");
 
+// Dispositivos
+const { dispositivo: gestionarDispositivoWeb } = require('../services/alertas-web.service');
 
 // ==========================================================
 // MIDDLEWARES
@@ -96,5 +96,42 @@ router.post(
 
   registrarAlertaPublicaController,
 );
+
+// Alertas web
+router.post('/alertas/dispositivo',
+  async (req, res, next) => {
+    try {
+      const data = await gestionarDispositivoWeb(req.body);
+
+      return res.json({
+        success: true,
+        message: 'Navegador vinculado.',
+        data,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+router.post('/alertas/baja',
+  async (req, res, next) => {
+    try {
+      const data = await gestionarDispositivoWeb(
+        req.body,
+        true,
+      );
+
+      return res.json({
+        success: true,
+        message: 'Avisos desactivados.',
+        data,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
 
 module.exports = router;

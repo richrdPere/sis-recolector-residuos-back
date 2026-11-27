@@ -4,12 +4,16 @@ const fs = require('fs');
 const crypto = require('crypto');
 const AppError = require('../utils/app-error');
 
-const uploadDirectory =
-  path.join(
-    process.cwd(),
-    'uploads',
-    'recolecciones',
-  );
+const { recoleccionesRoot } = require('../config/uploads');
+
+const uploadDirectory = recoleccionesRoot;
+
+// const uploadDirectory =
+//   path.join(
+//     process.cwd(),
+//     'uploads',
+//     'recolecciones',
+//   );
 
 if (
   !fs.existsSync(

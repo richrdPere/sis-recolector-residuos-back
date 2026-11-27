@@ -55,6 +55,7 @@ db.NotificacionUsuario = require("./notificaciones/notificacion_usuario.model");
 db.Notificacion = require("./notificaciones/notificacion.model");
 db.UsuarioDispositivo = require("./notificaciones/usuario_dispositivo.model");
 db.SuscripcionAlertaPublica = require('./notificaciones/suscripcion-alerta-publica.model');
+db.AvisoWebPublico = require('./notificaciones/aviso-web-publico.model');
 
 // - Ciudadanos
 db.CiudadanoDomicilio = require("./ciudadanos/ciudadano_domicilio.model");

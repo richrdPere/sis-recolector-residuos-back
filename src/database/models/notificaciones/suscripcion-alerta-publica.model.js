@@ -101,6 +101,17 @@ const SuscripcionAlertaPublica = sequelize.define('SuscripcionAlertaPublica', {
     allowNull: false,
     defaultValue: 'PENDIENTE_DISPOSITIVO',
   },
+
+  token_push: {
+    type: DataTypes.STRING(512).BINARY,
+    allowNull: true,
+    unique: 'uq_suscripcion_web_token',
+  },
+
+  fecha_vinculacion: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
 },
 
   {
