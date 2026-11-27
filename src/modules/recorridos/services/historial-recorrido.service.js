@@ -1,21 +1,17 @@
 'use strict';
 
-const {
-  Op,
-  Transaction,
-} = require('sequelize');
+const { Op, Transaction } = require('sequelize');
 
 const db = require('../../../database/models');
 const AppError = require('../../../utils/app-error');
 
+// Service
 const getPuntos = require('../../recolecciones/services/get-route-collection-points.service');
 
+// Utils
 const { getIncidenciasScope } = require('../../incidencias/utils/incidencia-service.utils');
-
-const {
-  calcularTiempos,
-  construirTrazado,
-} = require('../utils/historial.utils');
+const { calcularTiempos, construirTrazado } = require('../utils/historial.utils');
+const calcularDistanciaGps = require('../utils/distancia-gps.utils');
 
 const ROLES_GENERALES = [
   'SUPER_ADMIN',
@@ -176,10 +172,7 @@ const transaccion = fn =>
 // DETALLE INTEGRADO
 // ==========================================================
 
-const detalleHistorialService = (
-  id,
-  usuario,
-) => transaccion(async transaction => {
+const detalleHistorialService = (id, usuario) => transaccion(async transaction => {
   const {
     recorrido,
     actor,
@@ -371,6 +364,36 @@ const detalleHistorialService = (
     plain: true,
   });
 
+  const posicionesDistancia = await db.RecorridoPosicion.findAll({
+    where: {
+      id_recorrido: recorrido.id_recorrido,
+    },
+
+    attributes: [
+      'id_posicion',
+      'latitud',
+      'longitud',
+      'precision_gps',
+      'velocidad_mps',
+      'fecha_dispositivo',
+      'es_valida',
+      'es_ubicacion_simulada',
+    ],
+
+    order: [
+      ['fecha_dispositivo', 'ASC'],
+      ['id_posicion', 'ASC'],
+    ],
+
+    raw: true,
+    transaction,
+  });
+
+  const distanciaGps = calcularDistanciaGps(
+    r,
+    posicionesDistancia,
+  );
+
   return {
     recorrido: {
       id_recorrido: r.id_recorrido,
@@ -413,6 +436,8 @@ const detalleHistorialService = (
       r,
       eventosPlain,
     ),
+
+    distancia_gps: distanciaGps,
 
     puntos,
 
